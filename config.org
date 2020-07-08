@@ -181,6 +181,8 @@
      (use-package ivy
        :ensure t
        :delight ivy-mode ""
+       :bind (:map ivy-minibuffer-map
+                   ("<return>" . ivy-alt-done))
        :config
        (ivy-mode 1)
        (setq ivy-use-virtual-buffers t)
@@ -190,15 +192,18 @@
        (setq ivy-count-format "%d/%d ")
        (setq ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
        )
+
+     (use-package smex
+       :ensure t)
    #+end_src
 ** counsel
    #+begin_src emacs-lisp
      (use-package counsel
        :ensure t
        :bind (("M-x" . counsel-M-x)
-          ("\C-x \C-f" . counsel-find-file)
-          ("M-y" . counsel-yank-pop)
-          ("C-c f" . counsel-recentf))
+              ("\C-x \C-f" . counsel-find-file)
+              ("M-y" . counsel-yank-pop)
+              ("C-c f" . counsel-recentf))
        :init
        (setq counsel-find-file-ignore-regexp "\\.git\\/")
        )
