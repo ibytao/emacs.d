@@ -191,6 +191,14 @@
        (setq ivy-initial-inputs-alist nil)
        (setq ivy-count-format "%d/%d ")
        (setq ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
+
+       (ivy-set-actions
+        'counsel-find-file
+        '(("d" delete-file "delete")
+          ("r" rename-file "rename")
+          ("x" counsel-find-file-as-root "open as root"))
+        )
+
        )
 
      (use-package smex
