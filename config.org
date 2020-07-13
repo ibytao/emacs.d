@@ -123,7 +123,19 @@
 
     (use-package spaceline-all-the-icons
       :after spaceline
-      :config (spaceline-all-the-icons-theme))
+      :config
+      (spaceline-all-the-icons-theme)
+      (spaceline-toggle-all-the-icons-bookmark-on)
+      (spaceline-toggle-all-the-icons-eyebrowse-workspace-on)
+      (spaceline-toggle-all-the-icons-package-updates-on)
+      (spaceline-toggle-all-the-icons-window-number-on)
+
+      ;; 'slant, 'arrow, 'cup, 'wave, 'none
+      (setq spaceline-all-the-icons-separator-type 'slant)
+      (setq spaceline-all-the-icons-slim-render t)
+
+      (face-background 'spaceline-highlight-face)
+      )
 
     (use-package solarized-theme
       :ensure t
@@ -184,7 +196,8 @@
       (use-package color-theme-sanityinc-solarized
         :ensure t
         :config
-        (color-theme-sanityinc-solarized--define-theme dark))
+        (color-theme-sanityinc-solarized--define-theme dark)
+        )
       )
   #+end_src
 ** font
