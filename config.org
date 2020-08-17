@@ -729,8 +729,8 @@
    #+end_src
 ** css–less-scss
    #+begin_src emacs-lisp
-     ;; (use-package css-mode
-     ;;   :custom (css-indent-offset 2))
+     (use-package css-mode
+       :custom (css-indent-offset 2))
 
      (use-package less-css-mode
        :mode "\\.less\\'")
