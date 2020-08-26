@@ -67,7 +67,8 @@
     (show-paren-mode 1)                               ; Show the parent
     (setq-default cursor-type 'bar)                   ; set cursor style
     (blink-cursor-mode t)                             ; blink cursor
-    (add-hook 'before-save-hook 'delete-trailing-whitespace) ;delete traniling whitespace
+    (add-hook 'before-save-hook 'delete-trailing-whitespace) ; delete traniling whitespace
+    (add-to-list 'default-frame-alist '(fullscreen . maximized)) ; full screen
 
 
     ;; (when (memq window-system '(mac ns))
@@ -144,6 +145,7 @@
     (use-package solarized-theme
       :ensure t
       :init
+
       ;; make the fringe stand out from the background
       (setq solarized-distinct-fringe-background t)
 
@@ -167,17 +169,13 @@
       (setq solarized-scale-outline-headlines nil)
 
       (setq x-underline-at-descent-line t)
-
       (setq solarized-height-minus-1 1.0)
       (setq solarized-height-plus-1 1.0)
       (setq solarized-height-plus-2 1.0)
       (setq solarized-height-plus-3 1.0)
       (setq solarized-height-plus-4 1.0)
 
-      (mapc
-       (lambda (face)
-         (set-face-attribute face nil :weight 'normal :underline nil))
-       (face-list))
+      (load-theme 'solarized-dark t)
 
       (custom-set-faces
        ;; '(company-preview
@@ -195,13 +193,17 @@
          ((((type x)) (:inherit company-tooltip-selection :weight normal))
           (t (:inherit company-tooltip-selection)))))
 
+      (mapc
+       (lambda (face)
+         (set-face-attribute face nil :weight 'normal :underline nil))
+       (face-list))
+
       :config
-      (load-theme 'solarized-dark t)
-      (use-package color-theme-sanityinc-solarized
-        :ensure t
-        :config
-        (color-theme-sanityinc-solarized--define-theme dark)
-        )
+      ;; (use-package color-theme-sanityinc-solarized
+      ;;   :ensure t
+      ;;   :config
+      ;;   (color-theme-sanityinc-solarized--define-theme dark)
+      ;;   )
       )
   #+end_src
 ** font
@@ -220,10 +222,10 @@
    #+end_src
 ** proxy
    #+begin_src emacs-lisp
-     (setq url-proxy-services
-        '(("no_proxy" . "^\\(localhost\\|10\\..*\\|192\\.168\\..*\\)")
-          ("http" . "localhost:1087")
-          ("https" . "localhost:1087")))
+     ;; (setq url-proxy-services
+     ;;    '(("no_proxy" . "^\\(localhost\\|10\\..*\\|192\\.168\\..*\\)")
+     ;;      ("http" . "localhost:1087")
+     ;;      ("https" . "localhost:1087")))
    #+end_src
 ** keyboard
    #+begin_src emacs-lisp
@@ -548,7 +550,7 @@
      (use-package lsp-mode :hook ((lsp-mode . lsp-enable-which-key-integration))
        :config (setq lsp-completion-enable-additional-text-edit nil))
 
-     ;; (use-package lsp-ui)
+     (use-package lsp-ui)
 
      (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 
