@@ -101,27 +101,29 @@
   #+end_src
 ** Theme
   #+begin_src emacs-lisp
-    ;; (use-package doom-themes
-    ;;   :config
-    ;;   (setq doom-themes-enable-bold nil)
-    ;;   (setq doom-themes-enable-italic nil)
-    ;;   ;; (load-theme 'doom-solarized-dark t)
-    ;;   ;; (load-theme 'doom-solarized-light t)
-    ;;   )
+    (use-package doom-themes
+      :config
+      (setq doom-themes-enable-bold nil)
+      (setq doom-themes-enable-italic nil)
+      (load-theme 'doom-solarized-dark t)
+      ;; (load-theme 'doom-solarized-light t)
+      )
 
-    ;; (use-package doom-modeline
-    ;;   :defer 0.1
-    ;;   :config (doom-modeline-mode))
+    (use-package doom-modeline
+      :defer 0.1
+      :config (doom-modeline-mode))
 
-    ;; (use-package fancy-battery
-    ;;   :after doom-modeline
-    ;;   :hook (after-init . fancy-battery-mode))
+    (use-package fancy-battery
+      :after doom-modeline
+      :hook (after-init . fancy-battery-mode))
 
-    ;; (use-package solaire-mode
-    ;;   :custom (solaire-mode-remap-fringe t)
-    ;;   :config
-    ;;   (solaire-mode-swap-bg)
-    ;;   (solaire-global-mode +1))
+    (use-package solaire-mode
+      :custom (solaire-mode-remap-fringe t)
+      :config
+      (solaire-mode-swap-bg)
+      (solaire-global-mode +1))
+
+    ;; --------------------------------------------------------------------------------------------------------------
 
     (use-package spaceline
       :ensure t)
@@ -139,8 +141,7 @@
       (setq spaceline-all-the-icons-separator-type 'slant)
       (setq spaceline-all-the-icons-slim-render t)
 
-      (face-background 'spaceline-highlight-face)
-      )
+      (face-background 'spaceline-highlight-face))
 
     (use-package solarized-theme
       :ensure t
@@ -175,7 +176,7 @@
       (setq solarized-height-plus-3 1.0)
       (setq solarized-height-plus-4 1.0)
 
-      (load-theme 'solarized-dark t)
+      ;; (load-theme 'solarized-dark t)
 
       (custom-set-faces
        ;; '(company-preview
@@ -193,10 +194,10 @@
          ((((type x)) (:inherit company-tooltip-selection :weight normal))
           (t (:inherit company-tooltip-selection)))))
 
-      (mapc
-       (lambda (face)
-         (set-face-attribute face nil :weight 'normal :underline nil))
-       (face-list))
+      ;; (mapc
+      ;;  (lambda (face)
+      ;;    (set-face-attribute face nil :weight 'normal :underline nil))
+      ;;  (face-list))
 
       :config
       ;; (use-package color-theme-sanityinc-solarized
@@ -548,14 +549,13 @@
      (setq lsp-keymap-prefix "s-l")
 
      (use-package lsp-mode :hook ((lsp-mode . lsp-enable-which-key-integration))
-       :config (setq lsp-completion-enable-additional-text-edit nil))
+       :config
+       (setq lsp-completion-enable-additional-text-edit nil))
 
-     (use-package lsp-ui)
-
+     (use-package lsp-ui :ensure t)
      (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-
      (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
-
+     (use-package dap-java :ensure nil)
      (use-package lsp-treemacs)
 
      (use-package which-key :config (which-key-mode))
@@ -742,14 +742,14 @@
    #+end_src
 ** dart
    #+begin_src emacs-lisp
-     (use-package dart-mode
+     (use-package lsp-dart
        :ensure t
-       :after lsp
-       :ensure-system-package (dart_language_server . "pub global activate dart_language_server")
-       :custom
-       (dart-format-on-save t)
-       (setq dart-sdk-path "~/SDK/flutter/bin/cache/dart-sdk/")
-       )
+       :hook (dart-mode . lsp))
+     ;; Optional Flutter packages
+     (use-package hover
+       :ensure t
+       :init
+       (setq hover-hot-reload-on-save t)) ;; run app from desktop without emulator
 
      (use-package flutter
        :ensure t
@@ -757,12 +757,20 @@
        :bind (:map dart-mode-map
                    ("C-M-x" . #'flutter-run-or-hot-reload))
        :custom
-       (flutter-sdk-path "~/SDK/flutter/"))
+       (flutter-sdk-path "~/SDK/flutter/")
+       :config
+       (add-hook 'dart-mode-hook
+                 (lambda ()
+                   (add-hook 'after-save-hook #'flutter-run-or-hot-reload)))
+       (with-eval-after-load 'projectile
+         (add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
+         (add-to-list 'projectile-project-root-files-bottom-up "BUILD")))
    #+end_src
 ** java
    #+begin_src emacs-lisp
      (use-package lsp-java
-       :config (add-hook 'java-mode-hook 'lsp))
+       :config
+       (add-hook 'java-mode-hook 'lsp))
 
      (add-hook 'lsp-mode-hook #'lsp-lens-mode)
      (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
