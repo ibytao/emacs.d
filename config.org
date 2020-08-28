@@ -223,10 +223,10 @@
    #+end_src
 ** proxy
    #+begin_src emacs-lisp
-     ;; (setq url-proxy-services
-     ;;    '(("no_proxy" . "^\\(localhost\\|10\\..*\\|192\\.168\\..*\\)")
-     ;;      ("http" . "localhost:1087")
-     ;;      ("https" . "localhost:1087")))
+     (setq url-proxy-services
+        '(("no_proxy" . "^\\(localhost\\|10\\..*\\|192\\.168\\..*\\)")
+          ("http" . "localhost:1087")
+          ("https" . "localhost:1087")))
    #+end_src
 ** keyboard
    #+begin_src emacs-lisp
@@ -327,6 +327,7 @@
               ("C-c f" . counsel-recentf))
        :init
        (setq counsel-find-file-ignore-regexp "\\.git\\/")
+       (setq recentf-max-menu-items 200)
        )
    #+end_src
 ** swiper
@@ -761,10 +762,10 @@
        :config
        (add-hook 'dart-mode-hook
                  (lambda ()
-                   (add-hook 'after-save-hook #'flutter-run-or-hot-reload)))
-       (with-eval-after-load 'projectile
-         (add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
-         (add-to-list 'projectile-project-root-files-bottom-up "BUILD")))
+                   (add-hook 'after-save-hook #'flutter-hot-reload)
+                   (with-eval-after-load 'projectile
+                     (add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
+                     (add-to-list 'projectile-project-root-files-bottom-up "BUILD")))))
    #+end_src
 ** java
    #+begin_src emacs-lisp
