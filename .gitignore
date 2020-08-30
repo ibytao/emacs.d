@@ -24,3 +24,5 @@ irony
 .cache
 .dap-breakpoints
 custom-variables.el
+.extension
+workspace
