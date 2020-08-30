@@ -545,23 +545,6 @@
        :config
          (persp-mode))
    #+end_src
-** lsp
-   #+begin_src emacs-lisp
-     (setq lsp-keymap-prefix "s-l")
-
-     (use-package lsp-mode
-       :hook ((lsp-mode . lsp-enable-which-key-integration))
-       :config
-       (setq lsp-completion-enable-additional-text-edit nil))
-
-     (use-package lsp-ui :ensure t)
-     (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-     (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
-     (use-package dap-java :ensure nil)
-     (use-package lsp-treemacs)
-
-     (use-package which-key :config (which-key-mode))
-   #+end_src
 ** yasnippet
    #+BEGIN_SRC emacs-lisp
      (use-package yasnippet
@@ -588,6 +571,25 @@
        )
    #+end_src
 * Languages
+** lsp
+   #+begin_src emacs-lisp
+     (setq lsp-keymap-prefix "s-l")
+
+     (use-package lsp-mode
+       :hook ((lsp-mode . lsp-enable-which-key-integration)
+             )
+       :commands (lsp lsp-deferred)
+       :config
+       (setq lsp-completion-enable-additional-text-edit nil))
+
+     (use-package lsp-ui :ensure t)
+     (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+     (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
+     (use-package dap-java :ensure nil)
+     (use-package lsp-treemacs)
+
+     (use-package which-key :config (which-key-mode))
+   #+end_src
 ** clojure
    #+begin_src emacs-lisp
      (use-package clojure-mode
