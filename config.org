@@ -549,7 +549,8 @@
    #+begin_src emacs-lisp
      (setq lsp-keymap-prefix "s-l")
 
-     (use-package lsp-mode :hook ((lsp-mode . lsp-enable-which-key-integration))
+     (use-package lsp-mode
+       :hook ((lsp-mode . lsp-enable-which-key-integration))
        :config
        (setq lsp-completion-enable-additional-text-edit nil))
 
@@ -701,7 +702,7 @@
                    ))
        )
    #+end_src
-** Vue.js
+** Vue
    #+begin_src emacs-lisp
      (use-package vue-mode
        :delight "V "
@@ -745,15 +746,18 @@
    #+begin_src emacs-lisp
      (use-package lsp-dart
        :ensure t
+       :defer t
        :hook (dart-mode . lsp))
      ;; Optional Flutter packages
      (use-package hover
        :ensure t
+       :defer t
        :init
        (setq hover-hot-reload-on-save t)) ;; run app from desktop without emulator
 
      (use-package flutter
        :ensure t
+       :defer t
        :after dart-mode
        :bind (:map dart-mode-map
                    ("C-M-x" . #'flutter-run-or-hot-reload))
@@ -770,6 +774,8 @@
 ** java
    #+begin_src emacs-lisp
      (use-package lsp-java
+       :ensure t
+       :defer t
        :config
        (add-hook 'java-mode-hook 'lsp))
 
