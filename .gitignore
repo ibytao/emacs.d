@@ -26,3 +26,4 @@ irony
 custom-variables.el
 .extension
 workspace
+eclipse.jdt.ls
