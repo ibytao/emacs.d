@@ -98,6 +98,10 @@
     ;; ediff setup
     (setq ediff-split-window-function 'split-window-horizontally
           ediff-window-setup-function 'ediff-setup-windows-plain)
+
+    (use-package exec-path-from-shell :defer t :config
+      (when (memq window-system '(mac ns x))
+        (exec-path-from-shell-initialize)))
   #+end_src
 ** Theme
   #+begin_src emacs-lisp
@@ -571,25 +575,6 @@
        )
    #+end_src
 * Languages
-** lsp
-   #+begin_src emacs-lisp
-     (setq lsp-keymap-prefix "s-l")
-
-     (use-package lsp-mode
-       :hook ((lsp-mode . lsp-enable-which-key-integration)
-             )
-       :commands (lsp lsp-deferred)
-       :config
-       (setq lsp-completion-enable-additional-text-edit nil))
-
-     (use-package lsp-ui :ensure t)
-     (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-     (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
-     (use-package dap-java :ensure nil)
-     (use-package lsp-treemacs)
-
-     (use-package which-key :config (which-key-mode))
-   #+end_src
 ** clojure
    #+begin_src emacs-lisp
      (use-package clojure-mode
@@ -612,44 +597,6 @@
          (cljr-add-keybindings-with-prefix "C-c C-m"))
 
        (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)
-       )
-   #+end_src
-** Go
-   #+begin_src emacs-lisp
-     (use-package go-mode
-       :ensure t
-       :mode (("\\.go\\'" . go-mode))
-       :hook ((before-save . gofmt-before-save))
-       ;; :bind (("M-." . 'godef-jump))
-       :config
-       (add-hook 'go-mode-hook (lambda ()
-                                 (global-unset-key (kbd "S-m"))
-                                 (define-key go-mode-map (kbd "M-.") 'godef-jump)
-                                 (setq indent-tabs-mode 1)
-                                 (setq tab-width 2)
-                                 ))
-       (setq gofmt-command "goimports")
-
-       (use-package company-go
-         :ensure t
-         :config
-         (add-hook 'go-mode-hook (lambda()
-                                   (add-to-list (make-local-variable 'company-backends)
-                                                'company-go))))
-       (use-package go-eldoc
-         :ensure t
-         :hook (go-mode . go-eldoc-setup)
-         )
-       (use-package go-guru
-         :ensure t
-         :hook (go-mode . go-guru-hl-identifier-mode)
-         )
-       (use-package go-rename
-         :ensure t)
-
-       (let ((govet (flycheck-checker-get 'go-vet 'command)))
-         (when (equal (cadr govet) "tool")
-           (setf (cdr govet) (cddr govet))))
        )
    #+end_src
 ** js2-mode
@@ -704,16 +651,6 @@
                    ))
        )
    #+end_src
-** Vue
-   #+begin_src emacs-lisp
-     (use-package vue-mode
-       :delight "V "
-       :mode "\\.vue\\'"
-       :custom
-       (mmm-submode-decoration-level 0)
-       (vue-html-extra-indent 2)
-       :hook ((vue-mode . lsp-deferred)))
-   #+end_src
 ** Json
    #+begin_src emacs-lisp
      (use-package json-mode
@@ -744,46 +681,6 @@
 
      (use-package scss-mode
        :mode "\\.scss\\'")
-   #+end_src
-** dart
-   #+begin_src emacs-lisp
-     (use-package lsp-dart
-       :ensure t
-       :defer t
-       :hook (dart-mode . lsp))
-     ;; Optional Flutter packages
-     (use-package hover
-       :ensure t
-       :defer t
-       :init
-       (setq hover-hot-reload-on-save t)) ;; run app from desktop without emulator
-
-     (use-package flutter
-       :ensure t
-       :defer t
-       :after dart-mode
-       :bind (:map dart-mode-map
-                   ("C-M-x" . #'flutter-run-or-hot-reload))
-       :custom
-       (flutter-sdk-path "~/SDK/flutter/")
-       :config
-       (add-hook 'dart-mode-hook
-                 (lambda ()
-                   (add-hook 'after-save-hook #'flutter-hot-reload)
-                   (with-eval-after-load 'projectile
-                     (add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
-                     (add-to-list 'projectile-project-root-files-bottom-up "BUILD")))))
-   #+end_src
-** java
-   #+begin_src emacs-lisp
-     (use-package lsp-java
-       :ensure t
-       :defer t
-       :config
-       (add-hook 'java-mode-hook 'lsp))
-
-     (add-hook 'lsp-mode-hook #'lsp-lens-mode)
-     (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
    #+end_src
 ** sql
    #+begin_src emacs-lisp
@@ -853,6 +750,84 @@
       (add-hook 'python-mode-hook 'auto-virtualenv-set-virtualenv)
       )
   #+end_src
+** lsp
+   #+begin_src emacs-lisp
+     (setq lsp-keymap-prefix "s-l")
+
+     (use-package lsp-mode
+       :hook ((lsp-mode . lsp-enable-which-key-integration)
+             )
+       :commands (lsp lsp-deferred)
+       :config
+       (setq lsp-completion-enable-additional-text-edit nil))
+
+     (use-package lsp-ui :ensure t)
+     (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+     (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
+     (use-package dap-java :ensure nil)
+     (use-package lsp-treemacs)
+
+     (use-package which-key :config (which-key-mode))
+   #+end_src
+** Vue
+   #+begin_src emacs-lisp
+     (use-package vue-mode
+       :delight "V "
+       :mode "\\.vue\\'"
+       :custom
+       (mmm-submode-decoration-level 0)
+       (vue-html-extra-indent 2)
+       :hook ((vue-mode . lsp-deferred)))
+   #+end_src
+** dart
+   #+begin_src emacs-lisp
+     (use-package lsp-dart
+       :ensure t
+       :defer t
+       :hook (dart-mode . lsp))
+     ;; Optional Flutter packages
+     (use-package hover
+       :ensure t
+       :defer t
+       :init
+       (setq hover-hot-reload-on-save t)) ;; run app from desktop without emulator
+
+     (use-package flutter
+       :ensure t
+       :defer t
+       :after dart-mode
+       :bind (:map dart-mode-map
+                   ("C-M-x" . #'flutter-run-or-hot-reload))
+       :custom
+       (flutter-sdk-path "~/SDK/flutter/")
+       :config
+       (add-hook 'dart-mode-hook
+                 (lambda ()
+                   (add-hook 'after-save-hook #'flutter-hot-reload)
+                   (with-eval-after-load 'projectile
+                     (add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
+                     (add-to-list 'projectile-project-root-files-bottom-up "BUILD")))))
+   #+end_src
+** java
+   #+begin_src emacs-lisp
+     (use-package lsp-java
+       :ensure t
+       :defer t
+       :config
+       (add-hook 'java-mode-hook 'lsp))
+
+     (add-hook 'lsp-mode-hook #'lsp-lens-mode)
+     (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+   #+end_src
+** Go
+   #+begin_src emacs-lisp
+     (use-package go-mode
+       :ensure t
+       :mode (("\\.go\\'" . go-mode))
+       :hook ((before-save . gofmt-before-save)
+              (go-mode . lsp-deferred))
+       )
+   #+end_src
 * Org-Mode
 ** org
   #+begin_src emacs-lisp
