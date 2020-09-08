@@ -824,8 +824,16 @@
      (use-package go-mode
        :ensure t
        :mode (("\\.go\\'" . go-mode))
-       :hook ((before-save . gofmt-before-save)
-              (go-mode . lsp-deferred))
+       :hook ((go-mode . lsp-deferred))
+       :config
+       (add-hook 'go-mode-hook
+                 (lambda ()
+                   (setq-default tab-width 2)))
+
+       (defun lsp-go-install-save-hooks ()
+         (add-hook 'before-save-hook #'lsp-format-buffer t t)
+         (add-hook 'before-save-hook #'lsp-organize-imports t t))
+       (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
        )
    #+end_src
 * Org-Mode
