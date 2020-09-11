@@ -291,6 +291,8 @@
        (other-window -1))
      (global-set-key (kbd "s-[") 'prev-window)
      (global-set-key (kbd "s-]") 'other-window)
+
+     (global-set-key (kbd "C-r") 'counsel-git-grep)
    #+end_src
 * Advanced Configuration
 ** ivy
@@ -331,7 +333,7 @@
               ("C-c f" . counsel-recentf))
        :init
        (setq counsel-find-file-ignore-regexp "\\.git\\/")
-       (setq recentf-max-menu-items 200)
+       (setq recentf-max-saved-items 200)
        )
    #+end_src
 ** swiper
@@ -651,6 +653,11 @@
                    ))
        )
    #+end_src
+** yaml
+   #+begin_src emacs-lisp
+     (use-package yaml-mode
+       :mode "\\.yml\\'")
+   #+end_src
 ** Json
    #+begin_src emacs-lisp
      (use-package json-mode
@@ -814,7 +821,9 @@
        :ensure t
        :defer t
        :config
-       (add-hook 'java-mode-hook 'lsp))
+       (add-hook 'java-mode-hook 'lsp)
+       (setq lsp-java-jdt-download-url  "https://download.eclipse.org/jdtls/milestones/0.57.0/jdt-language-server-0.57.0-202006172108.tar.gz")
+       )
 
      (add-hook 'lsp-mode-hook #'lsp-lens-mode)
      (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
