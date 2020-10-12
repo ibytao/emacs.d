@@ -332,7 +332,7 @@
               ("M-y" . counsel-yank-pop)
               ("C-c f" . counsel-recentf))
        :init
-       (setq counsel-find-file-ignore-regexp "\\.git\\/")
+       (setq counsel-find-file-ignore-regexp (regexp-opt '(".git" ".DS_Store")))
        (setq recentf-max-saved-items 200)
        )
    #+end_src
