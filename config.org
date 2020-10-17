@@ -845,6 +845,11 @@
        (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
        )
    #+end_src
+** protobuf
+   #+begin_src emacs-lisp
+     (use-package protobuf-mode
+       :ensure t)
+   #+end_src
 * Org-Mode
 ** org
   #+begin_src emacs-lisp
