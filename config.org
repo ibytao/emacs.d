@@ -246,7 +246,7 @@
 
      ;;org
      (defun my-org-hook ()
-       (define-key org-mode-map (kbd "<C-o>") 'org-open-line)
+       ;; (define-key org-mode-map (kbd "<C-o>") 'org-open-line)
        (define-key org-mode-map (kbd "<C-return>") 'org-insert-heading-respect-content)
        (define-key org-mode-map (kbd "<C-S-return>") 'org-insert-todo-heading-respect-content)
        (define-key org-mode-map (kbd "<M-return>") 'org-meta-return)
@@ -257,9 +257,9 @@
        )
      (add-hook 'org-mode-hook 'my-org-hook)
 
-     (global-set-key (kbd "<C-return>") 'open-line-below)
+     (global-set-key (kbd "<C-return>") 'new-line-dwim)
      (global-set-key (kbd "<C-S-return>") 'open-line-above)
-     (global-set-key (kbd "<M-return>") 'new-line-dwim)
+     (global-set-key (kbd "<M-return>") 'open-line-below)
 
      ;; Buffer file functions
      (global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
@@ -276,8 +276,11 @@
      (global-set-key (kbd "M-j") (λ (join-line -1)))
 
      ;; Jump from file to containing directory
-     (global-set-key (kbd "C-x C-j") 'dired-jump) (autoload 'dired-jump "dired")
-     (global-set-key (kbd "C-x M-j") '(λ (dired-jump 1)))
+     (autoload 'dired-jump "dired-x"
+       "Jump to Dired buffer corresponding to current buffer." t)
+     (global-set-key (kbd "C-x C-j") 'dired-jump)
+
+     (global-set-key (kbd "C-c o") 'occur)
 
      ;; Make shell more convenient, and suspend-frame less
      ;; ansi-term
@@ -291,6 +294,7 @@
        (other-window -1))
      (global-set-key (kbd "s-[") 'prev-window)
      (global-set-key (kbd "s-]") 'other-window)
+     (global-set-key (kbd "C-o") 'other-window)
 
      (global-set-key (kbd "C-r") 'counsel-git-grep)
    #+end_src
@@ -305,7 +309,7 @@
        :config
        (ivy-mode 1)
        (setq ivy-use-virtual-buffers t)
-       (setq enable-recursive-minibuffers t)
+       ;; (setq enable-recursive-minibuffers t)
        (setq ivy-height 10)
        (setq ivy-initial-inputs-alist nil)
        (setq ivy-count-format "%d/%d ")
@@ -332,7 +336,7 @@
               ("M-y" . counsel-yank-pop)
               ("C-c f" . counsel-recentf))
        :init
-       (setq counsel-find-file-ignore-regexp "\\.git\\/")
+       (setq counsel-find-file-ignore-regexp (regexp-opt '(".git" ".DS_Store")))
        (setq recentf-max-saved-items 200)
        )
    #+end_src
@@ -522,7 +526,7 @@
        :ensure t
        :bind
        (("C-c p" . projectile-command-map))
-       (("C-c o" . projectile-find-file))
+       (("C-x f" . projectile-find-file))
        :init
        (projectile-mode +1)
        :config
