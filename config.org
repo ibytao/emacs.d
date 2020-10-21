@@ -257,9 +257,9 @@
        )
      (add-hook 'org-mode-hook 'my-org-hook)
 
-     (global-set-key (kbd "<C-return>") 'new-line-dwim)
+     (global-set-key (kbd "<S-return>") 'new-line-dwim)
      (global-set-key (kbd "<C-S-return>") 'open-line-above)
-     (global-set-key (kbd "<M-return>") 'open-line-below)
+     (global-set-key (kbd "<C-return>") 'open-line-below)
 
      ;; Buffer file functions
      (global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
