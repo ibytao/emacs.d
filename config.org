@@ -730,37 +730,19 @@
   #+end_src
 ** python
   #+begin_src emacs-lisp
-    ;; (setq python-shell-completion-native-enable nil)
-
-    (use-package exec-path-from-shell
+    (use-package lsp-python-ms
       :ensure t
-      :config
-      (when (memq window-system '(mac ns x))
-        (exec-path-from-shell-initialize)))
+      :init (setq lsp-python-ms-auto-install-server t)
+      :hook (python-mode . (lambda ()
+                             (require 'lsp-python-ms)
+                             (lsp))))  ; or lsp-deferred
 
-    (use-package company-jedi
-      :ensure t
+    (use-package pyvenv
+      :diminish
       :config
-      (add-hook 'python-mode-hook 'jedi:setup)
-      (add-hook 'python-mode-hook (lambda ()
-                                    (add-to-list 'company-backends 'company-jedi)))
-      (setq jedi:complete-on-dot t)
-      (setq jedi:use-shortcuts t)
-      )
-
-    (use-package elpy
-      :ensure t
-      :init
-      (elpy-enable)
-      :config
-      (setq elpy-rpc-backend "jedi")
-      )
-
-    (use-package auto-virtualenv
-      :ensure t
-      :config
-      (add-hook 'python-mode-hook 'auto-virtualenv-set-virtualenv)
-      )
+      (setq pyvenv-mode-line-indicator
+            '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
+      (pyvenv-mode +1))
   #+end_src
 ** lsp
    #+begin_src emacs-lisp
