@@ -28,3 +28,5 @@ custom-variables.el
 workspace
 eclipse.jdt.ls
 url
+elpy
+projectile.cache

@@ -534,6 +534,7 @@
        (setq projectile-completion-system 'ivy)
        (use-package counsel-projectile
          :ensure t)
+       (setq projectile-enable-caching t)
        )
    #+end_src
 ** guide-key
