@@ -397,11 +397,21 @@
        :config
        (global-undo-tree-mode))
    #+end_src
+** goto-chg
+   #+begin_src emacs-lisp
+     (use-package goto-chg
+       :ensure t
+       :bind
+       (("C-." . goto-last-change)
+        ("C-," . goto-last-change-reverse))
+       )
+   #+end_src
 ** magit
    #+begin_src emacs-lisp
      (use-package magit
        :ensure t
        :config
+       (global-set-key (kbd "C-c g") 'magit)
        (global-set-key (kbd "C-x m") 'magit)
        )
    #+end_src
@@ -439,7 +449,7 @@
        :ensure t
        :init
        ;; you can select the key you prefer to
-       (define-key global-map (kbd "C-.") 'ace-jump-mode)
+       (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
        )
    #+end_src
 ** company
@@ -449,22 +459,22 @@
        :config
        (global-company-mode t)
        (setq company-idle-delay 0)
-       (setq company-minimum-prefix-left 3)
+       (setq company-minimum-prefix-left 2)
        (setq company-backends
-         '((company-files
-            company-yasnippet
-            company-keywords
-            company-capf)
-           (company-abbrev company-dabbrev)))
+             '((company-capf
+                company-files
+                company-yasnippet
+                company-keywords)
+               (company-abbrev company-dabbrev)))
 
        (with-eval-after-load 'company
-           (define-key company-active-map (kbd "C-n") #'company-select-next)
-           (define-key company-active-map (kbd "C-p") #'company-select-previous))
+         (define-key company-active-map (kbd "C-n") #'company-select-next)
+         (define-key company-active-map (kbd "C-p") #'company-select-previous))
 
        (add-hook 'emacs-lisp-mode-hook
-             (lambda()
-               (add-to-list (make-local-variable 'company-backends)
-                    'company-elisp)))
+                 (lambda()
+                   (add-to-list (make-local-variable 'company-backends)
+                                'company-elisp)))
        )
    #+end_src
 ** flycheck
@@ -517,7 +527,7 @@
 
      (add-hook 'js2-mode-hook #'setup-tide-mode)
      (add-hook 'rjsx-mode-hook #'setup-tide-mode)
-     (add-hook 'typescript-mode-hook #'setup-tide-mode)
+     ;; (add-hook 'typescript-mode-hook #'setup-tide-mode)
      (add-hook 'web-mode-hook #'setup-tide-mode)
    #+end_src
 ** projectile
@@ -534,7 +544,8 @@
        (setq projectile-completion-system 'ivy)
        (use-package counsel-projectile
          :ensure t)
-       (setq projectile-enable-caching t)
+       ;; (setq projectile-enable-caching t)
+       ;; (setq projectile-file-exists-local-cache-expire (* 1 10))
        )
    #+end_src
 ** guide-key
@@ -571,14 +582,6 @@
        :ensure t
        :bind
        (("C-c t" . 'osx-dictionary-search-pointer))
-       )
-   #+end_src
-** magit
-   #+begin_src emacs-lisp
-     (use-package magit
-       :ensure t
-       :config
-       (global-set-key (kbd "C-c g") 'magit)
        )
    #+end_src
 * Languages
@@ -642,7 +645,10 @@
 ** typescript
    #+begin_src emacs-lisp
      (use-package typescript-mode
-       :mode ("\\.ts\\'"))
+       :mode ("\\.ts\\'")
+       :hook (typescript-mode . lsp-deferred)
+       :config
+       (setq typescript-indent-level 2))
    #+end_src
 ** rjsx
    #+begin_src emacs-lisp
@@ -746,13 +752,17 @@
   #+end_src
 ** lsp
    #+begin_src emacs-lisp
-     (setq lsp-keymap-prefix "s-l")
-
      (use-package lsp-mode
        :hook ((lsp-mode . lsp-enable-which-key-integration))
        :commands (lsp lsp-deferred)
+       :bind
+       (("s-." . lsp-find-references))
+       :init
+       (setq lsp-keymap-prefix "s-l")
        :config
-       (setq lsp-completion-enable-additional-text-edit nil))
+       (setq lsp-completion-enable-additional-text-edit nil)
+       (lsp-enable-which-key-integration t)
+       )
 
      (use-package lsp-ui :ensure t)
      (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
