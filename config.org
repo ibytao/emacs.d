@@ -452,7 +452,7 @@
        :ensure t
        :init
        ;; you can select the key you prefer to
-       (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+       (define-key global-map (kbd "C-;") 'ace-jump-mode)
        )
    #+end_src
 ** company
@@ -547,8 +547,8 @@
        (setq projectile-completion-system 'ivy)
        (use-package counsel-projectile
          :ensure t)
-       ;; (setq projectile-enable-caching t)
-       ;; (setq projectile-file-exists-local-cache-expire (* 1 10))
+       (setq projectile-enable-caching t)
+       (setq projectile-file-exists-local-cache-expire (* 1 10))
        )
    #+end_src
 ** guide-key
