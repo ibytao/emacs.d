@@ -462,7 +462,7 @@
        :config
        (global-company-mode t)
        (setq company-idle-delay 0)
-       (setq company-minimum-prefix-left 2)
+       (setq company-minimum-prefix-length 2)
        (setq company-backends
              '((company-capf
                 company-files
@@ -759,7 +759,8 @@
        :hook ((lsp-mode . lsp-enable-which-key-integration))
        :commands (lsp lsp-deferred)
        :bind
-       (("s-." . lsp-find-references))
+       (("M-'" . lsp-find-references)
+        ("M-/" . lsp-find-implementation))
        :init
        (setq lsp-keymap-prefix "s-l")
        :config
