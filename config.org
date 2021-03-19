@@ -111,6 +111,7 @@
       (setq doom-themes-enable-italic nil)
       (load-theme 'doom-solarized-dark t)
       ;; (load-theme 'doom-solarized-light t)
+      ;; (load-theme 'doom-nord-light)
       )
 
     (use-package doom-modeline
@@ -495,6 +496,7 @@
        :delight
        :custom (prettier-js-args '("--print-width" "80"
                                    "--bracket-spacing" "false"
+                                   "--semi" "false"
                                    "--trailing-comma" "all")))
    #+end_src
 ** tide
@@ -547,8 +549,8 @@
        (setq projectile-completion-system 'ivy)
        (use-package counsel-projectile
          :ensure t)
-       (setq projectile-enable-caching t)
-       (setq projectile-file-exists-local-cache-expire (* 1 10))
+       ;;(setq projectile-enable-caching t)
+       ;;(setq projectile-file-exists-local-cache-expire (* 1 100))
        )
    #+end_src
 ** guide-key
@@ -586,6 +588,15 @@
        :bind
        (("C-c t" . 'osx-dictionary-search-pointer))
        )
+   #+end_src
+** beacon
+   #+begin_src emacs-lisp
+     (use-package beacon
+       :ensure t
+       :custom
+       (beacon-color "yellow")
+       :config
+       (beacon-mode 1))
    #+end_src
 * Languages
 ** clojure
@@ -645,14 +656,6 @@
          (setq-default js2-strict-trailing-comma-warning nil) ;; jshint does not warn about this now for some reason
        )
    #+end_src
-** typescript
-   #+begin_src emacs-lisp
-     (use-package typescript-mode
-       :mode ("\\.ts\\'")
-       :hook (typescript-mode . lsp-deferred)
-       :config
-       (setq typescript-indent-level 2))
-   #+end_src
 ** rjsx
    #+begin_src emacs-lisp
      (use-package rjsx-mode
@@ -666,6 +669,14 @@
                    ;; (flycheck-select-checker 'javascript-eslint)
                    ))
        )
+   #+end_src
+** typescript
+   #+begin_src emacs-lisp
+     (use-package typescript-mode
+       :mode ("\\.ts\\'")
+       :hook (typescript-mode . lsp-deferred)
+       :config
+       (setq typescript-indent-level 2))
    #+end_src
 ** yaml
    #+begin_src emacs-lisp
@@ -758,9 +769,9 @@
      (use-package lsp-mode
        :hook ((lsp-mode . lsp-enable-which-key-integration))
        :commands (lsp lsp-deferred)
-       :bind
-       (("M-'" . lsp-find-references)
-        ("M-/" . lsp-find-implementation))
+       ;; :bind
+       ;; (("M-'" . lsp-find-references)
+       ;;  ("M-/" . lsp-find-implementation))
        :init
        (setq lsp-keymap-prefix "s-l")
        :config
@@ -768,7 +779,54 @@
        (lsp-enable-which-key-integration t)
        )
 
-     (use-package lsp-ui :ensure t)
+     (use-package lsp-ui :ensure t
+       :custom
+       ;; lsp-ui-doc
+       (lsp-ui-doc-enable t)
+       (lsp-ui-doc-header t)
+       (lsp-ui-doc-include-signature t)
+       (lsp-ui-doc-position 'top) ;; top, bottom, or at-point
+       (lsp-ui-doc-max-width 150)
+       (lsp-ui-doc-max-height 30)
+       (lsp-ui-doc-use-childframe t)
+       (lsp-ui-doc-use-webkit t)
+       ;; lsp-ui-flycheck
+       (lsp-ui-flycheck-enable nil)
+       ;; lsp-ui-sideline
+       (lsp-ui-sideline-enable nil)
+       (lsp-ui-sideline-ignore-duplicate t)
+       (lsp-ui-sideline-show-symbol t)
+       (lsp-ui-sideline-show-hover t)
+       (lsp-ui-sideline-show-diagnostics nil)
+       (lsp-ui-sideline-show-code-actions nil)
+       ;; lsp-ui-imenu
+       (lsp-ui-imenu-enable nil)
+       (lsp-ui-imenu-kind-position 'top)
+       ;; lsp-ui-peek
+       (lsp-ui-peek-enable t)
+       (lsp-ui-peek-peek-height 20)
+       (lsp-ui-peek-list-width 50)
+       (lsp-ui-peek-fontify 'on-demand) ;; never, on-demand, or always
+       :preface
+       (defun ladicle/toggle-lsp-ui-doc ()
+         (interactive)
+         (if lsp-ui-doc-mode
+             (progn
+               (lsp-ui-doc-mode -1)
+               (lsp-ui-doc--hide-frame))
+           (lsp-ui-doc-mode 1)))
+       :bind
+       (:map lsp-mode-map
+             ("M-'" . lsp-ui-peek-find-references)
+             ("M-." . lsp-ui-peek-find-definitions)
+             ("M-/" . lsp-ui-peek-find-implementation)
+             ;; ("C-c m"   . lsp-ui-imenu)
+             ;; ("C-c s"   . lsp-ui-sideline-mode)
+             ;; ("C-c d"   . ladicle/toggle-lsp-ui-doc)
+             )
+       :hook
+       (lsp-mode . lsp-ui-mode)
+       )
      (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
      (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
      (use-package dap-java :ensure nil)
