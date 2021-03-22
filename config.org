@@ -493,11 +493,20 @@
    #+begin_src emacs-lisp
      (use-package prettier-js
        :ensure t
-       :delight
-       :custom (prettier-js-args '("--print-width" "80"
-                                   "--bracket-spacing" "false"
-                                   "--semi" "false"
-                                   "--trailing-comma" "all")))
+       ;; :custom
+       ;; (prettier-js-args '("--print-width" "80"
+       ;;                     "--bracket-spacing" "false"
+       ;;                     "--semi" "true"
+       ;;                     ))
+       :config
+       (defun maybe-use-prettier ()
+         "Enable prettier-js-mode if an rc file is located."
+         (if (locate-dominating-file default-directory ".prettierrc")
+             (prettier-js-mode +1)))
+       (add-hook 'js2-mode-hook 'maybe-use-prettier)
+
+       ;; (add-hook 'js2-mode-hook (lambda () (prettier-js-mode +1)))
+       )
    #+end_src
 ** tide
    #+begin_src emacs-lisp
@@ -598,6 +607,16 @@
        :config
        (beacon-mode 1))
    #+end_src
+** diff-hl
+   #+begin_src emacs-lisp
+     (use-package diff-hl
+       :ensure t
+       :config
+       (global-diff-hl-mode)
+       (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+       (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+       )
+   #+end_src
 * Languages
 ** clojure
    #+begin_src emacs-lisp
@@ -627,8 +646,7 @@
    #+begin_src emacs-lisp
      (use-package js2-mode
        :ensure t
-       :hook ((js2-mode . js2-imenu-extras-mode)
-              (js2-mode . prettier-js-mode))
+       :hook ((js2-mode . js2-imenu-extras-mode))
        :mode "\\.js\\'"
        :custom (js-indent-level 2)
        :config
