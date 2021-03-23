@@ -617,6 +617,15 @@
        (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
        )
    #+end_src
+** restclient
+   #+begin_src emacs-lisp
+     (use-package restclient
+       :ensure t
+       :mode (("\\.http\\'" . restclient-mode))
+       :config
+       (setq restclient-log-request t)
+       )
+   #+end_src
 * Languages
 ** clojure
    #+begin_src emacs-lisp
