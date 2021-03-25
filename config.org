@@ -939,6 +939,12 @@
      (use-package protobuf-mode
        :ensure t)
    #+end_src
+** dockerfile
+   #+begin_src emacs-lisp
+     (use-package dockerfile-mode
+       :ensure t
+       :hook (dockerfile-mode . lsp))
+   #+end_src
 * Org-Mode
 ** org
   #+begin_src emacs-lisp
