@@ -540,9 +540,9 @@
                                 'company-tide)))
 
      (add-hook 'js2-mode-hook #'setup-tide-mode)
-     (add-hook 'rjsx-mode-hook #'setup-tide-mode)
+     ;; (add-hook 'rjsx-mode-hook #'setup-tide-mode)
      ;; (add-hook 'typescript-mode-hook #'setup-tide-mode)
-     (add-hook 'web-mode-hook #'setup-tide-mode)
+     ;; (add-hook 'web-mode-hook #'setup-tide-mode)
    #+end_src
 ** projectile
    #+begin_src emacs-lisp
@@ -687,7 +687,9 @@
    #+begin_src emacs-lisp
      (use-package rjsx-mode
        :ensure t
-       :mode ("\\.js\\'")
+       :mode (("\\.js\\'" . rjsx-mode)
+              ("\\.jsx\\'" . rjsx-mode))
+       :hook (rjsx-mode . lsp-deferred)
        :config
        (setq js2-basic-offset 2)
        (add-hook 'rjsx-mode-hook
@@ -700,7 +702,8 @@
 ** typescript
    #+begin_src emacs-lisp
      (use-package typescript-mode
-       :mode ("\\.ts\\'")
+       :mode (("\\.ts\\'" . typescript-mode)
+              ("\\.tsx\\'" . typescript-mode))
        :hook (typescript-mode . lsp-deferred)
        :config
        (setq typescript-indent-level 2))
