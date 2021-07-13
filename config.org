@@ -122,10 +122,9 @@
 
     (use-package spaceline
       :ensure t
-      :init
-      (progn
-        (setq powerline-height 28)
-        (setq-default powerline-default-separator 'slant))
+      :config
+      ;; (require 'spaceline-config)
+      ;; (spaceline-spacemacs-theme)
       )
 
     (use-package spaceline-all-the-icons
@@ -135,14 +134,12 @@
 
       (spaceline-toggle-all-the-icons-bookmark-on)
       (spaceline-toggle-all-the-icons-eyebrowse-workspace-on)
-      (spaceline-toggle-all-the-icons-package-updates-on)
       (spaceline-toggle-all-the-icons-window-number-on)
 
       ;; 'slant, 'arrow, 'cup, 'wave, 'none
       (setq spaceline-all-the-icons-separator-type 'none)
       (setq spaceline-all-the-icons-slim-render t)
-
-      (face-background 'spaceline-highlight-face))
+      )
 
     ;; -------------------------------------------------------------------------------------------------------
     ;; (use-package doom-themes
