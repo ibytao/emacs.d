@@ -105,112 +105,73 @@
   #+end_src
 ** Theme
   #+begin_src emacs-lisp
-    (use-package doom-themes
+    (add-to-list 'load-path "~/.emacs.d/emacs-color-theme-solarized/")
+    (use-package color-theme
       :config
-      (setq doom-themes-enable-bold nil)
-      (setq doom-themes-enable-italic nil)
-      (load-theme 'doom-solarized-dark t)
-      ;; (load-theme 'doom-solarized-light t)
-      ;; (load-theme 'doom-nord-light)
+      (require 'color-theme-solarized)
+      (color-theme-initialize)
+      ;; set dark theme
+      (color-theme-solarized-dark)
+      ;; set light theme
+      ;; (color-theme-solarized-light)
+
+      (setq solarized-bold nil)
+      (setq solarized-underline nil)
+      (setq solarized-broken-srgb t)
       )
 
-    (use-package doom-modeline
-      :defer 0.1
-      :config (doom-modeline-mode))
-
-    (use-package fancy-battery
-      :after doom-modeline
-      :hook (after-init . fancy-battery-mode))
-
-    (use-package solaire-mode
-      :custom (solaire-mode-remap-fringe t)
-      :config
-      (solaire-mode-swap-bg)
-      (solaire-global-mode +1))
-
-    ;; --------------------------------------------------------------------------------------------------------------
-
-    ;; (use-package spaceline
-    ;;   :ensure t)
-
-    ;; (use-package spaceline-all-the-icons
-    ;;   :after spaceline
-    ;;   :config
-    ;;   (spaceline-all-the-icons-theme)
-    ;;   (spaceline-toggle-all-the-icons-bookmark-on)
-    ;;   (spaceline-toggle-all-the-icons-eyebrowse-workspace-on)
-    ;;   (spaceline-toggle-all-the-icons-package-updates-on)
-    ;;   (spaceline-toggle-all-the-icons-window-number-on)
-
-    ;;   ;; 'slant, 'arrow, 'cup, 'wave, 'none
-    ;;   (setq spaceline-all-the-icons-separator-type 'slant)
-    ;;   (setq spaceline-all-the-icons-slim-render t)
-
-    ;;   (face-background 'spaceline-highlight-face))
-
-    (use-package solarized-theme
+    (use-package spaceline
       :ensure t
       :init
-
-      ;; make the fringe stand out from the background
-      (setq solarized-distinct-fringe-background t)
-
-      ;; Don't change the font for some headings and titles
-      (setq solarized-use-variable-pitch nil)
-
-      ;; make the modeline high contrast
-      (setq solarized-high-contrast-mode-line t)
-
-      ;; Use less bolding
-      (setq solarized-use-less-bold t)
-
-      ;; Use more italics
-      (setq solarized-use-more-italic t)
-
-      ;; Use less colors for indicators such as git:gutter, flycheck and similar
-      (setq solarized-emphasize-indicators nil)
-
-      ;; Don't change size of org-mode headlines (but keep other size-changes)
-      (setq solarized-scale-org-headlines nil)
-      (setq solarized-scale-outline-headlines nil)
-
-      (setq x-underline-at-descent-line t)
-      (setq solarized-height-minus-1 1.0)
-      (setq solarized-height-plus-1 1.0)
-      (setq solarized-height-plus-2 1.0)
-      (setq solarized-height-plus-3 1.0)
-      (setq solarized-height-plus-4 1.0)
-
-      ;; (load-theme 'solarized-dark t)
-
-      (custom-set-faces
-       ;; '(company-preview
-       ;;   ((t (:foreground "#859900" :underline t))))
-       ;; '(company-preview-common
-       ;;   ((t (:inherit company-preview))))
-       ;; '(company-tooltip
-       ;;   ((t (:background "lightgray" :foreground "black"))))
-       '(company-tooltip-selection
-         ((t (:background "#1b3d4a" :foreground "#859900" :weight normal))))
-       '(company-tooltip-common
-         ((((type x)) (:inherit company-tooltip :weight normal))
-          (t (:inherit company-tooltip))))
-       '(company-tooltip-common-selection
-         ((((type x)) (:inherit company-tooltip-selection :weight normal))
-          (t (:inherit company-tooltip-selection)))))
-
-      ;; (mapc
-      ;;  (lambda (face)
-      ;;    (set-face-attribute face nil :weight 'normal :underline nil))
-      ;;  (face-list))
-
-      :config
-      ;; (use-package color-theme-sanityinc-solarized
-      ;;   :ensure t
-      ;;   :config
-      ;;   (color-theme-sanityinc-solarized--define-theme dark)
-      ;;   )
+      (progn
+        (setq powerline-height 28)
+        (setq-default powerline-default-separator 'slant))
       )
+
+    (use-package spaceline-all-the-icons
+      :after spaceline
+      :config
+      (spaceline-all-the-icons-theme)
+
+      (spaceline-toggle-all-the-icons-bookmark-on)
+      (spaceline-toggle-all-the-icons-eyebrowse-workspace-on)
+      (spaceline-toggle-all-the-icons-package-updates-on)
+      (spaceline-toggle-all-the-icons-window-number-on)
+
+      ;; 'slant, 'arrow, 'cup, 'wave, 'none
+      (setq spaceline-all-the-icons-separator-type 'none)
+      (setq spaceline-all-the-icons-slim-render t)
+
+      (face-background 'spaceline-highlight-face))
+
+    ;; -------------------------------------------------------------------------------------------------------
+    ;; (use-package doom-themes
+    ;;   :config
+    ;;   (setq doom-themes-enable-bold nil)
+    ;;   (setq doom-themes-enable-italic nil)
+
+    ;;   (load-theme 'doom-solarized-dark t)
+    ;;   ;; (load-theme 'doom-solarized-light t)
+    ;;   ;; (load-theme 'doom-nord-light)
+    ;;   ;; (load-theme 'doom-dracula t)
+
+    ;;   (doom-themes-neotree-config)
+    ;;   (doom-themes-org-config)
+    ;;   )
+
+    ;; (use-package doom-modeline
+    ;;   :defer 0.1
+    ;;   :config (doom-modeline-mode))
+
+    ;; (use-package fancy-battery
+    ;;   :after doom-modeline
+    ;;   :hook (after-init . fancy-battery-mode))
+
+    ;; (use-package solaire-mode
+    ;;   :custom (solaire-mode-remap-fringe t)
+    ;;   :config
+    ;;   ;;(solaire-mode-swap-bg)
+    ;;   (solaire-global-mode +1))
   #+end_src
 ** font
    #+begin_src emacs-lisp
@@ -540,9 +501,9 @@
                                 'company-tide)))
 
      (add-hook 'js2-mode-hook #'setup-tide-mode)
-     ;; (add-hook 'rjsx-mode-hook #'setup-tide-mode)
+     (add-hook 'rjsx-mode-hook #'setup-tide-mode)
      ;; (add-hook 'typescript-mode-hook #'setup-tide-mode)
-     ;; (add-hook 'web-mode-hook #'setup-tide-mode)
+     (add-hook 'web-mode-hook #'setup-tide-mode)
    #+end_src
 ** projectile
    #+begin_src emacs-lisp
@@ -689,7 +650,7 @@
        :ensure t
        :mode (("\\.js\\'" . rjsx-mode)
               ("\\.jsx\\'" . rjsx-mode))
-       :hook (rjsx-mode . lsp-deferred)
+       ;; :hook (rjsx-mode . lsp-deferred)
        :config
        (setq js2-basic-offset 2)
        (add-hook 'rjsx-mode-hook
