@@ -39,36 +39,36 @@
 ** Better defaults
   #+begin_src emacs-lisp
     (setq-default
-     ad-redefinition-action 'accept                   ; Silence warnings for redefinition
-     cursor-in-non-selected-windows t                 ; Hide the cursor in inactive windows
-     display-time-default-load-average nil            ; Don't display load average
-     fill-column 80                                   ; Set width for automatic line breaks
-     help-window-select t                             ; Focus new help windows when opened
-     indent-tabs-mode nil                             ; Prefers spaces over tabs
-     inhibit-startup-screen t                         ; Disable start-up screen
-     initial-scratch-message ""                       ; Empty the initial *scratch* buffer
-     kill-ring-max 128                                ; Maximum length of kill ring
-     load-prefer-newer t                              ; Prefers the newest version of a file
-     mark-ring-max 128                                ; Maximum length of mark ring
-     scroll-conservatively most-positive-fixnum       ; Always scroll by one line
-     select-enable-clipboard t                        ; Merge system's and Emacs' clipboard
-     tab-width 4                                      ; Set width for tabs
-     use-package-always-ensure t                      ; Avoid the :ensure keyword for each package
-     user-full-name "Buck"                            ; Set the full name of the current user
-     user-mail-address "buck@gmail.com"               ; Set the email address of the current user
-     vc-follow-symlinks t                             ; Always follow the symlinks
-     view-read-only t)                                ; Always open read-only buffers in view-mode
-    (cd "~/")                                         ; Move to the user directory
-    (column-number-mode 1)                            ; Show the column number
-    (display-time-mode 1)                             ; Enable time in the mode-line
-    (fset 'yes-or-no-p 'y-or-n-p)                     ; Replace yes/no prompts with y/n
-    (global-hl-line-mode)                             ; Hightlight current line
-    (set-default-coding-systems 'utf-8)               ; Default to utf-8 encoding
-    (show-paren-mode 1)                               ; Show the parent
-    (setq-default cursor-type 'bar)                   ; set cursor style
-    (blink-cursor-mode t)                             ; blink cursor
-    (add-hook 'before-save-hook 'delete-trailing-whitespace) ; delete traniling whitespace
-    (add-to-list 'default-frame-alist '(fullscreen . maximized)) ; full screen
+     ad-redefinition-action 'accept                                ; Silence warnings for redefinition
+     cursor-in-non-selected-windows t                              ; Hide the cursor in inactive windows
+     display-time-default-load-average nil                         ; Don't display load average
+     fill-column 80                                                ; Set width for automatic line breaks
+     help-window-select t                                          ; Focus new help windows when opened
+     indent-tabs-mode nil                                          ; Prefers spaces over tabs
+     inhibit-startup-screen t                                      ; Disable start-up screen
+     initial-scratch-message ""                                    ; Empty the initial *scratch* buffer
+     kill-ring-max 128                                             ; Maximum length of kill ring
+     load-prefer-newer t                                           ; Prefers the newest version of a file
+     mark-ring-max 128                                             ; Maximum length of mark ring
+     scroll-conservatively most-positive-fixnum                    ; Always scroll by one line
+     select-enable-clipboard t                                     ; Merge system's and Emacs' clipboard
+     tab-width 4                                                   ; Set width for tabs
+     use-package-always-ensure t                                   ; Avoid the :ensure keyword for each package
+     user-full-name "Buck"                                         ; Set the full name of the current user
+     user-mail-address "buck@gmail.com"                            ; Set the email address of the current user
+     vc-follow-symlinks t                                          ; Always follow the symlinks
+     view-read-only t)                                             ; Always open read-only buffers in view-mode
+    (cd "~/")                                                      ; Move to the user directory
+    (column-number-mode 1)                                         ; Show the column number
+    (display-time-mode 1)                                          ; Enable time in the mode-line
+    (fset 'yes-or-no-p 'y-or-n-p)                                  ; Replace yes/no prompts with y/n
+    (global-hl-line-mode)                                          ; Hightlight current line
+    (set-default-coding-systems 'utf-8)                            ; Default to utf-8 encoding
+    (show-paren-mode 1)                                            ; Show the parent
+    (setq-default cursor-type 'bar)                                ; set cursor style
+    (blink-cursor-mode t)                                          ; blink cursor
+    (add-hook 'before-save-hook 'delete-trailing-whitespace)       ; delete traniling whitespace
+    (add-to-list 'default-frame-alist '(fullscreen . maximized))   ; full screen
 
 
     ;; (when (memq window-system '(mac ns))
@@ -105,7 +105,7 @@
   #+end_src
 ** Theme
   #+begin_src emacs-lisp
-    (add-to-list 'load-path "~/.emacs.d/emacs-color-theme-solarized/")
+    (add-to-list 'load-path "~/.emacs.d/elpa/emacs-color-theme-solarized/")
     (use-package color-theme
       :config
       (require 'color-theme-solarized)
@@ -123,8 +123,23 @@
     (use-package spaceline
       :ensure t
       :config
-      ;; (require 'spaceline-config)
-      ;; (spaceline-spacemacs-theme)
+      (require 'spaceline-config)
+      (spaceline-spacemacs-theme)
+
+
+      (set-face-attribute 'mode-line nil
+                          :box nil
+                          :overline nil
+                          :underline nil)
+
+      (set-face-attribute 'mode-line-inactive nil
+                          :box nil
+                          :overline nil
+                          :underline nil)
+
+      ;; (custom-set-faces
+      ;;  '(powerline-active2 ((t (:inherit mode-line :foreground "#657b83"))))
+      ;;  '(spaceline-highlight-face ((t (:background "#002b36" :foreground "#657b83" :inherit 'mode-line)))))
       )
 
     (use-package spaceline-all-the-icons
@@ -137,7 +152,7 @@
       (spaceline-toggle-all-the-icons-window-number-on)
 
       ;; 'slant, 'arrow, 'cup, 'wave, 'none
-      (setq spaceline-all-the-icons-separator-type 'none)
+      (setq spaceline-all-the-icons-separator-type 'wave)
       (setq spaceline-all-the-icons-slim-render t)
       )
 
