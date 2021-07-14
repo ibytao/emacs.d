@@ -137,9 +137,18 @@
                           :overline nil
                           :underline nil)
 
-      ;; (custom-set-faces
-      ;;  '(powerline-active2 ((t (:inherit mode-line :foreground "#657b83"))))
-      ;;  '(spaceline-highlight-face ((t (:background "#002b36" :foreground "#657b83" :inherit 'mode-line)))))
+      (custom-set-faces
+       ;; custom-set-faces was added by Custom.
+       ;; If you edit it by hand, you could mess it up, so be careful.
+       ;; Your init file should contain only one such instance.
+       ;; If there is more than one, they won't work right.
+       '(mode-line ((t (:background "#657b83" :foreground "black" :box nil :overline nil :underline nil))))
+       '(powerline-active1 ((t (:inherit mode-line :background "#586e75" :foreground "#002b36"))))
+       '(powerline-active2 ((t (:inherit mode-line :background "#586e75" :foreground "#002b36"))))
+       '(mode-line-inactive ((t (:inherit mode-line :background "#073642" :foreground "#839496" :box nil :overline nil :underline nil :weight light))))
+       '(powerline-inactive1 ((t (:inherit mode-line-inactive :background "#073642"))))
+       '(powerline-inactive2 ((t (:inherit mode-line-inactive :background "#586e75"))))
+       '(spaceline-highlight-face ((t (:background "#859900" :foreground "#3E3D31" :inherit 'mode-line)))))
       )
 
     (use-package spaceline-all-the-icons
