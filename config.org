@@ -71,10 +71,13 @@
     (add-to-list 'default-frame-alist '(fullscreen . maximized))   ; full screen
 
 
-    ;; (when (memq window-system '(mac ns))
-    ;;   (add-to-list 'default-frame-alist '(ns-appearance . 'dark))
-    ;;   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t)))
+    (when (memq window-system '(mac ns))
+      (add-to-list 'default-frame-alist '(ns-appearance . 'dark))
+      (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+      (setq ns-use-proxy-icon nil)
+      (setq frame-title-format nil))
 
+    (setq warning-minimum-level :emergency)
 
     ;;Write backup files to own directory
     (setq backup-directory-alist
