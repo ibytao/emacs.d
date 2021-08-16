@@ -105,6 +105,12 @@
     (use-package exec-path-from-shell :defer t :config
       (when (memq window-system '(mac ns x))
         (exec-path-from-shell-initialize)))
+
+    ;; code folding
+    (add-hook 'go-mode-hook 'hs-minor-mode)
+    (add-hook 'java-mode-hook 'hs-minor-mode)
+    (add-hook 'js2-mode-hook 'hs-minor-mode)
+    (global-set-key (kbd "C-o") 'hs-toggle-hiding)
   #+end_src
 ** Theme
   #+begin_src emacs-lisp
@@ -117,7 +123,7 @@
       (color-theme-solarized-dark)
       ;; set light theme
       ;; (color-theme-solarized-light)
-
+      (setq solarized-italic nil)
       (setq solarized-bold nil)
       (setq solarized-underline nil)
       (setq solarized-broken-srgb t)
@@ -282,7 +288,7 @@
        (other-window -1))
      (global-set-key (kbd "s-[") 'prev-window)
      (global-set-key (kbd "s-]") 'other-window)
-     (global-set-key (kbd "C-o") 'other-window)
+     ;; (global-set-key (kbd "C-o") 'other-window)
 
      (global-set-key (kbd "C-r") 'counsel-git-grep)
    #+end_src
