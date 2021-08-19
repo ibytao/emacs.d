@@ -394,14 +394,14 @@
        :config
        (global-undo-tree-mode))
    #+end_src
-** goto-chg
+** session
    #+begin_src emacs-lisp
-     (use-package goto-chg
+     (use-package session
        :ensure t
        :bind
-       (("C-." . goto-last-change)
-        ("C-," . goto-last-change-reverse))
-       )
+       (("C-;" . session-jump-to-last-change))
+       :config
+       (setq session-jump-undo-threshold 100))
    #+end_src
 ** magit
    #+begin_src emacs-lisp
@@ -446,7 +446,7 @@
        :ensure t
        :init
        ;; you can select the key you prefer to
-       (define-key global-map (kbd "C-;") 'ace-jump-mode)
+       (define-key global-map (kbd "C-,") 'ace-jump-mode)
        )
    #+end_src
 ** company
