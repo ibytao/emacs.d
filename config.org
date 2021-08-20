@@ -341,7 +341,8 @@
    #+begin_src emacs-lisp
      (use-package swiper
        :ensure t
-       :bind (("C-s" . swiper)))
+       :bind (("C-c s" . swiper-thing-at-point)
+              ("C-s" . swiper)))
    #+end_src
 ** expand-region
    #+begin_src emacs-lisp
@@ -583,13 +584,27 @@
        (use-package yasnippet-snippets :ensure t)
        )
    #+END_SRC
-** osx-dictionary
+** translate
    #+begin_src emacs-lisp
-     (use-package osx-dictionary
+     (use-package go-translate
        :ensure t
-       :bind
-       (("C-c t" . 'osx-dictionary-search-pointer))
+       :bind (("C-c t" . go-translate))
+       :config
+       (setq go-translate-token-current (cons 430675 2721866130))
+       (setq go-translate-base-url "https://translate.google.cn")
+       (setq go-translate-local-language "zh-CN")
+       (setq go-translate-inputs-function #'go-translate-inputs-current-or-prompt)
        )
+
+
+     (defun read-word ()
+       (interactive)
+       (let ((text (thing-at-point 'word)))
+         (if text
+             (shell-command (concat "say " (shell-quote-argument text)))
+           )))
+
+     (define-key global-map (kbd "C-c r") 'read-word)
    #+end_src
 ** beacon
    #+begin_src emacs-lisp
