@@ -1003,6 +1003,33 @@
       (setq org-cycle-separator-lines 1)
       )
   #+end_src
+** cal-china-x
+   #+begin_src emacs-lisp
+     ;;农历
+     (use-package cal-china-x
+       :ensure t
+       :config
+       (setq mark-holidays-in-calendar t)
+
+       (setq holidays '(
+                        ;;公历节日
+                        (holiday-fixed 2 14 "情人节")
+                        (holiday-fixed 9 10 "教师节")
+                        (holiday-float 6 0 3 "父亲节")
+                        ;;农历节日
+                        (holiday-lunar 1 15 "元宵节" 0)
+                        (holiday-lunar 7 7 "七夕情人节" 0)
+                        ;;纪念日
+                        (holiday-fixed 12 1 "儿子生日")
+                        (holiday-fixed 2 18 "老婆生日" 0)
+                        (holiday-lunar 11 28 "我的生日" 0)
+                        )
+             )
+
+       ;;只显示我定制的节假日
+       (setq calendar-holidays (append cal-china-x-chinese-holidays holidays))
+       )
+   #+end_src
 ** org-bullets
   #+begin_src emacs-lisp
     (use-package org-bullets
