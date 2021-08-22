@@ -110,7 +110,7 @@
     (add-hook 'go-mode-hook 'hs-minor-mode)
     (add-hook 'java-mode-hook 'hs-minor-mode)
     (add-hook 'js2-mode-hook 'hs-minor-mode)
-    (global-set-key (kbd "C-o") 'hs-toggle-hiding)
+    (global-set-key (kbd "C-.") 'hs-toggle-hiding)
   #+end_src
 ** Theme
   #+begin_src emacs-lisp
@@ -325,7 +325,6 @@
        (other-window -1))
      (global-set-key (kbd "s-[") 'prev-window)
      (global-set-key (kbd "s-]") 'other-window)
-     ;; (global-set-key (kbd "C-o") 'other-window)
 
      (global-set-key (kbd "C-r") 'counsel-git-grep)
    #+end_src
@@ -484,7 +483,7 @@
        :ensure t
        :init
        ;; you can select the key you prefer to
-       (define-key global-map (kbd "C-,") 'ace-jump-mode)
+       (define-key global-map (kbd "C-c j") 'ace-jump-mode)
        )
    #+end_src
 ** company
