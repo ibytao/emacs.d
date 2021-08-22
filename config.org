@@ -28,12 +28,12 @@
 ** shell
    #+begin_src emacs-lisp
      ;;shell path
-     (use-package exec-path-from-shell
-       :ensure t
-       :config
-       (when (memq window-system '(mac ns x))
-         (exec-path-from-shell-initialize))
-       )
+     (let ((path (shell-command-to-string ". ~/.bash_profile; echo -n $PATH")))
+       (setenv "PATH" path)
+       (setq exec-path
+             (append
+              (split-string-and-unquote path ":")
+              exec-path)))
    #+end_src
 * Start Up
 ** Better defaults
