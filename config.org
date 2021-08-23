@@ -269,6 +269,13 @@
      ;; (set-face-attribute 'default nil :font "-outline-Consolas-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
      ;; (set-face-attribute 'default nil :font "-*-Operator Mono-normal-italic-normal-*-16-*-*-*-m-0-iso10646-1")
      ;; (set-face-attribute 'default nil :font "-*-Operator Mono-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
+
+     (custom-set-faces
+      ;; custom-set-faces was added by Custom.
+      ;; If you edit it by hand, you could mess it up, so be careful.
+      ;; Your init file should contain only one such instance.
+      ;; If there is more than one, they won't work right.
+      '(org-table ((t (:foreground "#6c71c4" :family "Ubuntu Mono")))))
    #+end_src
 ** proxy
    #+begin_src emacs-lisp
@@ -1029,6 +1036,12 @@
       (add-hook 'org-mode-hook (lambda () (setq truncate-lines nil)))
       (setq org-cycle-separator-lines 1)
       )
+
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((python . t)
+       (emacs-lisp . t)
+       (sh . t)))
   #+end_src
 ** cal-china-x
    #+begin_src emacs-lisp
