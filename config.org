@@ -1036,6 +1036,8 @@
       (add-hook 'org-mode-hook (lambda () (setq truncate-lines nil)))
       (setq org-cycle-separator-lines 1)
 
+      (setq org-confirm-babel-evaluate nil)
+      (require 'ob-js)
       (org-babel-do-load-languages 'org-babel-load-languages
                                    '((python . t)
                                      (emacs-lisp . t)
