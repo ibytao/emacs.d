@@ -1,19 +1,19 @@
 * Emacs Initialization
 ** Packages Sources
-  #+BEGIN_SRC emacs-lisp
-    (setq package-archives '(("melpa" . "http://melpa.org/packages/")
-                             ("gnu" . "http://elpa.gnu.org/packages/")
-                             ("org" . "http://orgmode.org/elpa/")))
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (setq package-archives '(("melpa" . "http://melpa.org/packages/")
+                              ("gnu" . "http://elpa.gnu.org/packages/")
+                              ("org" . "http://orgmode.org/elpa/")))
+   #+END_SRC
 ** use-package
-  #+begin_src emacs-lisp
-    (unless (package-installed-p 'use-package)
-      (package-refresh-contents)
-      (package-install 'use-package))
+   #+begin_src emacs-lisp
+     (unless (package-installed-p 'use-package)
+       (package-refresh-contents)
+       (package-install 'use-package))
 
-    (use-package delight :ensure t)
-    (use-package use-package-ensure-system-package :ensure t)
-  #+end_src
+     (use-package delight :ensure t)
+     (use-package use-package-ensure-system-package :ensure t)
+   #+end_src
 ** dufuns
    #+begin_src emacs-lisp
      ;; Functions (load all files in defuns-dir)
@@ -37,224 +37,224 @@
    #+end_src
 * Start Up
 ** Better defaults
-  #+begin_src emacs-lisp
-    (setq-default
-     ad-redefinition-action 'accept                                ; Silence warnings for redefinition
-     cursor-in-non-selected-windows t                              ; Hide the cursor in inactive windows
-     display-time-default-load-average nil                         ; Don't display load average
-     fill-column 80                                                ; Set width for automatic line breaks
-     help-window-select t                                          ; Focus new help windows when opened
-     indent-tabs-mode nil                                          ; Prefers spaces over tabs
-     inhibit-startup-screen t                                      ; Disable start-up screen
-     initial-scratch-message ""                                    ; Empty the initial *scratch* buffer
-     kill-ring-max 128                                             ; Maximum length of kill ring
-     load-prefer-newer t                                           ; Prefers the newest version of a file
-     mark-ring-max 128                                             ; Maximum length of mark ring
-     scroll-conservatively most-positive-fixnum                    ; Always scroll by one line
-     select-enable-clipboard t                                     ; Merge system's and Emacs' clipboard
-     tab-width 4                                                   ; Set width for tabs
-     use-package-always-ensure t                                   ; Avoid the :ensure keyword for each package
-     user-full-name "Buck"                                         ; Set the full name of the current user
-     user-mail-address "buck@gmail.com"                            ; Set the email address of the current user
-     vc-follow-symlinks t                                          ; Always follow the symlinks
-     view-read-only t)                                             ; Always open read-only buffers in view-mode
-    (cd "~/")                                                      ; Move to the user directory
-    (column-number-mode 1)                                         ; Show the column number
-    (display-time-mode 1)                                          ; Enable time in the mode-line
-    (fset 'yes-or-no-p 'y-or-n-p)                                  ; Replace yes/no prompts with y/n
-    (global-hl-line-mode)                                          ; Hightlight current line
-    (set-default-coding-systems 'utf-8)                            ; Default to utf-8 encoding
-    (show-paren-mode 1)                                            ; Show the parent
-    (setq-default cursor-type 'bar)                                ; set cursor style
-    (blink-cursor-mode t)                                          ; blink cursor
-    (add-hook 'before-save-hook 'delete-trailing-whitespace)       ; delete traniling whitespace
-    (add-to-list 'default-frame-alist '(fullscreen . maximized))   ; full screen
+   #+begin_src emacs-lisp
+     (setq-default
+      ad-redefinition-action 'accept                                ; Silence warnings for redefinition
+      cursor-in-non-selected-windows t                              ; Hide the cursor in inactive windows
+      display-time-default-load-average nil                         ; Don't display load average
+      fill-column 80                                                ; Set width for automatic line breaks
+      help-window-select t                                          ; Focus new help windows when opened
+      indent-tabs-mode nil                                          ; Prefers spaces over tabs
+      inhibit-startup-screen t                                      ; Disable start-up screen
+      initial-scratch-message ""                                    ; Empty the initial *scratch* buffer
+      kill-ring-max 128                                             ; Maximum length of kill ring
+      load-prefer-newer t                                           ; Prefers the newest version of a file
+      mark-ring-max 128                                             ; Maximum length of mark ring
+      scroll-conservatively most-positive-fixnum                    ; Always scroll by one line
+      select-enable-clipboard t                                     ; Merge system's and Emacs' clipboard
+      tab-width 4                                                   ; Set width for tabs
+      use-package-always-ensure t                                   ; Avoid the :ensure keyword for each package
+      user-full-name "Buck"                                         ; Set the full name of the current user
+      user-mail-address "buck@gmail.com"                            ; Set the email address of the current user
+      vc-follow-symlinks t                                          ; Always follow the symlinks
+      view-read-only t)                                             ; Always open read-only buffers in view-mode
+     (cd "~/")                                                      ; Move to the user directory
+     (column-number-mode 1)                                         ; Show the column number
+     (display-time-mode 1)                                          ; Enable time in the mode-line
+     (fset 'yes-or-no-p 'y-or-n-p)                                  ; Replace yes/no prompts with y/n
+     (global-hl-line-mode)                                          ; Hightlight current line
+     (set-default-coding-systems 'utf-8)                            ; Default to utf-8 encoding
+     (show-paren-mode 1)                                            ; Show the parent
+     (setq-default cursor-type 'bar)                                ; set cursor style
+     (blink-cursor-mode t)                                          ; blink cursor
+     (add-hook 'before-save-hook 'delete-trailing-whitespace)       ; delete traniling whitespace
+     (add-to-list 'default-frame-alist '(fullscreen . maximized))   ; full screen
 
 
-    (when (memq window-system '(mac ns))
-      (add-to-list 'default-frame-alist '(ns-appearance . 'dark))
-      (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-      (setq ns-use-proxy-icon nil)
-      (setq frame-title-format nil))
+     (when (memq window-system '(mac ns))
+       (add-to-list 'default-frame-alist '(ns-appearance . 'dark))
+       (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+       (setq ns-use-proxy-icon nil)
+       (setq frame-title-format nil))
 
-    (setq warning-minimum-level :emergency)
+     (setq warning-minimum-level :emergency)
 
-    ;;Write backup files to own directory
-    (setq backup-directory-alist
-          `(("." . ,(expand-file-name
-                     (concat user-emacs-directory "backups")))))
-    (setq custom-file "~/.emacs.d/custom-variables.el")
-    (when (file-exists-p custom-file)
-      (load custom-file))
+     ;;Write backup files to own directory
+     (setq backup-directory-alist
+           `(("." . ,(expand-file-name
+                      (concat user-emacs-directory "backups")))))
+     (setq custom-file "~/.emacs.d/custom-variables.el")
+     (when (file-exists-p custom-file)
+       (load custom-file))
 
 
-    (when window-system
-      (menu-bar-mode -1)              ; Disable the menu bar
-      (scroll-bar-mode -1)            ; Disable the scroll bar
-      (tool-bar-mode -1)              ; Disable the tool bar
-      (tooltip-mode -1))              ; Disable the tooltips
+     (when window-system
+       (menu-bar-mode -1)              ; Disable the menu bar
+       (scroll-bar-mode -1)            ; Disable the scroll bar
+       (tool-bar-mode -1)              ; Disable the tool bar
+       (tooltip-mode -1))              ; Disable the tooltips
 
-    ;; Move to trash when deleting stuff
-    (setq delete-by-moving-to-trash t
-          trash-directory "~/.Trash/emacs")
+     ;; Move to trash when deleting stuff
+     (setq delete-by-moving-to-trash t
+           trash-directory "~/.Trash/emacs")
 
-    ;; ediff setup
-    (setq ediff-split-window-function 'split-window-horizontally
-          ediff-window-setup-function 'ediff-setup-windows-plain)
+     ;; ediff setup
+     (setq ediff-split-window-function 'split-window-horizontally
+           ediff-window-setup-function 'ediff-setup-windows-plain)
 
-    (use-package exec-path-from-shell :defer t :config
-      (when (memq window-system '(mac ns x))
-        (exec-path-from-shell-initialize)))
+     (use-package exec-path-from-shell :defer t :config
+       (when (memq window-system '(mac ns x))
+         (exec-path-from-shell-initialize)))
 
-    ;; code folding
-    (add-hook 'go-mode-hook 'hs-minor-mode)
-    (add-hook 'java-mode-hook 'hs-minor-mode)
-    (add-hook 'js2-mode-hook 'hs-minor-mode)
+     ;; code folding
+     (add-hook 'go-mode-hook 'hs-minor-mode)
+     (add-hook 'java-mode-hook 'hs-minor-mode)
+     (add-hook 'js2-mode-hook 'hs-minor-mode)
 
-    (add-hook 'js2-mode-hook
-              (lambda ()
-                (global-unset-key (kbd "TAB"))
-                (define-key js2-mode-map (kbd "TAB") 'hs-toggle-hiding)))
+     (add-hook 'js2-mode-hook
+               (lambda ()
+                 (global-unset-key (kbd "TAB"))
+                 (define-key js2-mode-map (kbd "TAB") 'hs-toggle-hiding)))
 
-    (add-hook 'go-mode-hook
-              (lambda ()
-                (global-unset-key (kbd "TAB"))
-                (define-key go-mode-map (kbd "TAB") 'hs-toggle-hiding)))
+     (add-hook 'go-mode-hook
+               (lambda ()
+                 (global-unset-key (kbd "TAB"))
+                 (define-key go-mode-map (kbd "TAB") 'hs-toggle-hiding)))
 
-    (add-hook 'java-mode-hook
-              (lambda ()
-                (global-unset-key (kbd "TAB"))
-                (define-key java-mode-map (kbd "TAB") 'hs-toggle-hiding)))
-  #+end_src
+     (add-hook 'java-mode-hook
+               (lambda ()
+                 (global-unset-key (kbd "TAB"))
+                 (define-key java-mode-map (kbd "TAB") 'hs-toggle-hiding)))
+   #+end_src
 ** Theme
-  #+begin_src emacs-lisp
-    ;; (add-to-list 'load-path "~/.emacs.d/elpa/emacs-color-theme-solarized/")
-    ;; (use-package color-theme
-    ;;   :config
-    ;;   (require 'color-theme-solarized)
-    ;;   (color-theme-initialize)
-    ;;   ;; set dark theme
-    ;;   (color-theme-solarized-dark)
-    ;;   ;; set light theme
-    ;;   ;; (color-theme-solarized-light)
-    ;;   (setq solarized-italic nil)
-    ;;   (setq solarized-bold nil)
-    ;;   (setq solarized-underline nil)
-    ;;   (setq solarized-broken-srgb t)
-    ;;   )
+   #+begin_src emacs-lisp
+     ;; (add-to-list 'load-path "~/.emacs.d/elpa/emacs-color-theme-solarized/")
+     ;; (use-package color-theme
+     ;;   :config
+     ;;   (require 'color-theme-solarized)
+     ;;   (color-theme-initialize)
+     ;;   ;; set dark theme
+     ;;   (color-theme-solarized-dark)
+     ;;   ;; set light theme
+     ;;   ;; (color-theme-solarized-light)
+     ;;   (setq solarized-italic nil)
+     ;;   (setq solarized-bold nil)
+     ;;   (setq solarized-underline nil)
+     ;;   (setq solarized-broken-srgb t)
+     ;;   )
 
-    (use-package solarized-theme
-      :ensure t
-      :config
-      ;; make the fringe stand out from the background
-      ;; (setq solarized-distinct-fringe-background t)
+     (use-package solarized-theme
+       :ensure t
+       :config
+       ;; make the fringe stand out from the background
+       ;; (setq solarized-distinct-fringe-background t)
 
-      ;; Don't change the font for some headings and titles
-      (setq solarized-use-variable-pitch nil)
+       ;; Don't change the font for some headings and titles
+       (setq solarized-use-variable-pitch nil)
 
-      ;; make the modeline high contrast
-      (setq solarized-high-contrast-mode-line t)
+       ;; make the modeline high contrast
+       (setq solarized-high-contrast-mode-line t)
 
-      ;; Use less bolding
-      (setq solarized-use-less-bold t)
+       ;; Use less bolding
+       (setq solarized-use-less-bold t)
 
-      ;; Use more italics
-      (setq solarized-use-more-italic t)
+       ;; Use more italics
+       (setq solarized-use-more-italic t)
 
-      ;; Use less colors for indicators such as git:gutter, flycheck and similar
-      (setq solarized-emphasize-indicators nil)
+       ;; Use less colors for indicators such as git:gutter, flycheck and similar
+       (setq solarized-emphasize-indicators nil)
 
-      ;; Don't change size of org-mode headlines (but keep other size-changes)
-      (setq solarized-scale-org-headlines nil)
-      (setq solarized-scale-outline-headlines nil)
+       ;; Don't change size of org-mode headlines (but keep other size-changes)
+       (setq solarized-scale-org-headlines nil)
+       (setq solarized-scale-outline-headlines nil)
 
-      (setq x-underline-at-descent-line t)
+       (setq x-underline-at-descent-line t)
 
-      (setq solarized-height-minus-1 1.0)
-      (setq solarized-height-plus-1 1.0)
-      (setq solarized-height-plus-2 1.0)
-      (setq solarized-height-plus-3 1.0)
-      (setq solarized-height-plus-4 1.0)
+       (setq solarized-height-minus-1 1.0)
+       (setq solarized-height-plus-1 1.0)
+       (setq solarized-height-plus-2 1.0)
+       (setq solarized-height-plus-3 1.0)
+       (setq solarized-height-plus-4 1.0)
 
-      (load-theme 'solarized-dark t)
-      )
+       (load-theme 'solarized-dark t)
+       )
 
-    (use-package spaceline
-      :ensure t
-      :config
-      (require 'spaceline-config)
-      (spaceline-spacemacs-theme)
+     (use-package spaceline
+       :ensure t
+       :config
+       (require 'spaceline-config)
+       (spaceline-spacemacs-theme)
 
 
-      (set-face-attribute 'mode-line nil
-                          :box nil
-                          :overline nil
-                          :underline nil)
+       (set-face-attribute 'mode-line nil
+                           :box nil
+                           :overline nil
+                           :underline nil)
 
-      (set-face-attribute 'mode-line-inactive nil
-                          :box nil
-                          :overline nil
-                          :underline nil)
+       (set-face-attribute 'mode-line-inactive nil
+                           :box nil
+                           :overline nil
+                           :underline nil)
 
-      (custom-set-faces
-       ;; custom-set-faces was added by Custom.
-       ;; If you edit it by hand, you could mess it up, so be careful.
-       ;; Your init file should contain only one such instance.
-       ;; If there is more than one, they won't work right.
-       '(magit-diff-context-highlight ((t (:extend t :background "#073642" :foreground "grey70"))))
-       '(magit-section-highlight ((t (:extend t :background "#073642"))))
-       '(mode-line ((t (:background "#657b83" :foreground "black" :box nil :overline nil :underline nil))))
-       '(powerline-active1 ((t (:inherit mode-line :background "#586e75" :foreground "#002b36"))))
-       '(powerline-active2 ((t (:inherit mode-line :background "#586e75" :foreground "#002b36"))))
-       '(mode-line-inactive ((t (:inherit mode-line :background "#073642" :foreground "#839496" :box nil :overline nil :underline nil :weight light))))
-       '(powerline-inactive1 ((t (:inherit mode-line-inactive :background "#073642"))))
-       '(powerline-inactive2 ((t (:inherit mode-line-inactive :background "#586e75"))))
-       '(spaceline-highlight-face ((t (:background "#859900" :foreground "#3E3D31" :inherit 'mode-line)))))
-      )
+       (custom-set-faces
+        ;; custom-set-faces was added by Custom.
+        ;; If you edit it by hand, you could mess it up, so be careful.
+        ;; Your init file should contain only one such instance.
+        ;; If there is more than one, they won't work right.
+        '(magit-diff-context-highlight ((t (:extend t :background "#073642" :foreground "grey70"))))
+        '(magit-section-highlight ((t (:extend t :background "#073642"))))
+        '(mode-line ((t (:background "#657b83" :foreground "black" :box nil :overline nil :underline nil))))
+        '(powerline-active1 ((t (:inherit mode-line :background "#586e75" :foreground "#002b36"))))
+        '(powerline-active2 ((t (:inherit mode-line :background "#586e75" :foreground "#002b36"))))
+        '(mode-line-inactive ((t (:inherit mode-line :background "#073642" :foreground "#839496" :box nil :overline nil :underline nil :weight light))))
+        '(powerline-inactive1 ((t (:inherit mode-line-inactive :background "#073642"))))
+        '(powerline-inactive2 ((t (:inherit mode-line-inactive :background "#586e75"))))
+        '(spaceline-highlight-face ((t (:background "#859900" :foreground "#3E3D31" :inherit 'mode-line)))))
+       )
 
-    (use-package spaceline-all-the-icons
-      :after spaceline
-      :config
-      (spaceline-all-the-icons-theme)
+     (use-package spaceline-all-the-icons
+       :after spaceline
+       :config
+       (spaceline-all-the-icons-theme)
 
-      (spaceline-toggle-all-the-icons-bookmark-on)
-      (spaceline-toggle-all-the-icons-eyebrowse-workspace-on)
-      (spaceline-toggle-all-the-icons-window-number-on)
+       (spaceline-toggle-all-the-icons-bookmark-on)
+       (spaceline-toggle-all-the-icons-eyebrowse-workspace-on)
+       (spaceline-toggle-all-the-icons-window-number-on)
 
-      ;; 'slant, 'arrow, 'cup, 'wave, 'none
-      (setq spaceline-all-the-icons-separator-type 'wave)
-      (setq spaceline-all-the-icons-slim-render t)
-      )
+       ;; 'slant, 'arrow, 'cup, 'wave, 'none
+       (setq spaceline-all-the-icons-separator-type 'wave)
+       (setq spaceline-all-the-icons-slim-render t)
+       )
 
-    ;; -------------------------------------------------------------------------------------------------------
-    ;; (use-package doom-themes
-    ;;   :config
-    ;;   (setq doom-themes-enable-bold nil)
-    ;;   (setq doom-themes-enable-italic nil)
+     ;; -------------------------------------------------------------------------------------------------------
+     ;; (use-package doom-themes
+     ;;   :config
+     ;;   (setq doom-themes-enable-bold nil)
+     ;;   (setq doom-themes-enable-italic nil)
 
-    ;;   (load-theme 'doom-solarized-dark t)
-    ;;   ;; (load-theme 'doom-solarized-light t)
-    ;;   ;; (load-theme 'doom-nord-light)
-    ;;   ;; (load-theme 'doom-dracula t)
+     ;;   (load-theme 'doom-solarized-dark t)
+     ;;   ;; (load-theme 'doom-solarized-light t)
+     ;;   ;; (load-theme 'doom-nord-light)
+     ;;   ;; (load-theme 'doom-dracula t)
 
-    ;;   (doom-themes-neotree-config)
-    ;;   (doom-themes-org-config)
-    ;;   )
+     ;;   (doom-themes-neotree-config)
+     ;;   (doom-themes-org-config)
+     ;;   )
 
-    ;; (use-package doom-modeline
-    ;;   :defer 0.1
-    ;;   :config (doom-modeline-mode))
+     ;; (use-package doom-modeline
+     ;;   :defer 0.1
+     ;;   :config (doom-modeline-mode))
 
-    ;; (use-package fancy-battery
-    ;;   :after doom-modeline
-    ;;   :hook (after-init . fancy-battery-mode))
+     ;; (use-package fancy-battery
+     ;;   :after doom-modeline
+     ;;   :hook (after-init . fancy-battery-mode))
 
-    ;; (use-package solaire-mode
-    ;;   :custom (solaire-mode-remap-fringe t)
-    ;;   :config
-    ;;   ;;(solaire-mode-swap-bg)
-    ;;   (solaire-global-mode +1))
-  #+end_src
+     ;; (use-package solaire-mode
+     ;;   :custom (solaire-mode-remap-fringe t)
+     ;;   :config
+     ;;   ;;(solaire-mode-swap-bg)
+     ;;   (solaire-global-mode +1))
+   #+end_src
 ** font
    #+begin_src emacs-lisp
      (set-face-attribute 'default nil :font "Operator Mono 16")
@@ -279,9 +279,9 @@
 ** proxy
    #+begin_src emacs-lisp
      (setq url-proxy-services
-        '(("no_proxy" . "^\\(localhost\\|10\\..*\\|192\\.168\\..*\\)")
-          ("http" . "localhost:1087")
-          ("https" . "localhost:1087")))
+           '(("no_proxy" . "^\\(localhost\\|10\\..*\\|192\\.168\\..*\\)")
+             ("http" . "localhost:1087")
+             ("https" . "localhost:1087")))
    #+end_src
 ** keyboard
    #+begin_src emacs-lisp
@@ -352,9 +352,9 @@
        :bind (("C-x C-j" . dired-jump))
        :config
        (add-hook 'dired-mode-hook (lambda ()
-                                     (define-key dired-mode-map (kbd "h") 'dired-up-directory)
-                                     (define-key dired-mode-map (kbd "l") 'dired-find-file)
-                                     ))
+                                    (define-key dired-mode-map (kbd "h") 'dired-up-directory)
+                                    (define-key dired-mode-map (kbd "l") 'dired-find-file)
+                                    ))
        )
 
      (use-package all-the-icons-dired
@@ -438,26 +438,26 @@
        (("s-i" . 'copy-inner))
        (("s-o" . 'copy-outer))
        )
-#+END_SRC
+   #+END_SRC
 ** multiple-cursors
    #+BEGIN_SRC emacs-lisp
-  ;;
-  ;; multiple cursors
-  ;;
-  (use-package multiple-cursors
-    :ensure t
-    :bind (("C-c m" . mc/mark-all-dwim)
-           ("C->" . 'mc/mark-next-like-this)
-           ("C-M->" . 'mc/skip-to-next-like-this)
-           ("C-<" . 'mc/mark-previous-like-this)
-           ("C-M-<" . 'mc/skip-to-previous-like-this)
-           ("C-c C-<" . 'mc/mark-all-like-this))
-    :init
-    (global-unset-key (kbd "M-<down-mouse-1>"))
-    (global-set-key (kbd "M-<mouse-1>") 'mc/add-cursor-on-click)
-    ;; (global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
-    )
-#+END_SRC
+     ;;
+     ;; multiple cursors
+     ;;
+     (use-package multiple-cursors
+       :ensure t
+       :bind (("C-c m" . mc/mark-all-dwim)
+              ("C->" . 'mc/mark-next-like-this)
+              ("C-M->" . 'mc/skip-to-next-like-this)
+              ("C-<" . 'mc/mark-previous-like-this)
+              ("C-M-<" . 'mc/skip-to-previous-like-this)
+              ("C-c C-<" . 'mc/mark-all-like-this))
+       :init
+       (global-unset-key (kbd "M-<down-mouse-1>"))
+       (global-set-key (kbd "M-<mouse-1>") 'mc/add-cursor-on-click)
+       ;; (global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
+       )
+   #+END_SRC
 ** undo
    #+begin_src emacs-lisp
      (use-package undo-tree
@@ -597,10 +597,10 @@
        (company-mode +1)
        )
 
-       (add-hook 'js-mode-hook
-                 (lambda ()
-                   (add-to-list (make-local-variable 'company-backends)
-                                'company-tide)))
+     (add-hook 'js-mode-hook
+               (lambda ()
+                 (add-to-list (make-local-variable 'company-backends)
+                              'company-tide)))
 
      (add-hook 'js2-mode-hook #'setup-tide-mode)
      (add-hook 'rjsx-mode-hook #'setup-tide-mode)
@@ -642,7 +642,7 @@
      (use-package perspective
        :ensure t
        :config
-         (persp-mode))
+       (persp-mode))
    #+end_src
 ** yasnippet
    #+BEGIN_SRC emacs-lisp
@@ -760,27 +760,27 @@
        :custom (js-indent-level 2)
        :config
        (setq-default indent-tabs-mode nil)
-         (setq js-indent-level 2)
-         (setq-default js2-basic-offset 2)
+       (setq js-indent-level 2)
+       (setq-default js2-basic-offset 2)
 
-         (setq-default js2-allow-rhino-new-expr-initializer nil)
-         (setq-default js2-auto-indent-p nil)
-         (setq-default js2-enter-indents-newline nil)
-         (setq-default js2-global-externs '("module" "require" "buster" "sinon" "assert" "refute" "setTimeout" "clearTimeout" "setInterval" "clearInterval" "location" "__dirname" "console" "JSON"))
-         (setq-default js2-idle-timer-delay 0.1)
-         (setq-default js2-indent-on-enter-key nil)
-         (setq-default js2-mirror-mode nil)
-         (setq-default js2-strict-inconsistent-return-warning nil)
-         (setq-default js2-auto-indent-p t)
-         (setq-default js2-include-rhino-externs nil)
-         (setq-default js2-include-gears-externs nil)
-         (setq-default js2-concat-multiline-strings 'eol)
-         (setq-default js2-rebind-eol-bol-keys nil)
+       (setq-default js2-allow-rhino-new-expr-initializer nil)
+       (setq-default js2-auto-indent-p nil)
+       (setq-default js2-enter-indents-newline nil)
+       (setq-default js2-global-externs '("module" "require" "buster" "sinon" "assert" "refute" "setTimeout" "clearTimeout" "setInterval" "clearInterval" "location" "__dirname" "console" "JSON"))
+       (setq-default js2-idle-timer-delay 0.1)
+       (setq-default js2-indent-on-enter-key nil)
+       (setq-default js2-mirror-mode nil)
+       (setq-default js2-strict-inconsistent-return-warning nil)
+       (setq-default js2-auto-indent-p t)
+       (setq-default js2-include-rhino-externs nil)
+       (setq-default js2-include-gears-externs nil)
+       (setq-default js2-concat-multiline-strings 'eol)
+       (setq-default js2-rebind-eol-bol-keys nil)
 
-         ;; Let flycheck handle parse errors
-         (setq-default js2-show-parse-errors nil)
-         (setq-default js2-strict-missing-semi-warning nil)
-         (setq-default js2-strict-trailing-comma-warning nil) ;; jshint does not warn about this now for some reason
+       ;; Let flycheck handle parse errors
+       (setq-default js2-show-parse-errors nil)
+       (setq-default js2-strict-missing-semi-warning nil)
+       (setq-default js2-strict-trailing-comma-warning nil) ;; jshint does not warn about this now for some reason
        )
    #+end_src
 ** rjsx
@@ -851,19 +851,19 @@
        :delight sql-mode "Σ ")
    #+end_src
 ** php
-  #+begin_src emacs-lisp
-    (use-package php-mode
-      :ensure t
-      :mode "[^.][^t][^p][^l]\\.php$"
-      ;; :bind (("m-." . ac-php-find-symbol-at-point)
-      ;;        ("m-," . ac-php-location-stack-back))
-      :config
-      (eval-after-load 'php-mode
-        '(require 'php-ext))
-      (define-key php-mode-map  (kbd "m-.") 'ac-php-find-symbol-at-point)   ;goto define
-      (define-key php-mode-map  (kbd "m-,") 'ac-php-location-stack-back)    ;go back
-      (add-hook 'php-mode-hook
-                (lambda ()
+   #+begin_src emacs-lisp
+     (use-package php-mode
+       :ensure t
+       :mode "[^.][^t][^p][^l]\\.php$"
+       ;; :bind (("m-." . ac-php-find-symbol-at-point)
+       ;;        ("m-," . ac-php-location-stack-back))
+       :config
+       (eval-after-load 'php-mode
+         '(require 'php-ext))
+       (define-key php-mode-map  (kbd "m-.") 'ac-php-find-symbol-at-point)   ;goto define
+       (define-key php-mode-map  (kbd "m-,") 'ac-php-location-stack-back)    ;go back
+       (add-hook 'php-mode-hook
+                 (lambda ()
                    ;; (paredit-mode t)
                    (setq-default tab-width 4)
                    (setq c-basic-offset 4)
@@ -872,28 +872,28 @@
                    (ac-php-core-eldoc-setup) ;; enable eldoc
                    (make-local-variable 'company-backends)
                    (add-to-list 'company-backends 'company-ac-php-backend)))
-      (setq php-file-patterns nil)
-      ;; (add-to-list 'auto-mode-alist '("[^.][^t][^p][^l]\\.php$" . php-mode))
-      (add-to-list 'auto-mode-alist '("\\.tpl.php$" . html-mode))
-      (eval-after-load "php-mode" '(define-key php-mode-map (kbd "C-.") nil))
-    )
-  #+end_src
+       (setq php-file-patterns nil)
+       ;; (add-to-list 'auto-mode-alist '("[^.][^t][^p][^l]\\.php$" . php-mode))
+       (add-to-list 'auto-mode-alist '("\\.tpl.php$" . html-mode))
+       (eval-after-load "php-mode" '(define-key php-mode-map (kbd "C-.") nil))
+       )
+   #+end_src
 ** python
-  #+begin_src emacs-lisp
-    (use-package lsp-python-ms
-      :ensure t
-      :init (setq lsp-python-ms-auto-install-server t)
-      :hook (python-mode . (lambda ()
-                             (require 'lsp-python-ms)
-                             (lsp))))  ; or lsp-deferred
+   #+begin_src emacs-lisp
+     (use-package lsp-python-ms
+       :ensure t
+       :init (setq lsp-python-ms-auto-install-server t)
+       :hook (python-mode . (lambda ()
+                              (require 'lsp-python-ms)
+                              (lsp))))  ; or lsp-deferred
 
-    (use-package pyvenv
-      :diminish
-      :config
-      (setq pyvenv-mode-line-indicator
-            '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
-      (pyvenv-mode +1))
-  #+end_src
+     (use-package pyvenv
+       :diminish
+       :config
+       (setq pyvenv-mode-line-indicator
+             '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
+       (pyvenv-mode +1))
+   #+end_src
 ** lsp
    #+begin_src emacs-lisp
      (use-package lsp-mode
@@ -1050,23 +1050,23 @@
    #+end_src
 * Org-Mode
 ** org
-  #+begin_src emacs-lisp
-    (use-package org
-      :ensure org-plus-contrib
-      :config
-      (require 'org-tempo)
-      (add-hook 'org-mode-hook (lambda () (setq truncate-lines nil)))
-      (setq org-cycle-separator-lines 1)
+   #+begin_src emacs-lisp
+     (use-package org
+       :ensure org-plus-contrib
+       :config
+       (require 'org-tempo)
+       (add-hook 'org-mode-hook (lambda () (setq truncate-lines nil)))
+       (setq org-cycle-separator-lines 1)
 
-      (setq org-confirm-babel-evaluate nil)
-      (require 'ob-js)
-      (org-babel-do-load-languages 'org-babel-load-languages
-                                   '((python . t)
-                                     (emacs-lisp . t)
-                                     (sh . t)
-                                     (js . t)))
-      )
-  #+end_src
+       (setq org-confirm-babel-evaluate nil)
+       (require 'ob-js)
+       (org-babel-do-load-languages 'org-babel-load-languages
+                                    '((python . t)
+                                      (emacs-lisp . t)
+                                      (sh . t)
+                                      (js . t)))
+       )
+   #+end_src
 ** cal-china-x
    #+begin_src emacs-lisp
      ;;农历
@@ -1092,19 +1092,46 @@
 
        ;;只显示我定制的节假日
        (setq calendar-holidays (append cal-china-x-chinese-holidays holidays))
+
+
+       (setq org-agenda-format-date 'd/org-agenda-format-date-aligned)
+       (defun d/org-agenda-format-date-aligned (date)
+         "Format a DATE string for display in the daily/weekly agenda, or timeline.
+           This function makes sure that dates are aligned for easy reading."
+         (message "format----------------------------date-------------")
+         (require 'cal-iso)
+         (let* ((dayname (aref cal-china-x-days
+                               (calendar-day-of-week date)))
+                (day (cadr date))
+                (month (car date))
+                (year (nth 2 date))
+                (cn-date (calendar-chinese-from-absolute (calendar-absolute-from-gregorian date)))
+                (cn-month (cl-caddr cn-date))
+                (cn-day (cl-cadddr cn-date))
+                (cn-month-string (concat (aref cal-china-x-month-name
+                                               (1- (floor cn-month)))
+                                         (if (integerp cn-month)
+                                             ""
+                                           "(闰月)")))
+                (cn-day-string (aref cal-china-x-day-name
+                                     (1- cn-day))))
+           (format "%04d-%02d-%02d 星期%s %s%s" year month
+                   day dayname cn-month-string cn-day-string)))
+
+
        )
    #+end_src
 ** org-bullets
-  #+begin_src emacs-lisp
-    (use-package org-bullets
-        :ensure t
-        :config
-        (add-hook 'org-mode-hook (lambda () (org-bullets-mode t)))
-        (setq org-hide-leading-stars t)
-        (setq org-ellipsis "⤵") ;; ⤵ ↴ ⬎ ⤷
-        (set-face-attribute 'org-ellipsis nil :underline nil)
-        (setq org-log-done 'time))
-  #+end_src
+   #+begin_src emacs-lisp
+     (use-package org-bullets
+       :ensure t
+       :config
+       (add-hook 'org-mode-hook (lambda () (org-bullets-mode t)))
+       (setq org-hide-leading-stars t)
+       (setq org-ellipsis "⤵") ;; ⤵ ↴ ⬎ ⤷
+       (set-face-attribute 'org-ellipsis nil :underline nil)
+       (setq org-log-done 'time))
+   #+end_src
 ** reveal
    #+begin_src emacs-lisp
      (use-package ox-reveal
