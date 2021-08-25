@@ -156,10 +156,10 @@
       (setq solarized-high-contrast-mode-line t)
 
       ;; Use less bolding
-      ;; (setq solarized-use-less-bold t)
+      (setq solarized-use-less-bold t)
 
       ;; Use more italics
-      ;; (setq solarized-use-more-italic t)
+      (setq solarized-use-more-italic t)
 
       ;; Use less colors for indicators such as git:gutter, flycheck and similar
       (setq solarized-emphasize-indicators nil)
@@ -177,7 +177,6 @@
       (setq solarized-height-plus-4 1.0)
 
       (load-theme 'solarized-dark t)
-
       )
 
     (use-package spaceline
