@@ -128,6 +128,36 @@
    #+end_src
 ** Theme
    #+begin_src emacs-lisp
+     ;; -------------------------------------------------------------------------------------------------------
+     ;; (use-package doom-themes
+     ;;   :config
+     ;;   (setq doom-themes-enable-bold nil)
+     ;;   (setq doom-themes-enable-italic nil)
+
+     ;;   (load-theme 'doom-solarized-dark t)
+     ;;   ;; (load-theme 'doom-solarized-light t)
+     ;;   ;; (load-theme 'doom-nord-light)
+     ;;   ;; (load-theme 'doom-dracula t)
+
+     ;;   (doom-themes-neotree-config)
+     ;;   (doom-themes-org-config)
+     ;;   )
+
+     ;; (use-package doom-modeline
+     ;;   :defer 0.1
+     ;;   :config (doom-modeline-mode))
+
+     ;; (use-package fancy-battery
+     ;;   :after doom-modeline
+     ;;   :hook (after-init . fancy-battery-mode))
+
+     ;; (use-package solaire-mode
+     ;;   :custom (solaire-mode-remap-fringe t)
+     ;;   :config
+     ;;   ;;(solaire-mode-swap-bg)
+     ;;   (solaire-global-mode +1))
+
+     ;; ----------------------------------------------------------------------------------------------------
      ;; (add-to-list 'load-path "~/.emacs.d/elpa/emacs-color-theme-solarized/")
      ;; (use-package color-theme
      ;;   :config
@@ -225,35 +255,6 @@
        (setq spaceline-all-the-icons-separator-type 'wave)
        (setq spaceline-all-the-icons-slim-render t)
        )
-
-     ;; -------------------------------------------------------------------------------------------------------
-     ;; (use-package doom-themes
-     ;;   :config
-     ;;   (setq doom-themes-enable-bold nil)
-     ;;   (setq doom-themes-enable-italic nil)
-
-     ;;   (load-theme 'doom-solarized-dark t)
-     ;;   ;; (load-theme 'doom-solarized-light t)
-     ;;   ;; (load-theme 'doom-nord-light)
-     ;;   ;; (load-theme 'doom-dracula t)
-
-     ;;   (doom-themes-neotree-config)
-     ;;   (doom-themes-org-config)
-     ;;   )
-
-     ;; (use-package doom-modeline
-     ;;   :defer 0.1
-     ;;   :config (doom-modeline-mode))
-
-     ;; (use-package fancy-battery
-     ;;   :after doom-modeline
-     ;;   :hook (after-init . fancy-battery-mode))
-
-     ;; (use-package solaire-mode
-     ;;   :custom (solaire-mode-remap-fringe t)
-     ;;   :config
-     ;;   ;;(solaire-mode-swap-bg)
-     ;;   (solaire-global-mode +1))
    #+end_src
 ** font
    #+begin_src emacs-lisp
