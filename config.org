@@ -258,17 +258,16 @@
    #+end_src
 ** font
    #+begin_src emacs-lisp
-     (set-face-attribute 'default nil :font "Operator Mono 16")
-
-     ;; (set-face-attribute 'default nil :font "-apple-Monaco-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
-
+     ;; (set-face-attribute 'default nil :font "Operator Mono 16")
+     ;; (set-face-attribute 'default nil :font "-apple-Monaco-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
      ;; (set-face-attribute 'default nil :font "-*-Inconsolata Awesome-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
-     ;; (set-face-attribute 'default nil :font "-apple-Menlo-normal-normal-normal-*-15-*-*-*-m-0-iso10646-1")
+     ;; (set-face-attribute 'default nil :font "-apple-Menlo-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
      ;; (set-face-attribute 'default nil :font "-apple-inconsolata-medium-r-normal--14-*-*-*-*-*-iso10646-1")
      ;; (set-face-attribute 'default nil :font "-*-Hack-normal-normal-normal-*-13-*-*-*-m-0-iso10646-1")
      ;; (set-face-attribute 'default nil :font "-outline-Consolas-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
      ;; (set-face-attribute 'default nil :font "-*-Operator Mono-normal-italic-normal-*-16-*-*-*-m-0-iso10646-1")
      ;; (set-face-attribute 'default nil :font "-*-Operator Mono-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
+     (set-face-attribute 'default nil :font "JetBrains Mono 16")
 
      (custom-set-faces
       ;; custom-set-faces was added by Custom.
@@ -643,7 +642,8 @@
      (use-package perspective
        :ensure t
        :config
-       (persp-mode))
+       (unless (equal persp-mode t)
+         (persp-mode)))
    #+end_src
 ** yasnippet
    #+BEGIN_SRC emacs-lisp
