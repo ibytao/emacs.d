@@ -255,6 +255,16 @@
        (setq spaceline-all-the-icons-separator-type 'wave)
        (setq spaceline-all-the-icons-slim-render t)
        )
+
+     ;; org block code style
+     (custom-set-faces
+      '(org-block-begin-line
+        ((t (:underline nil))))
+      '(org-block
+        ((t (:background "#073642"))))
+      '(org-block-end-line
+        ((t (:overline nil))))
+      )
    #+end_src
 ** font
    #+begin_src emacs-lisp
