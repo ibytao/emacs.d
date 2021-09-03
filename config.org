@@ -200,11 +200,11 @@
 
        (setq x-underline-at-descent-line t)
 
-       (setq solarized-height-minus-1 1.0)
-       (setq solarized-height-plus-1 1.0)
-       (setq solarized-height-plus-2 1.0)
-       (setq solarized-height-plus-3 1.0)
-       (setq solarized-height-plus-4 1.0)
+       (setq solarized-height-minus-1 1.2)
+       (setq solarized-height-plus-1 1.2)
+       (setq solarized-height-plus-2 1.2)
+       (setq solarized-height-plus-3 1.2)
+       (setq solarized-height-plus-4 1.2)
 
        (load-theme 'solarized-dark t)
        )
@@ -260,8 +260,8 @@
      (custom-set-faces
       '(org-block-begin-line
         ((t (:underline nil))))
-      '(org-block
-        ((t (:background "#073642"))))
+      ;; '(org-block
+      ;;   ((t (:background "#073642"))))
       '(org-block-end-line
         ((t (:overline nil))))
       )
@@ -269,22 +269,25 @@
 ** font
    #+begin_src emacs-lisp
      ;; (set-face-attribute 'default nil :font "Operator Mono 16")
-     ;; (set-face-attribute 'default nil :font "-apple-Monaco-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
-     ;; (set-face-attribute 'default nil :font "-*-Inconsolata Awesome-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
-     ;; (set-face-attribute 'default nil :font "-apple-Menlo-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
-     ;; (set-face-attribute 'default nil :font "-apple-inconsolata-medium-r-normal--14-*-*-*-*-*-iso10646-1")
-     ;; (set-face-attribute 'default nil :font "-*-Hack-normal-normal-normal-*-13-*-*-*-m-0-iso10646-1")
-     ;; (set-face-attribute 'default nil :font "-outline-Consolas-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
      ;; (set-face-attribute 'default nil :font "-*-Operator Mono-normal-italic-normal-*-16-*-*-*-m-0-iso10646-1")
      ;; (set-face-attribute 'default nil :font "-*-Operator Mono-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
-     (set-face-attribute 'default nil :font "JetBrains Mono 16")
+
+     ;; (set-face-attribute 'default nil :font "-apple-Monaco-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
+     ;; (set-face-attribute 'default nil :font "-apple-Menlo-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
+     ;; (set-face-attribute 'default nil :font "-apple-inconsolata-medium-r-normal--14-*-*-*-*-*-iso10646-1")
+
+     ;; (set-face-attribute 'default nil :font "-*-Inconsolata Awesome-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
+     ;; (set-face-attribute 'default nil :font "-*-Hack-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
+     (set-face-attribute 'default nil :font "-outline-Consolas-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
+
+     ;; (set-face-attribute 'default nil :font "JetBrains Mono 16")
 
      (custom-set-faces
       ;; custom-set-faces was added by Custom.
       ;; If you edit it by hand, you could mess it up, so be careful.
       ;; Your init file should contain only one such instance.
       ;; If there is more than one, they won't work right.
-      '(org-table ((t (:foreground "#6c71c4" :family "Ubuntu Mono")))))
+      '(org-table ((t (:foreground "#839496" :family "Ubuntu Mono")))))
    #+end_src
 ** proxy
    #+begin_src emacs-lisp
@@ -488,7 +491,6 @@
      (use-package magit
        :ensure t
        :config
-       (global-set-key (kbd "C-c g") 'magit)
        (global-set-key (kbd "C-x m") 'magit)
        )
    #+end_src
@@ -1023,13 +1025,38 @@
      (use-package lsp-java
        :ensure t
        :defer t
+       :hook (java-mode . lsp)
        :config
-       (add-hook 'java-mode-hook 'lsp)
        (setq lsp-java-jdt-download-url  "https://download.eclipse.org/jdtls/milestones/0.57.0/jdt-language-server-0.57.0-202006172108.tar.gz")
        )
 
      (add-hook 'lsp-mode-hook #'lsp-lens-mode)
      (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+     (add-hook 'java-mode-hook (lambda () (gradle-mode 1)))
+   #+end_src
+** groovy
+   #+begin_src emacs-lisp
+     (use-package groovy-mode
+       :ensure t
+       :defer t
+       :hook (groovy-mode . lsp))
+   #+end_src
+** gradle
+   #+begin_src emacs-lisp
+     (use-package gradle-mode
+       :ensure t
+       :defer t
+       :bind (("C-c g b" . gradle-build)
+              ("C-c g t" . gradle-test)
+              ("C-c g s" . gradle-single-test)
+              ("C-c g j" . gradle-build--daemon)
+              ("C-c g k" . gradle-test--daemon)
+              ("C-c g l" . gradle-single-test--daemon)
+              ("C-c g d" . gradle-execute--daemon)
+              ("C-c g e" . gradle-execute))
+       :config
+       (gradle-mode 1)
+       )
    #+end_src
 ** Go
    #+begin_src emacs-lisp
