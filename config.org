@@ -287,7 +287,7 @@
       ;; If you edit it by hand, you could mess it up, so be careful.
       ;; Your init file should contain only one such instance.
       ;; If there is more than one, they won't work right.
-      '(org-table ((t (:foreground "#839496" :family "Ubuntu Mono")))))
+      '(org-table ((t (:foreground "#859900" :family "Ubuntu Mono")))))
    #+end_src
 ** proxy
    #+begin_src emacs-lisp
@@ -343,9 +343,9 @@
 
      ;; Make shell more convenient, and suspend-frame less
      ;; ansi-term
-     (global-set-key (kbd "C-z") (lambda ()(interactive)(ansi-term "/usr/local/bin/fish")))
+     ;; (global-set-key (kbd "C-z") (lambda ()(interactive)(ansi-term "/usr/local/bin/fish")))
      ;; (global-set-key (kbd "C-z") 'shell)
-     (global-set-key (kbd "C-x M-z") 'suspend-frame)
+     ;; (global-set-key (kbd "C-x M-z") 'suspend-frame)
 
      ;; switch window selected
      (defun prev-window ()
@@ -459,16 +459,32 @@
      ;;
      (use-package multiple-cursors
        :ensure t
-       :bind (("C-c m" . mc/mark-all-dwim)
-              ("C->" . 'mc/mark-next-like-this)
-              ("C-M->" . 'mc/skip-to-next-like-this)
-              ("C-<" . 'mc/mark-previous-like-this)
-              ("C-M-<" . 'mc/skip-to-previous-like-this)
-              ("C-c C-<" . 'mc/mark-all-like-this))
        :init
        (global-unset-key (kbd "M-<down-mouse-1>"))
        (global-set-key (kbd "M-<mouse-1>") 'mc/add-cursor-on-click)
-       ;; (global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
+       (global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
+
+       (global-set-key
+        (kbd "C-c m")
+        (defhydra hydra-mc (:columns 6 :color pink)
+          "multiple-cursors"
+          ("l" mc/edit-lines "lines")
+          ("e" mc/edit-ends-of-lines "end-lines")
+
+          ("n" mc/mark-next-like-this "next")
+          ("p" mc/mark-previous-like-this "previous")
+
+          ("k" mc/skip-to-previous-like-this "skip-p")
+          ("j" mc/skip-to-next-like-this "skip-n")
+
+          ("u" mc/unmark-next-like-this "unmark-n")
+          ("U" mc/unmark-previous-like-this "unmark-p")
+
+          ("a" mc/mark-all-like-this "all")
+          ("m" mc/mark-all-dwim "dwim")
+          ("r" mc/mark-all-in-region-regexp "regexp")
+
+          ("q" nil "Quit" :color blue)))
        )
    #+END_SRC
 ** undo
@@ -526,9 +542,11 @@
    #+begin_src emacs-lisp
      (use-package ace-jump-mode
        :ensure t
-       :init
+       :config
        ;; you can select the key you prefer to
-       (define-key global-map (kbd "C-c j") 'ace-jump-mode)
+       (define-key org-mode-map (kbd "C-j") nil)
+       (define-key paredit-mode-map (kbd "C-j") nil)
+       (define-key global-map (kbd "C-j") 'ace-jump-mode)
        )
    #+end_src
 ** company
