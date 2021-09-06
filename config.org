@@ -565,94 +565,6 @@
        (define-key global-map (kbd "C-j") 'ace-jump-mode)
        )
    #+end_src
-** company
-   #+begin_src emacs-lisp
-     (use-package company
-       :ensure t
-       :config
-       (global-company-mode t)
-       (setq company-idle-delay 0)
-       (setq company-minimum-prefix-length 2)
-       (setq company-backends
-             '((company-capf
-                company-files
-                company-yasnippet
-                company-keywords)
-               (company-abbrev company-dabbrev)))
-
-       (with-eval-after-load 'company
-         (define-key company-active-map (kbd "C-n") #'company-select-next)
-         (define-key company-active-map (kbd "C-p") #'company-select-previous))
-
-       (add-hook 'emacs-lisp-mode-hook
-                 (lambda()
-                   (add-to-list (make-local-variable 'company-backends)
-                                'company-elisp)))
-       )
-   #+end_src
-** flycheck
-   #+begin_src emacs-lisp
-     (use-package flycheck
-       :ensure t
-       :config
-       ;; (global-flycheck-mode t)
-       )
-   #+end_src
-** prettier-js
-   #+begin_src emacs-lisp
-     (use-package prettier-js
-       :ensure t
-       ;; :custom
-       ;; (prettier-js-args '("--print-width" "80"
-       ;;                     "--bracket-spacing" "false"
-       ;;                     "--semi" "true"
-       ;;                     ))
-       :config
-       (defun maybe-use-prettier ()
-         "Enable prettier-js-mode if an rc file is located."
-         (if (locate-dominating-file default-directory ".prettierrc")
-             (prettier-js-mode +1)))
-       (add-hook 'js2-mode-hook 'maybe-use-prettier)
-
-       ;; (add-hook 'js2-mode-hook (lambda () (prettier-js-mode +1)))
-       )
-   #+end_src
-** tide
-   #+begin_src emacs-lisp
-     (use-package tide
-       :ensure t
-       :after (typescript-mode company flycheck)
-       :hook ((typescript-mode . tide-setup)
-              (typescript-mode . tide-hl-identifier-mode))
-       ;;(before-save . tide-format-before-save))
-       :config
-       (setq tide-completion-enable-autoimport-suggestions t)
-       )
-
-     (defun setup-tide-mode ()
-       "Setup tide mode for other mode."
-       (interactive)
-       (message "setup tide mode")
-       (tide-setup)
-       (flycheck-mode +1)
-       (setq flycheck-check-syntax-automatically '(save mode-enabled))
-       (eldoc-mode +1)
-       (tide-hl-identifier-mode +1)
-       (define-key tide-mode-map (kbd "s-.") 'tide-references)
-       (define-key tide-references-mode-map (kbd "v") 'tide-goto-reference)
-       (company-mode +1)
-       )
-
-     (add-hook 'js-mode-hook
-               (lambda ()
-                 (add-to-list (make-local-variable 'company-backends)
-                              'company-tide)))
-
-     (add-hook 'js2-mode-hook #'setup-tide-mode)
-     (add-hook 'rjsx-mode-hook #'setup-tide-mode)
-     ;; (add-hook 'typescript-mode-hook #'setup-tide-mode)
-     (add-hook 'web-mode-hook #'setup-tide-mode)
-   #+end_src
 ** projectile
    #+begin_src emacs-lisp
      (use-package projectile
@@ -697,15 +609,6 @@
        (unless (equal persp-mode t)
          (persp-mode)))
    #+end_src
-** yasnippet
-   #+BEGIN_SRC emacs-lisp
-     (use-package yasnippet
-       :ensure t
-       :config
-       (yas-global-mode)
-       (use-package yasnippet-snippets :ensure t)
-       )
-   #+END_SRC
 ** translate
    #+begin_src emacs-lisp
      (use-package go-translate
@@ -780,173 +683,6 @@
               ("C-c w r" . search-web-region)))
    #+end_src
 * Languages
-** clojure
-   #+begin_src emacs-lisp
-     (use-package clojure-mode
-       :ensure t
-       :config
-       (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
-       (add-to-list 'auto-mode-alist '("\\.cljs$" . clojurescript-mode))
-       (add-to-list 'auto-mode-alist '("\\.cljc$" . clojurec-mode))
-       )
-   #+end_src
-** clj-refactor
-   #+begin_src emacs-lisp
-     (use-package clj-refactor
-       :ensure t
-       :config
-       (defun my-clojure-mode-hook ()
-         (clj-refactor-mode 1)
-         (yas-minor-mode 1) ; for adding require/use/import statements
-         ;; This choice of keybinding leaves cider-macroexpand-1 unbound
-         (cljr-add-keybindings-with-prefix "C-c C-m"))
-
-       (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)
-       )
-   #+end_src
-** js2-mode
-   #+begin_src emacs-lisp
-     (use-package js2-mode
-       :ensure t
-       :hook ((js2-mode . js2-imenu-extras-mode))
-       :mode "\\.js\\'"
-       :custom (js-indent-level 2)
-       :config
-       (setq-default indent-tabs-mode nil)
-       (setq js-indent-level 2)
-       (setq-default js2-basic-offset 2)
-
-       (setq-default js2-allow-rhino-new-expr-initializer nil)
-       (setq-default js2-auto-indent-p nil)
-       (setq-default js2-enter-indents-newline nil)
-       (setq-default js2-global-externs '("module" "require" "buster" "sinon" "assert" "refute" "setTimeout" "clearTimeout" "setInterval" "clearInterval" "location" "__dirname" "console" "JSON"))
-       (setq-default js2-idle-timer-delay 0.1)
-       (setq-default js2-indent-on-enter-key nil)
-       (setq-default js2-mirror-mode nil)
-       (setq-default js2-strict-inconsistent-return-warning nil)
-       (setq-default js2-auto-indent-p t)
-       (setq-default js2-include-rhino-externs nil)
-       (setq-default js2-include-gears-externs nil)
-       (setq-default js2-concat-multiline-strings 'eol)
-       (setq-default js2-rebind-eol-bol-keys nil)
-
-       ;; Let flycheck handle parse errors
-       (setq-default js2-show-parse-errors nil)
-       (setq-default js2-strict-missing-semi-warning nil)
-       (setq-default js2-strict-trailing-comma-warning nil) ;; jshint does not warn about this now for some reason
-       )
-   #+end_src
-** rjsx
-   #+begin_src emacs-lisp
-     (use-package rjsx-mode
-       :ensure t
-       :mode (("\\.js\\'" . rjsx-mode)
-              ("\\.jsx\\'" . rjsx-mode))
-       ;; :hook (rjsx-mode . lsp-deferred)
-       :config
-       (setq js2-basic-offset 2)
-       (add-hook 'rjsx-mode-hook
-                 (lambda()
-                   (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
-                   ;; (flycheck-select-checker 'javascript-eslint)
-                   ))
-       )
-   #+end_src
-** typescript
-   #+begin_src emacs-lisp
-     (use-package typescript-mode
-       :mode (("\\.ts\\'" . typescript-mode)
-              ("\\.tsx\\'" . typescript-mode))
-       :hook (typescript-mode . lsp-deferred)
-       :config
-       (setq typescript-indent-level 2))
-   #+end_src
-** yaml
-   #+begin_src emacs-lisp
-     (use-package yaml-mode
-       :mode "\\.yml\\'")
-   #+end_src
-** Json
-   #+begin_src emacs-lisp
-     (use-package json-mode
-       :delight "J "
-       :mode "\\.json\\'"
-       :hook (before-save . my/json-mode-before-save-hook)
-       :preface
-       (defun my/json-mode-before-save-hook ()
-         (when (eq major-mode 'json-mode)
-           (json-pretty-print-buffer)))
-
-       (defun my/json-array-of-numbers-on-one-line (encode array)
-         "Prints the arrays of numbers in one line."
-         (let* ((json-encoding-pretty-print
-                 (and json-encoding-pretty-print
-                      (not (loop for x across array always (numberp x)))))
-                (json-encoding-separator (if json-encoding-pretty-print "," ", ")))
-           (funcall encode array)))
-       :config (advice-add 'json-encode-array :around #'my/json-array-of-numbers-on-one-line))
-   #+end_src
-** css–less-scss
-   #+begin_src emacs-lisp
-     (use-package css-mode
-       :custom (css-indent-offset 2))
-
-     (use-package less-css-mode
-       :mode "\\.less\\'")
-
-     (use-package scss-mode
-       :mode "\\.scss\\'")
-   #+end_src
-** sql
-   #+begin_src emacs-lisp
-     (use-package sql-indent
-       :after (:any sql sql-interactive-mode)
-       :delight sql-mode "Σ ")
-   #+end_src
-** php
-   #+begin_src emacs-lisp
-     (use-package php-mode
-       :ensure t
-       :mode "[^.][^t][^p][^l]\\.php$"
-       ;; :bind (("m-." . ac-php-find-symbol-at-point)
-       ;;        ("m-," . ac-php-location-stack-back))
-       :config
-       (eval-after-load 'php-mode
-         '(require 'php-ext))
-       (define-key php-mode-map  (kbd "m-.") 'ac-php-find-symbol-at-point)   ;goto define
-       (define-key php-mode-map  (kbd "m-,") 'ac-php-location-stack-back)    ;go back
-       (add-hook 'php-mode-hook
-                 (lambda ()
-                   ;; (paredit-mode t)
-                   (setq-default tab-width 4)
-                   (setq c-basic-offset 4)
-                   (require 'company-php)
-                   (company-mode t)
-                   (ac-php-core-eldoc-setup) ;; enable eldoc
-                   (make-local-variable 'company-backends)
-                   (add-to-list 'company-backends 'company-ac-php-backend)))
-       (setq php-file-patterns nil)
-       ;; (add-to-list 'auto-mode-alist '("[^.][^t][^p][^l]\\.php$" . php-mode))
-       (add-to-list 'auto-mode-alist '("\\.tpl.php$" . html-mode))
-       (eval-after-load "php-mode" '(define-key php-mode-map (kbd "C-.") nil))
-       )
-   #+end_src
-** python
-   #+begin_src emacs-lisp
-     (use-package lsp-python-ms
-       :ensure t
-       :init (setq lsp-python-ms-auto-install-server t)
-       :hook (python-mode . (lambda ()
-                              (require 'lsp-python-ms)
-                              (lsp))))  ; or lsp-deferred
-
-     (use-package pyvenv
-       :diminish
-       :config
-       (setq pyvenv-mode-line-indicator
-             '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
-       (pyvenv-mode +1))
-   #+end_src
 ** lsp
    #+begin_src emacs-lisp
      (use-package lsp-mode
@@ -1021,6 +757,307 @@
      (add-hook 'dap-stopped-hook
                (lambda (arg) (call-interactively #'dap-hydra)))
    #+end_src
+** company
+   #+begin_src emacs-lisp
+     (use-package company
+       :ensure t
+       :config
+       (global-company-mode t)
+       (setq company-idle-delay 0)
+       (setq company-show-numbers t)
+       (setq company-minimum-prefix-length 2)
+       (setq company-backends
+             '((;;company-capf
+                company-tabnine
+                company-files
+                company-yasnippet
+                company-keywords)
+               (company-abbrev company-dabbrev)))
+
+       (with-eval-after-load 'company
+         (define-key company-active-map (kbd "C-n") #'company-select-next)
+         (define-key company-active-map (kbd "C-p") #'company-select-previous))
+
+       (add-hook 'emacs-lisp-mode-hook
+                 (lambda()
+                   (add-to-list (make-local-variable 'company-backends)
+                                'company-elisp)))
+       )
+   #+end_src
+** flycheck
+   #+begin_src emacs-lisp
+     (use-package flycheck
+       :ensure t
+       :config
+       ;; (global-flycheck-mode t)
+       )
+   #+end_src
+** yasnippet
+   #+BEGIN_SRC emacs-lisp
+     (use-package yasnippet
+       :ensure t
+       :config
+       (yas-global-mode)
+       (use-package yasnippet-snippets :ensure t)
+       )
+   #+END_SRC
+** groovy
+   #+begin_src emacs-lisp
+     (use-package groovy-mode
+       :ensure t
+       :defer t
+       :hook (groovy-mode . lsp))
+   #+end_src
+** gradle
+   #+begin_src emacs-lisp
+     (use-package gradle-mode
+       :ensure t
+       :defer t
+       :bind (("C-c g b" . gradle-build)
+              ("C-c g t" . gradle-test)
+              ("C-c g s" . gradle-single-test)
+              ("C-c g j" . gradle-build--daemon)
+              ("C-c g k" . gradle-test--daemon)
+              ("C-c g l" . gradle-single-test--daemon)
+              ("C-c g d" . gradle-execute--daemon)
+              ("C-c g e" . gradle-execute))
+       :config
+       (gradle-mode 1)
+       )
+   #+end_src
+** sql
+   #+begin_src emacs-lisp
+     (use-package sql-indent
+       :after (:any sql sql-interactive-mode)
+       :delight sql-mode "Σ ")
+   #+end_src
+** protobuf
+   #+begin_src emacs-lisp
+     (use-package protobuf-mode
+       :ensure t)
+   #+end_src
+** yaml
+   #+begin_src emacs-lisp
+     (use-package yaml-mode
+       :mode "\\.yml\\'")
+   #+end_src
+** Json
+   #+begin_src emacs-lisp
+     (use-package json-mode
+       :delight "J "
+       :mode "\\.json\\'"
+       :hook (before-save . my/json-mode-before-save-hook)
+       :preface
+       (defun my/json-mode-before-save-hook ()
+         (when (eq major-mode 'json-mode)
+           (json-pretty-print-buffer)))
+
+       (defun my/json-array-of-numbers-on-one-line (encode array)
+         "Prints the arrays of numbers in one line."
+         (let* ((json-encoding-pretty-print
+                 (and json-encoding-pretty-print
+                      (not (loop for x across array always (numberp x)))))
+                (json-encoding-separator (if json-encoding-pretty-print "," ", ")))
+           (funcall encode array)))
+       :config (advice-add 'json-encode-array :around #'my/json-array-of-numbers-on-one-line))
+   #+end_src
+** dockerfile
+   #+begin_src emacs-lisp
+     (use-package dockerfile-mode
+       :ensure t
+       :hook (dockerfile-mode . lsp))
+   #+end_src
+** clojure
+   #+begin_src emacs-lisp
+     (use-package clojure-mode
+       :ensure t
+       :config
+       (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
+       (add-to-list 'auto-mode-alist '("\\.cljs$" . clojurescript-mode))
+       (add-to-list 'auto-mode-alist '("\\.cljc$" . clojurec-mode))
+       )
+   #+end_src
+** clj-refactor
+   #+begin_src emacs-lisp
+     (use-package clj-refactor
+       :ensure t
+       :config
+       (defun my-clojure-mode-hook ()
+         (clj-refactor-mode 1)
+         (yas-minor-mode 1) ; for adding require/use/import statements
+         ;; This choice of keybinding leaves cider-macroexpand-1 unbound
+         (cljr-add-keybindings-with-prefix "C-c C-m"))
+
+       (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)
+       )
+   #+end_src
+** php
+   #+begin_src emacs-lisp
+     (use-package php-mode
+       :ensure t
+       :mode "[^.][^t][^p][^l]\\.php$"
+       ;; :bind (("m-." . ac-php-find-symbol-at-point)
+       ;;        ("m-," . ac-php-location-stack-back))
+       :config
+       (eval-after-load 'php-mode
+         '(require 'php-ext))
+       (define-key php-mode-map  (kbd "m-.") 'ac-php-find-symbol-at-point)   ;goto define
+       (define-key php-mode-map  (kbd "m-,") 'ac-php-location-stack-back)    ;go back
+       (add-hook 'php-mode-hook
+                 (lambda ()
+                   ;; (paredit-mode t)
+                   (setq-default tab-width 4)
+                   (setq c-basic-offset 4)
+                   (require 'company-php)
+                   (company-mode t)
+                   (ac-php-core-eldoc-setup) ;; enable eldoc
+                   (make-local-variable 'company-backends)
+                   (add-to-list 'company-backends 'company-ac-php-backend)))
+       (setq php-file-patterns nil)
+       ;; (add-to-list 'auto-mode-alist '("[^.][^t][^p][^l]\\.php$" . php-mode))
+       (add-to-list 'auto-mode-alist '("\\.tpl.php$" . html-mode))
+       (eval-after-load "php-mode" '(define-key php-mode-map (kbd "C-.") nil))
+       )
+   #+end_src
+** python
+   #+begin_src emacs-lisp
+     (use-package lsp-python-ms
+       :ensure t
+       :init (setq lsp-python-ms-auto-install-server t)
+       :hook (python-mode . (lambda ()
+                              (require 'lsp-python-ms)
+                              (lsp))))  ; or lsp-deferred
+
+     (use-package pyvenv
+       :diminish
+       :config
+       (setq pyvenv-mode-line-indicator
+             '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
+       (pyvenv-mode +1))
+   #+end_src
+** java
+   #+begin_src emacs-lisp
+     (use-package lsp-java
+       :ensure t
+       :defer t
+       :hook (java-mode . lsp)
+       :config
+       (setq lsp-java-jdt-download-url  "https://download.eclipse.org/jdtls/milestones/0.57.0/jdt-language-server-0.57.0-202006172108.tar.gz")
+       )
+
+     (add-hook 'lsp-mode-hook #'lsp-lens-mode)
+     (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+     (add-hook 'java-mode-hook (lambda () (gradle-mode 1)))
+   #+end_src
+** Go
+   #+begin_src emacs-lisp
+     (use-package go-mode
+       :ensure t
+       :mode (("\\.go\\'" . go-mode))
+       :hook ((go-mode . lsp-deferred))
+       :config
+       (add-hook 'go-mode-hook
+                 (lambda ()
+                   (setq-default tab-width 2)))
+
+       (defun lsp-go-install-save-hooks ()
+         (add-hook 'before-save-hook #'lsp-format-buffer t t)
+         (add-hook 'before-save-hook #'lsp-organize-imports t t))
+       (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
+       )
+   #+end_src
+* front-end
+** tide
+   #+begin_src emacs-lisp
+     (use-package tide
+       :ensure t
+       :after (typescript-mode company flycheck)
+       :hook ((typescript-mode . tide-setup)
+              (typescript-mode . tide-hl-identifier-mode))
+       ;;(before-save . tide-format-before-save))
+       :config
+       (setq tide-completion-enable-autoimport-suggestions t)
+       )
+
+     (defun setup-tide-mode ()
+       "Setup tide mode for other mode."
+       (interactive)
+       (message "setup tide mode")
+       (tide-setup)
+       (flycheck-mode +1)
+       (setq flycheck-check-syntax-automatically '(save mode-enabled))
+       (eldoc-mode +1)
+       (tide-hl-identifier-mode +1)
+       (define-key tide-mode-map (kbd "s-.") 'tide-references)
+       (define-key tide-references-mode-map (kbd "v") 'tide-goto-reference))
+
+     (add-hook 'js-mode-hook
+               (lambda ()
+                 (add-to-list (make-local-variable 'company-backends)
+                              'company-tide)))
+
+     (add-hook 'js2-mode-hook #'setup-tide-mode)
+     (add-hook 'rjsx-mode-hook #'setup-tide-mode)
+     ;; (add-hook 'typescript-mode-hook #'setup-tide-mode)
+     (add-hook 'web-mode-hook #'setup-tide-mode)
+   #+end_src
+** js2-mode
+   #+begin_src emacs-lisp
+     (use-package js2-mode
+       :ensure t
+       :hook ((js2-mode . js2-imenu-extras-mode))
+       :mode "\\.js\\'"
+       :custom (js-indent-level 2)
+       :config
+       (setq-default indent-tabs-mode nil)
+       (setq js-indent-level 2)
+       (setq-default js2-basic-offset 2)
+
+       (setq-default js2-allow-rhino-new-expr-initializer nil)
+       (setq-default js2-auto-indent-p nil)
+       (setq-default js2-enter-indents-newline nil)
+       (setq-default js2-global-externs '("module" "require" "buster" "sinon" "assert" "refute" "setTimeout" "clearTimeout" "setInterval" "clearInterval" "location" "__dirname" "console" "JSON"))
+       (setq-default js2-idle-timer-delay 0.1)
+       (setq-default js2-indent-on-enter-key nil)
+       (setq-default js2-mirror-mode nil)
+       (setq-default js2-strict-inconsistent-return-warning nil)
+       (setq-default js2-auto-indent-p t)
+       (setq-default js2-include-rhino-externs nil)
+       (setq-default js2-include-gears-externs nil)
+       (setq-default js2-concat-multiline-strings 'eol)
+       (setq-default js2-rebind-eol-bol-keys nil)
+
+       ;; Let flycheck handle parse errors
+       (setq-default js2-show-parse-errors nil)
+       (setq-default js2-strict-missing-semi-warning nil)
+       (setq-default js2-strict-trailing-comma-warning nil) ;; jshint does not warn about this now for some reason
+       )
+   #+end_src
+** rjsx
+   #+begin_src emacs-lisp
+     (use-package rjsx-mode
+       :ensure t
+       :mode (("\\.js\\'" . rjsx-mode)
+              ("\\.jsx\\'" . rjsx-mode))
+       ;; :hook (rjsx-mode . lsp-deferred)
+       :config
+       (setq js2-basic-offset 2)
+       (add-hook 'rjsx-mode-hook
+                 (lambda()
+                   (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
+                   ;; (flycheck-select-checker 'javascript-eslint)
+                   ))
+       )
+   #+end_src
+** typescript
+   #+begin_src emacs-lisp
+     (use-package typescript-mode
+       :mode (("\\.ts\\'" . typescript-mode)
+              ("\\.tsx\\'" . typescript-mode))
+       :hook (typescript-mode . lsp-deferred)
+       :config
+       (setq typescript-indent-level 2))
+   #+end_src
 ** Vue
    #+begin_src emacs-lisp
      (use-package vue-mode
@@ -1030,6 +1067,17 @@
        (mmm-submode-decoration-level 0)
        (vue-html-extra-indent 2)
        :hook ((vue-mode . lsp-deferred)))
+   #+end_src
+** css–less-scss
+   #+begin_src emacs-lisp
+     (use-package css-mode
+       :custom (css-indent-offset 2))
+
+     (use-package less-css-mode
+       :mode "\\.less\\'")
+
+     (use-package scss-mode
+       :mode "\\.scss\\'")
    #+end_src
 ** dart
    #+begin_src emacs-lisp
@@ -1060,72 +1108,25 @@
                      (add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
                      (add-to-list 'projectile-project-root-files-bottom-up "BUILD")))))
    #+end_src
-** java
-   #+begin_src emacs-lisp
-     (use-package lsp-java
-       :ensure t
-       :defer t
-       :hook (java-mode . lsp)
-       :config
-       (setq lsp-java-jdt-download-url  "https://download.eclipse.org/jdtls/milestones/0.57.0/jdt-language-server-0.57.0-202006172108.tar.gz")
-       )
+** prettier-js
+  #+begin_src emacs-lisp
+    (use-package prettier-js
+      :ensure t
+      ;; :custom
+      ;; (prettier-js-args '("--print-width" "80"
+      ;;                     "--bracket-spacing" "false"
+      ;;                     "--semi" "true"
+      ;;                     ))
+      :config
+      (defun maybe-use-prettier ()
+        "Enable prettier-js-mode if an rc file is located."
+        (if (locate-dominating-file default-directory ".prettierrc")
+            (prettier-js-mode +1)))
+      (add-hook 'js2-mode-hook 'maybe-use-prettier)
 
-     (add-hook 'lsp-mode-hook #'lsp-lens-mode)
-     (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
-     (add-hook 'java-mode-hook (lambda () (gradle-mode 1)))
-   #+end_src
-** groovy
-   #+begin_src emacs-lisp
-     (use-package groovy-mode
-       :ensure t
-       :defer t
-       :hook (groovy-mode . lsp))
-   #+end_src
-** gradle
-   #+begin_src emacs-lisp
-     (use-package gradle-mode
-       :ensure t
-       :defer t
-       :bind (("C-c g b" . gradle-build)
-              ("C-c g t" . gradle-test)
-              ("C-c g s" . gradle-single-test)
-              ("C-c g j" . gradle-build--daemon)
-              ("C-c g k" . gradle-test--daemon)
-              ("C-c g l" . gradle-single-test--daemon)
-              ("C-c g d" . gradle-execute--daemon)
-              ("C-c g e" . gradle-execute))
-       :config
-       (gradle-mode 1)
-       )
-   #+end_src
-** Go
-   #+begin_src emacs-lisp
-     (use-package go-mode
-       :ensure t
-       :mode (("\\.go\\'" . go-mode))
-       :hook ((go-mode . lsp-deferred))
-       :config
-       (add-hook 'go-mode-hook
-                 (lambda ()
-                   (setq-default tab-width 2)))
-
-       (defun lsp-go-install-save-hooks ()
-         (add-hook 'before-save-hook #'lsp-format-buffer t t)
-         (add-hook 'before-save-hook #'lsp-organize-imports t t))
-       (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
-       )
-   #+end_src
-** protobuf
-   #+begin_src emacs-lisp
-     (use-package protobuf-mode
-       :ensure t)
-   #+end_src
-** dockerfile
-   #+begin_src emacs-lisp
-     (use-package dockerfile-mode
-       :ensure t
-       :hook (dockerfile-mode . lsp))
-   #+end_src
+      ;; (add-hook 'js2-mode-hook (lambda () (prettier-js-mode +1)))
+      )
+  #+end_src
 * Org-Mode
 ** org
    #+begin_src emacs-lisp
