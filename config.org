@@ -966,7 +966,7 @@
        (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
        )
    #+end_src
-* front-end
+* Front-end
 ** tide
    #+begin_src emacs-lisp
      (use-package tide
