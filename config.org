@@ -750,7 +750,7 @@
 ** company
    #+begin_src emacs-lisp
      (use-package company-tabnine
-       :after company)
+       :ensure t)
 
      (use-package company
        :ensure t
