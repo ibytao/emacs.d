@@ -10,7 +10,7 @@
  (expand-file-name "config.org"
 		   user-emacs-directory))
 
-(global-set-key (kbd "C-c i")
+(global-set-key (kbd "C-x c")
                 (lambda() (interactive)(org-babel-load-file
                                         (expand-file-name "config.org"
 		                                                  user-emacs-directory))))

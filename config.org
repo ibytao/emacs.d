@@ -234,8 +234,7 @@
        (spaceline-toggle-all-the-icons-bookmark-on)
        ;; (spaceline-toggle-all-the-icons-eyebrowse-workspace-on)
        ;; (spaceline-toggle-all-the-icons-window-number-on)
-
-       (spaceline-all-the-icons-theme 'your-segment-symbol '((:eval (format-time-string "%M"))) 'etc)
+       (spaceline-all-the-icons-theme 'your-segment-symbol '(:eval (format-time-string "%M")) 'etc)
 
        ;; 'slant, 'arrow, 'cup, 'wave, 'none
        (setq spaceline-all-the-icons-separator-type 'wave)
@@ -358,18 +357,6 @@
                (lambda () (define-key go-mode-map (kbd "<tab>") 'hs-toggle-hiding)))
      (add-hook 'java-mode-hook
                (lambda () (define-key java-mode-map (kbd "<tab>") 'hs-toggle-hiding)))
-
-     (defun my/select-current-line-and-forward-line (arg)
-       "Select the current line and move the cursor by ARG lines IF
-     no region is selected.
-     If a region is already selected when calling this command, only move
-     the cursor by ARG lines."
-       (interactive "p")
-       (when (not (use-region-p))
-         (forward-line 0)
-         (set-mark-command nil))
-       (forward-line arg))
-     (global-set-key (kbd "C-i") #'my/select-current-line-and-forward-line)
    #+end_src
 * Advanced Configuration
 ** dired
@@ -425,10 +412,11 @@
        :bind (("M-x" . counsel-M-x)
               ("\C-x \C-f" . counsel-find-file)
               ("M-y" . counsel-yank-pop)
-              ("C-c f" . counsel-recentf)
+              ("C-o" . counsel-recentf)
               ("C-x b" . persp-ivy-switch-buffer)
               ("C-x C-b" . ibuffer-list-buffers)
-              )
+              ("s-1" . previous-buffer)
+              ("s-2" . next-buffer))
        :init
        (setq counsel-find-file-ignore-regexp (regexp-opt '(".git" ".DS_Store")))
        (setq recentf-max-saved-items 200)
@@ -489,8 +477,8 @@
           ("n" mc/mark-next-like-this "next")
           ("p" mc/mark-previous-like-this "previous")
 
-          ("k" mc/skip-to-previous-like-this "skip-p")
-          ("j" mc/skip-to-next-like-this "skip-n")
+          ("k" mc/skip-to-previous-like-this "skip-n")
+          ("j" mc/skip-to-next-like-this "skip-p")
 
           ("u" mc/unmark-next-like-this "unmark-n")
           ("U" mc/unmark-previous-like-this "unmark-p")
@@ -568,9 +556,8 @@
    #+begin_src emacs-lisp
      (use-package projectile
        :ensure t
-       :bind
-       (("C-c p" . projectile-command-map))
-       (("C-x f" . projectile-find-file))
+       :bind (("C-c p" . projectile-command-map)
+              ("C-c f" . projectile-find-file))
        :custom ((projectile-completion-system 'ivy))
        :init
        (when (file-directory-p "~/Workspace")
@@ -1108,24 +1095,24 @@
                      (add-to-list 'projectile-project-root-files-bottom-up "BUILD")))))
    #+end_src
 ** prettier-js
-  #+begin_src emacs-lisp
-    (use-package prettier-js
-      :ensure t
-      ;; :custom
-      ;; (prettier-js-args '("--print-width" "80"
-      ;;                     "--bracket-spacing" "false"
-      ;;                     "--semi" "true"
-      ;;                     ))
-      :config
-      (defun maybe-use-prettier ()
-        "Enable prettier-js-mode if an rc file is located."
-        (if (locate-dominating-file default-directory ".prettierrc")
-            (prettier-js-mode +1)))
-      (add-hook 'js2-mode-hook 'maybe-use-prettier)
+   #+begin_src emacs-lisp
+     (use-package prettier-js
+       :ensure t
+       ;; :custom
+       ;; (prettier-js-args '("--print-width" "80"
+       ;;                     "--bracket-spacing" "false"
+       ;;                     "--semi" "true"
+       ;;                     ))
+       :config
+       (defun maybe-use-prettier ()
+         "Enable prettier-js-mode if an rc file is located."
+         (if (locate-dominating-file default-directory ".prettierrc")
+             (prettier-js-mode +1)))
+       (add-hook 'js2-mode-hook 'maybe-use-prettier)
 
-      ;; (add-hook 'js2-mode-hook (lambda () (prettier-js-mode +1)))
-      )
-  #+end_src
+       ;; (add-hook 'js2-mode-hook (lambda () (prettier-js-mode +1)))
+       )
+   #+end_src
 * Org-Mode
 ** org
    #+begin_src emacs-lisp
