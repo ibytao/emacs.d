@@ -679,6 +679,10 @@
        ;;  ("M-/" . lsp-find-implementation))
        :init
        (setq lsp-keymap-prefix "s-l")
+       (add-hook 'lsp-completion-mode-hook (lambda ()
+                                             (when lsp-completion-mode
+                                               (set (make-local-variable 'company-backends)
+                                                    (remq 'company-capf company-backends)))))
        :config
        (setq lsp-completion-enable-additional-text-edit nil)
        (lsp-enable-which-key-integration t)
@@ -745,29 +749,28 @@
    #+end_src
 ** company
    #+begin_src emacs-lisp
+     (use-package company-tabnine
+       :after company)
+
      (use-package company
        :ensure t
+       :bind (:map company-active-map
+                   ("C-n" . company-select-next)
+                   ("C-p" . company-select-previous)
+                   ("C-s" . company-filter-candidates)
+                   ("<tab>" . company-complete-selection))
+       :bind (:map company-search-map
+                   ("C-n" . company-select-next)
+                   ("C-p" . company-select-previous))
        :config
        (global-company-mode t)
        (setq company-idle-delay 0)
        (setq company-show-numbers t)
        (setq company-minimum-prefix-length 2)
        (setq company-backends
-             '((;;company-capf
-                company-tabnine
-                company-files
-                company-yasnippet
-                company-keywords)
-               (company-abbrev company-dabbrev)))
-
-       (with-eval-after-load 'company
-         (define-key company-active-map (kbd "C-n") #'company-select-next)
-         (define-key company-active-map (kbd "C-p") #'company-select-previous))
-
-       (add-hook 'emacs-lisp-mode-hook
-                 (lambda()
-                   (add-to-list (make-local-variable 'company-backends)
-                                'company-elisp)))
+             '((company-capf :with company-tabnine)
+               (company-dabbrev-code company-keywords company-files)
+               (company-abbrev company-yasnippet)))
        )
    #+end_src
 ** flycheck
