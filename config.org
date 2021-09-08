@@ -196,7 +196,6 @@
        (require 'spaceline-config)
        (spaceline-spacemacs-theme)
 
-
        (set-face-attribute 'mode-line nil
                            :box nil
                            :overline nil
@@ -216,7 +215,7 @@
           ((t (:background "#002b36" :foreground "#268bd2" :weight normal))))
         '(magit-diff-context-highlight ((t (:extend t :background "#073642" :foreground "grey70"))))
         '(magit-section-highlight ((t (:extend t :background "#073642"))))
-        '(mode-line ((t (:background "#657b83" :foreground "black" :box nil :overline nil :underline nil))))
+        '(mode-line ((t (:background "#657b83" :foreground "#002b36" :box nil :overline nil :underline nil))))
         '(powerline-active1 ((t (:inherit mode-line :background "#586e75" :foreground "#002b36"))))
         '(powerline-active2 ((t (:inherit mode-line :background "#586e75" :foreground "#002b36"))))
         '(mode-line-inactive
@@ -234,7 +233,10 @@
        (spaceline-toggle-all-the-icons-bookmark-on)
        ;; (spaceline-toggle-all-the-icons-eyebrowse-workspace-on)
        ;; (spaceline-toggle-all-the-icons-window-number-on)
-       (spaceline-all-the-icons-theme 'your-segment-symbol '(:eval (format-time-string "%M")) 'etc)
+
+       (spaceline-all-the-icons-theme
+        'persp-segment-symbol
+        '(:eval (propertize (format-time-string "%M"))) 'etc)
 
        ;; 'slant, 'arrow, 'cup, 'wave, 'none
        (setq spaceline-all-the-icons-separator-type 'wave)
@@ -398,9 +400,7 @@
         '(("d" delete-file "delete")
           ("r" rename-file "rename")
           ("x" counsel-find-file-as-root "open as root"))
-        )
-
-       )
+        ))
 
      (use-package smex
        :ensure t)
@@ -766,7 +766,7 @@
        (global-company-mode t)
        (setq company-idle-delay 0)
        (setq company-show-numbers t)
-       (setq company-minimum-prefix-length 2)
+       (setq company-minimum-prefix-length 1)
        (setq company-backends
              '((company-capf :with company-tabnine)
                (company-dabbrev-code company-keywords company-files)
