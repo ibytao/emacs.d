@@ -979,12 +979,13 @@
        (eldoc-mode +1)
        (tide-hl-identifier-mode +1)
        (define-key tide-mode-map (kbd "s-.") 'tide-references)
-       (define-key tide-references-mode-map (kbd "v") 'tide-goto-reference))
+       (define-key tide-references-mode-map (kbd "v") 'tide-goto-reference)
 
-     (add-hook 'js-mode-hook
-               (lambda ()
-                 (add-to-list (make-local-variable 'company-backends)
-                              'company-tide)))
+       (setq company-backends
+             '((company-tide :with company-tabnine)
+               (company-dabbrev-code company-keywords company-files)
+               (company-abbrev company-yasnippet)))
+       )
 
      (add-hook 'js2-mode-hook #'setup-tide-mode)
      (add-hook 'rjsx-mode-hook #'setup-tide-mode)
