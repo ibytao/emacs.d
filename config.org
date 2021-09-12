@@ -391,6 +391,7 @@
        :ensure t
        :delight ivy-mode ""
        :bind (:map ivy-minibuffer-map
+                   ("C-h" . delete-backward-char)
                    ("<return>" . ivy-alt-done))
        :config
        (ivy-mode 1)
@@ -407,9 +408,6 @@
           ("r" rename-file "rename")
           ("x" counsel-find-file-as-root "open as root"))
         ))
-
-     (use-package smex
-       :ensure t)
    #+end_src
 ** counsel
    #+begin_src emacs-lisp
@@ -425,8 +423,7 @@
               ("s-2" . next-buffer))
        :init
        (setq counsel-find-file-ignore-regexp (regexp-opt '(".git" ".DS_Store")))
-       (setq recentf-max-saved-items 200)
-       )
+       (setq recentf-max-saved-items 200))
    #+end_src
 ** swiper
    #+begin_src emacs-lisp
