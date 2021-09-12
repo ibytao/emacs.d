@@ -28,12 +28,17 @@
 ** shell
    #+begin_src emacs-lisp
      ;;shell path
-     (let ((path (shell-command-to-string ". ~/.bash_profile; echo -n $PATH")))
-       (setenv "PATH" path)
-       (setq exec-path
-             (append
-              (split-string-and-unquote path ":")
-              exec-path)))
+     (use-package exec-path-from-shell :config
+       (when (memq window-system '(mac ns x))
+         (exec-path-from-shell-initialize)))
+
+     ;; (when (memq window-system '(mac ns x))
+     ;;   (let ((path (shell-command-to-string ". ~/.bash_profile; echo -n $PATH")))
+     ;;     (setenv "PATH" path)
+     ;;     (setq exec-path
+     ;;           (append
+     ;;            (split-string-and-unquote path ":")
+     ;;            exec-path))))
    #+end_src
 * Start Up
 ** Better defaults
@@ -101,11 +106,6 @@
      ;; ediff setup
      (setq ediff-split-window-function 'split-window-horizontally
            ediff-window-setup-function 'ediff-setup-windows-plain)
-
-     (use-package exec-path-from-shell :defer t :config
-       (when (memq window-system '(mac ns x))
-         (exec-path-from-shell-initialize)))
-
    #+end_src
 ** Theme
    #+begin_src emacs-lisp
@@ -362,6 +362,11 @@
                (lambda () (define-key java-mode-map (kbd "<tab>") 'hs-toggle-hiding)))
    #+end_src
 * Advanced Configuration
+** all-the-icons
+   #+begin_src emacs-lisp
+     (use-package all-the-icons
+       :ensure t)
+   #+end_src
 ** dired
    #+begin_src emacs-lisp
      (use-package dired
@@ -375,10 +380,10 @@
                    (define-key dired-mode-map (kbd "k") 'dired-find-file)))
        )
 
-     (use-package all-the-icons-dired
-       :ensure t
-       :config
-       (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+     ;; (use-package all-the-icons-dired
+     ;;   :ensure t
+     ;;   :config
+     ;;   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
    #+end_src
 ** ivy
    #+begin_src emacs-lisp
@@ -396,7 +401,7 @@
        (setq ivy-count-format "%d/%d ")
        (setq ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
 
-       (ivy-set-actions
+       (ivy-set-actions ;; M-o
         'counsel-find-file
         '(("d" delete-file "delete")
           ("r" rename-file "rename")
@@ -680,14 +685,8 @@
        ;;  ("M-/" . lsp-find-implementation))
        :init
        (setq lsp-keymap-prefix "s-l")
-       (add-hook 'lsp-completion-mode-hook (lambda ()
-                                             (when lsp-completion-mode
-                                               (set (make-local-variable 'company-backends)
-                                                    (remq 'company-capf company-backends)))))
        :config
-       (setq lsp-completion-enable-additional-text-edit nil)
-       (lsp-enable-which-key-integration t)
-       )
+       (setq lsp-completion-enable-additional-text-edit nil))
 
      (use-package lsp-ui :ensure t
        :custom
@@ -957,14 +956,20 @@
        )
    #+end_src
 * Front-end
+** typescript
+   #+begin_src emacs-lisp
+     (use-package typescript-mode
+       :mode (("\\.ts\\'" . typescript-mode)
+              ("\\.tsx\\'" . typescript-mode))
+       :hook (typescript-mode . lsp-deferred)
+       :config
+       (flycheck)
+       (setq typescript-indent-level 2))
+   #+end_src
 ** tide
    #+begin_src emacs-lisp
      (use-package tide
        :ensure t
-       :after (typescript-mode company flycheck)
-       :hook ((typescript-mode . tide-setup)
-              (typescript-mode . tide-hl-identifier-mode))
-       ;;(before-save . tide-format-before-save))
        :config
        (setq tide-completion-enable-autoimport-suggestions t)
        )
@@ -1039,15 +1044,6 @@
                    ;; (flycheck-select-checker 'javascript-eslint)
                    ))
        )
-   #+end_src
-** typescript
-   #+begin_src emacs-lisp
-     (use-package typescript-mode
-       :mode (("\\.ts\\'" . typescript-mode)
-              ("\\.tsx\\'" . typescript-mode))
-       :hook (typescript-mode . lsp-deferred)
-       :config
-       (setq typescript-indent-level 2))
    #+end_src
 ** Vue
    #+begin_src emacs-lisp
