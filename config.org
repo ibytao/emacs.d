@@ -682,6 +682,11 @@
        ;;  ("M-/" . lsp-find-implementation))
        :init
        (setq lsp-keymap-prefix "s-l")
+       (add-hook 'lsp-completion-mode-hook
+                 (lambda ()
+                   (when lsp-completion-mode
+                     (set (make-local-variable 'company-backends)
+                          (remq 'company-capf company-backends)))))
        :config
        (setq lsp-completion-enable-additional-text-edit nil))
 
