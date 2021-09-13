@@ -286,6 +286,10 @@
    #+end_src
 ** keyboard
    #+begin_src emacs-lisp
+     ;; split window
+     (global-set-key (kbd "C-x 2") (lambda () (interactive)(split-window-vertically) (other-window 1)))
+     (global-set-key (kbd "C-x 3") (lambda () (interactive)(split-window-horizontally) (other-window 1)))
+
      ;; comment or uncomment
      (global-set-key (kbd "C-c /") 'comment-or-uncomment-region)
      (global-set-key (kbd "s-/") 'comment-line)
@@ -760,7 +764,7 @@
                    ("C-n" . company-select-next)
                    ("C-p" . company-select-previous)
                    ("C-s" . company-filter-candidates)
-                   ("<tab>" . company-complete-selection))
+                   ("C-w" . kill-region-or-backward-word))
        :bind (:map company-search-map
                    ("C-n" . company-select-next)
                    ("C-p" . company-select-previous))
@@ -770,7 +774,7 @@
        (setq company-show-numbers t)
        (setq company-minimum-prefix-length 1)
        (setq company-backends
-             '((company-capf :with company-tabnine)
+             '((company-capf :with company-tabnine :separate)
                (company-dabbrev-code company-keywords company-files)
                (company-abbrev company-yasnippet)))
        )
@@ -965,7 +969,8 @@
               ("\\.tsx\\'" . typescript-mode))
        :hook (typescript-mode . lsp-deferred)
        :config
-       (flycheck)
+       (flycheck-add-mode 'javascript-eslint 'typescript-mode)
+       (flycheck-mode +1)
        (setq typescript-indent-level 2))
    #+end_src
 ** tide
@@ -989,7 +994,7 @@
        (define-key tide-references-mode-map (kbd "v") 'tide-goto-reference)
 
        (setq company-backends
-             '((company-tide :with company-tabnine)
+             '((company-tide :with company-tabnine :separate)
                (company-dabbrev-code company-keywords company-files)
                (company-abbrev company-yasnippet)))
        )
