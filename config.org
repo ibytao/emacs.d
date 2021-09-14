@@ -364,6 +364,24 @@
                (lambda () (define-key go-mode-map (kbd "<tab>") 'hs-toggle-hiding)))
      (add-hook 'java-mode-hook
                (lambda () (define-key java-mode-map (kbd "<tab>") 'hs-toggle-hiding)))
+
+     ;; move line up
+     ;; move line up
+     (defun move-line-up ()
+       (interactive)
+       (transpose-lines 1)
+       (previous-line 2))
+
+     (global-set-key [(control shift up)] 'move-line-up)
+
+     ;; move line down
+     (defun move-line-down ()
+       (interactive)
+       (next-line 1)
+       (transpose-lines 1)
+       (previous-line 1))
+
+     (global-set-key [(control shift down)] 'move-line-down)
    #+end_src
 * Advanced Configuration
 ** all-the-icons
@@ -772,7 +790,7 @@
        (global-company-mode t)
        (setq company-idle-delay 0)
        (setq company-show-numbers t)
-       (setq company-minimum-prefix-length 1)
+       (setq company-minimum-prefix-length 2)
        (setq company-backends
              '((company-capf :with company-tabnine :separate)
                (company-dabbrev-code company-keywords company-files)
