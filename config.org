@@ -359,11 +359,11 @@
      (add-hook 'js2-mode-hook 'hs-minor-mode)
 
      (add-hook 'js2-mode-hook
-               (lambda () (define-key js2-mode-map (kbd "<tab>") 'hs-toggle-hiding)))
+               (lambda () (define-key js2-mode-map (kbd "C-c i") 'hs-toggle-hiding)))
      (add-hook 'go-mode-hook
-               (lambda () (define-key go-mode-map (kbd "<tab>") 'hs-toggle-hiding)))
+               (lambda () (define-key go-mode-map (kbd "C-c i") 'hs-toggle-hiding)))
      (add-hook 'java-mode-hook
-               (lambda () (define-key java-mode-map (kbd "<tab>") 'hs-toggle-hiding)))
+               (lambda () (define-key java-mode-map (kbd "C-c i") 'hs-toggle-hiding)))
 
      ;; move line up
      ;; move line up
@@ -707,15 +707,20 @@
        (add-hook 'lsp-completion-mode-hook
                  (lambda ()
                    (when lsp-completion-mode
-                     (set (make-local-variable 'company-backends)
-                          (remq 'company-capf company-backends)))))
+                     (setq company-backends
+                           '((company-capf :with company-tabnine :separate)
+                             (company-dabbrev-code company-keywords company-files)
+                             (company-abbrev company-yasnippet)))
+                     ;; (set (make-local-variable 'company-backends)
+                     ;;      (remq 'company-capf company-backends))
+                     )))
        :config
        (setq lsp-completion-enable-additional-text-edit nil))
 
      (use-package lsp-ui :ensure t
        :custom
        ;; lsp-ui-doc
-       (lsp-ui-doc-enable nil)
+       (lsp-ui-doc-enable t)
        (lsp-ui-doc-header t)
        (lsp-ui-doc-include-signature t)
        (lsp-ui-doc-position 'top) ;; top, bottom, or at-point
@@ -726,7 +731,7 @@
        ;; lsp-ui-flycheck
        (lsp-ui-flycheck-enable nil)
        ;; lsp-ui-sideline
-       (lsp-ui-sideline-enable t)
+       (lsp-ui-sideline-enable nil)
        (lsp-ui-sideline-ignore-duplicate t)
        (lsp-ui-sideline-show-symbol t)
        (lsp-ui-sideline-show-hover t)
@@ -987,7 +992,7 @@
               ("\\.tsx\\'" . typescript-mode))
        :hook (typescript-mode . lsp-deferred)
        :config
-       (flycheck-add-mode 'javascript-eslint 'typescript-mode)
+       ;; (flycheck-add-mode 'javascript-eslint 'typescript-mode)
        (flycheck-mode +1)
        (setq typescript-indent-level 2))
    #+end_src
@@ -1019,7 +1024,6 @@
 
      (add-hook 'js2-mode-hook #'setup-tide-mode)
      (add-hook 'rjsx-mode-hook #'setup-tide-mode)
-     ;; (add-hook 'typescript-mode-hook #'setup-tide-mode)
      (add-hook 'web-mode-hook #'setup-tide-mode)
    #+end_src
 ** js2-mode
