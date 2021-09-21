@@ -993,12 +993,14 @@
        :hook ((rust-mode . lsp-deferred))
        :bind (("C-c C-c" . rust-run))
        :config
-       (add-hook 'rust-mode-hook
-                 (lambda ()
-                   (flycheck-mode nil)
-                   (setq-default tab-width 2)))
        (setq rust-format-on-save t
              indent-tabs-mode nil))
+
+     (use-package flycheck-rust
+       :ensure t
+       :config
+       (with-eval-after-load 'rust-mode
+         (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
    #+end_src
 * Front-end
 ** typescript
