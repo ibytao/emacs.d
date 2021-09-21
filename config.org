@@ -793,9 +793,11 @@
                    ("C-p" . company-select-previous))
        :config
        (global-company-mode t)
-       (setq company-idle-delay 0)
-       (setq company-show-numbers t)
-       (setq company-minimum-prefix-length 2)
+
+       (setq company-idle-delay 0
+             company-show-numbers t
+             company-minimum-prefix-length 2)
+
        (setq company-backends
              '((company-capf :with company-tabnine :separate)
                (company-dabbrev-code company-keywords company-files)
@@ -983,6 +985,20 @@
          (add-hook 'before-save-hook #'lsp-organize-imports t t))
        (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
        )
+   #+end_src
+** rust
+   #+begin_src emacs-lisp
+     (use-package rust-mode
+       :ensure t
+       :hook ((rust-mode . lsp-deferred))
+       :bind (("C-c C-c" . rust-run))
+       :config
+       (add-hook 'rust-mode-hook
+                 (lambda ()
+                   (flycheck-mode nil)
+                   (setq-default tab-width 2)))
+       (setq rust-format-on-save t
+             indent-tabs-mode nil))
    #+end_src
 * Front-end
 ** typescript
