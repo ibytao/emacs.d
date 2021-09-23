@@ -991,6 +991,8 @@
        :ensure t
        :hook ((rust-mode . lsp-deferred))
        :bind (("C-c C-c" . rust-run))
+       :bind (:map rust-mode-map
+                   ("C-<return>" . open-line-below-semicolon))
        :config
        (setq rust-format-on-save t
              indent-tabs-mode nil))

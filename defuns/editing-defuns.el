@@ -6,6 +6,13 @@
   (newline)
   (indent-for-tab-command))
 
+(defun open-line-below-semicolon ()
+  (interactive)
+  (end-of-line)
+  (insert ";")
+  (newline)
+  (indent-for-tab-command))
+
 (defun open-line-above ()
   (interactive)
   (beginning-of-line)
