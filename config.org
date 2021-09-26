@@ -732,7 +732,8 @@
                      ;;      (remq 'company-capf company-backends))
                      )))
        :config
-       (setq lsp-completion-enable-additional-text-edit nil))
+       (setq lsp-completion-enable-additional-text-edit nil)
+       (setq lsp-signature-auto-activate nil))
 
      (use-package lsp-ui :ensure t
        :custom
@@ -777,7 +778,7 @@
              ("M-/" . lsp-ui-peek-find-implementation)
              ;; ("C-c m"   . lsp-ui-imenu)
              ;; ("C-c s"   . lsp-ui-sideline-mode)
-             ;; ("C-c d"   . ladicle/toggle-lsp-ui-doc)
+             ("M-i"   . ladicle/toggle-lsp-ui-doc)
              )
        :hook
        (lsp-mode . lsp-ui-mode)
@@ -1133,18 +1134,17 @@
      (use-package scss-mode
        :mode "\\.scss\\'")
    #+end_src
-** dart
+** dart&flutter
    #+begin_src emacs-lisp
      (use-package lsp-dart
        :ensure t
        :defer t
-       :hook (dart-mode . lsp))
-     ;; Optional Flutter packages
-     (use-package hover
-       :ensure t
-       :defer t
-       :init
-       (setq hover-hot-reload-on-save t)) ;; run app from desktop without emulator
+       :hook ((dart-mode . lsp)
+              (dart-mode . (lambda ()
+                             (add-hook 'after-save-hook
+                                       (lambda ()
+                                         (lsp-format-buffer)
+                                         (flutter-hot-reload)))))))
 
      (use-package flutter
        :ensure t
