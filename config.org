@@ -351,33 +351,11 @@
      (global-set-key (kbd "s-[") 'prev-window)
      (global-set-key (kbd "s-]") 'other-window)
 
-     ;; C-i <tab>
-     (setq local-function-key-map (delq '(kp-tab . [9]) local-function-key-map))
-     ;; this is C-i
-     ;; (global-set-key (kbd "C-i") (lambda () (interactive) (message "C-i")))
-     ;; this is <tab> key
-     ;; (global-set-key (kbd "<tab>") (lambda () (interactive) (message "<tab>")))
-
-     ;; code folding
-     (add-hook 'go-mode-hook 'hs-minor-mode)
-     (add-hook 'java-mode-hook 'hs-minor-mode)
-     (add-hook 'js2-mode-hook 'hs-minor-mode)
-
-     (add-hook 'js2-mode-hook
-               (lambda () (define-key js2-mode-map (kbd "C-c i") 'hs-toggle-hiding)))
-     (add-hook 'go-mode-hook
-               (lambda () (define-key go-mode-map (kbd "C-c i") 'hs-toggle-hiding)))
-     (add-hook 'java-mode-hook
-               (lambda () (define-key java-mode-map (kbd "C-c i") 'hs-toggle-hiding)))
-
-     ;; move line up
      ;; move line up
      (defun move-line-up ()
        (interactive)
        (transpose-lines 1)
        (previous-line 2))
-
-     (global-set-key [(control shift up)] 'move-line-up)
 
      ;; move line down
      (defun move-line-down ()
@@ -386,7 +364,14 @@
        (transpose-lines 1)
        (previous-line 1))
 
-     (global-set-key [(control shift down)] 'move-line-down)
+     (global-set-key (kbd "<C-S-down>") 'move-line-down)
+     (global-set-key (kbd "<C-S-up>") 'move-line-up)
+
+     ;; Move more quickly
+     (global-set-key (kbd "C-S-n") (λ (ignore-errors (next-line 5))))
+     (global-set-key (kbd "C-S-p") (λ (ignore-errors (previous-line 5))))
+     (global-set-key (kbd "C-S-f") (λ (ignore-errors (forward-char 5))))
+     (global-set-key (kbd "C-S-b") (λ (ignore-errors (backward-char 5))))
    #+end_src
 * Advanced Configuration
 ** all-the-icons
@@ -479,10 +464,10 @@
      (use-package change-inner
        :ensure t
        :bind
-       (("M-I" . 'change-inner))
-       (("M-O" . 'change-outer))
-       (("s-i" . 'copy-inner))
-       (("s-o" . 'copy-outer))
+       (("M-i" . 'change-inner))
+       (("M-o" . 'change-outer))
+       (("M-I" . 'copy-inner))
+       (("M-O" . 'copy-outer))
        )
    #+END_SRC
 ** multiple-cursors
@@ -587,13 +572,19 @@
      (use-package projectile
        :ensure t
        :bind (("C-c p" . projectile-command-map)
-              ("C-c f" . projectile-find-file))
+              ("s-o" . projectile-switch-project)
+              ("s-f" . projectile-find-file))
        :custom ((projectile-completion-system 'ivy))
        :init
        (when (file-directory-p "~/Workspace")
          (setq projectile-project-search-path '("~/Workspace")))
        (setq projectile-switch-project-action #'projectile-dired)
        :config
+       ;; Translate the problematic keys to the function key Hyper,
+       ;; then bind this to the desired ctrl-i behavior
+       (keyboard-translate ?\C-i ?\H-i)
+       (global-set-key [?\H-i] 'projectile-find-file)
+
        (projectile-mode +1)
        (setq projectile-globally-ignored-files '( "TAGS" ".DS_Store" "." ".." ".git"))
        ;; (setq projectile-enable-caching t)
@@ -710,6 +701,15 @@
               ("C-c w p" . search-web-at-point)
               ("C-c w r" . search-web-region)))
    #+end_src
+** origami
+   #+begin_src emacs-lisp
+     (use-package origami
+       :ensure t
+       :hook (prog-mode . origami-mode)
+       :bind (:map origami-mode-map
+                   ("<tab>" . origami-recursively-toggle-node)
+                   ("<S-tab>" . origami-toggle-all-nodes)))
+   #+end_src
 * Languages
 ** lsp
    #+begin_src emacs-lisp
@@ -773,12 +773,12 @@
            (lsp-ui-doc-mode 1)))
        :bind
        (:map lsp-mode-map
-             ("M-'" . lsp-ui-peek-find-references)
+             ("s-." . lsp-ui-peek-find-references)
              ("M-." . lsp-ui-peek-find-definitions)
              ("M-/" . lsp-ui-peek-find-implementation)
              ;; ("C-c m"   . lsp-ui-imenu)
              ;; ("C-c s"   . lsp-ui-sideline-mode)
-             ("M-i"   . ladicle/toggle-lsp-ui-doc)
+             ("s-i"   . ladicle/toggle-lsp-ui-doc)
              )
        :hook
        (lsp-mode . lsp-ui-mode)
