@@ -632,12 +632,15 @@
    #+begin_src emacs-lisp
      (use-package go-translate
        :ensure t
-       :bind (("C-c t" . go-translate))
+       :bind (("C-c t" . gts-do-translate))
        :config
        (setq go-translate-token-current (cons 430675 2721866130))
-       (setq go-translate-base-url "https://translate.google.cn")
-       (setq go-translate-local-language "zh-CN")
-       (setq go-translate-inputs-function #'go-translate-inputs-current-or-prompt)
+       (setq gts-translate-list '(("en" "zh")))
+       (setq gts-default-translator
+             (gts-translator
+              :picker (gts-noprompt-picker)
+              :engines (list (gts-google-rpc-engine))
+              :render (gts-buffer-render)))
        )
 
 
