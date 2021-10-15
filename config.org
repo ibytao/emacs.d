@@ -65,7 +65,7 @@
       view-read-only t)                                             ; Always open read-only buffers in view-mode
      (cd "~/")                                                      ; Move to the user directory
      (column-number-mode 1)                                         ; Show the column number
-     (display-time-mode 1)                                          ; Enable time in the mode-line
+     (display-time-mode nil)                                        ; Enable time in the mode-line
      (fset 'yes-or-no-p 'y-or-n-p)                                  ; Replace yes/no prompts with y/n
      (global-hl-line-mode)                                          ; Hightlight current line
      (set-default-coding-systems 'utf-8)                            ; Default to utf-8 encoding
@@ -75,12 +75,17 @@
      (add-hook 'before-save-hook 'delete-trailing-whitespace)       ; delete traniling whitespace
      (add-to-list 'default-frame-alist '(fullscreen . maximized))   ; full screen
 
+     (set-fringe-mode '(0 . 1))
 
      (when (memq window-system '(mac ns))
        (add-to-list 'default-frame-alist '(ns-appearance . 'dark))
        (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
        (setq ns-use-proxy-icon nil)
        (setq frame-title-format nil))
+
+     ;; set transparency
+     (set-frame-parameter (selected-frame) 'alpha '(98 98))
+     (add-to-list 'default-frame-alist '(alpha 98 98))
 
      (setq warning-minimum-level :emergency)
 
@@ -710,7 +715,7 @@
        :ensure t
        :hook (prog-mode . origami-mode)
        :bind (:map origami-mode-map
-                   ("<tab>" . origami-recursively-toggle-node)
+                   ("<C-tab>" . origami-recursively-toggle-node)
                    ("<S-tab>" . origami-toggle-all-nodes)))
    #+end_src
 * Languages
