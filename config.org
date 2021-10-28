@@ -436,8 +436,8 @@
               ("C-o" . counsel-recentf)
               ("C-x b" . persp-ivy-switch-buffer)
               ("C-x C-b" . ibuffer-list-buffers)
-              ("s-1" . previous-buffer)
-              ("s-2" . next-buffer))
+              ("s-p" . previous-buffer)
+              ("s-n" . next-buffer))
        :init
        (setq counsel-find-file-ignore-regexp (regexp-opt '(".git" ".DS_Store")))
        (setq recentf-max-saved-items 200))
