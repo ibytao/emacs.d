@@ -588,7 +588,8 @@
        ;; Translate the problematic keys to the function key Hyper,
        ;; then bind this to the desired ctrl-i behavior
        (keyboard-translate ?\C-i ?\H-i)
-       (global-set-key [?\H-i] 'projectile-find-file)
+       ;; (global-set-key [?\H-i] 'projectile-find-file)
+       (global-set-key [?\H-i] 'project-find-file)
 
        (projectile-mode +1)
        (setq projectile-globally-ignored-files '( "TAGS" ".DS_Store" "." ".." ".git"))
@@ -1126,6 +1127,7 @@
        :delight "V "
        :mode "\\.vue\\'"
        :custom
+       ;; 0, 1, or 2, representing (respectively) none, low, and high coloring
        (mmm-submode-decoration-level 0)
        (vue-html-extra-indent 2)
        :hook ((vue-mode . lsp-deferred)))
