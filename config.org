@@ -657,6 +657,8 @@
            )))
 
      (define-key global-map (kbd "C-c r") 'read-word)
+
+     (require 'insert-translated-name)
    #+end_src
 ** beacon
    #+begin_src emacs-lisp
