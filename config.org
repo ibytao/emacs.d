@@ -436,8 +436,8 @@
               ("C-o" . counsel-recentf)
               ("C-x b" . persp-ivy-switch-buffer)
               ("C-x C-b" . ibuffer-list-buffers)
-              ("s-1" . previous-buffer)
-              ("s-2" . next-buffer))
+              ("s-p" . previous-buffer)
+              ("s-n" . next-buffer))
        :init
        (setq counsel-find-file-ignore-regexp (regexp-opt '(".git" ".DS_Store")))
        (setq recentf-max-saved-items 200))
@@ -588,7 +588,8 @@
        ;; Translate the problematic keys to the function key Hyper,
        ;; then bind this to the desired ctrl-i behavior
        (keyboard-translate ?\C-i ?\H-i)
-       (global-set-key [?\H-i] 'projectile-find-file)
+       ;; (global-set-key [?\H-i] 'projectile-find-file)
+       (global-set-key [?\H-i] 'project-find-file)
 
        (projectile-mode +1)
        (setq projectile-globally-ignored-files '( "TAGS" ".DS_Store" "." ".." ".git"))
@@ -635,6 +636,15 @@
    #+end_src
 ** translate
    #+begin_src emacs-lisp
+     (defun read-word ()
+       (interactive)
+       (let ((text (thing-at-point 'word)))
+         (if text
+             (shell-command (concat "say " (shell-quote-argument text)))
+           )))
+
+     (define-key global-map (kbd "C-c r") 'read-word)
+
      (use-package go-translate
        :ensure t
        :bind (("C-c t" . gts-do-translate))
@@ -644,19 +654,9 @@
        (setq gts-default-translator
              (gts-translator
               :picker (gts-noprompt-picker)
-              :engines (list (gts-google-rpc-engine))
+              :engines (list (gts-google-engine))
               :render (gts-buffer-render)))
        )
-
-
-     (defun read-word ()
-       (interactive)
-       (let ((text (thing-at-point 'word)))
-         (if text
-             (shell-command (concat "say " (shell-quote-argument text)))
-           )))
-
-     (define-key global-map (kbd "C-c r") 'read-word)
 
      (require 'insert-translated-name)
    #+end_src
@@ -1129,6 +1129,7 @@
        :delight "V "
        :mode "\\.vue\\'"
        :custom
+       ;; 0, 1, or 2, representing (respectively) none, low, and high coloring
        (mmm-submode-decoration-level 0)
        (vue-html-extra-indent 2)
        :hook ((vue-mode . lsp-deferred)))
