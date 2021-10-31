@@ -1073,7 +1073,7 @@
        )
 
      (add-hook 'js2-mode-hook #'setup-tide-mode)
-     (add-hook 'web-mode-hook #'setup-tide-mode)
+     ;; (add-hook 'web-mode-hook #'setup-tide-mode)
    #+end_src
 ** js2-mode
    #+begin_src emacs-lisp
@@ -1126,22 +1126,25 @@
    #+begin_src emacs-lisp
      (use-package vue-mode
        :delight "V "
+       :hook ((vue-mode . lsp-deferred))
        :mode "\\.vue\\'"
        :custom
        ;; 0, 1, or 2, representing (respectively) none, low, and high coloring
        (mmm-submode-decoration-level 0)
-       (vue-html-extra-indent 2)
-       :hook ((vue-mode . lsp-deferred)))
+       (vue-html-extra-indent 2))
    #+end_src
 ** css–less-scss
    #+begin_src emacs-lisp
      (use-package css-mode
+       :hook (css-mode . lsp-deferred)
        :custom (css-indent-offset 2))
 
      (use-package less-css-mode
+       :hook (less-mode . lsp-deferred)
        :mode "\\.less\\'")
 
      (use-package scss-mode
+       :hook (scss-mode . lsp-deferred)
        :mode "\\.scss\\'")
    #+end_src
 ** dart&flutter
