@@ -1073,7 +1073,6 @@
        )
 
      (add-hook 'js2-mode-hook #'setup-tide-mode)
-     ;; (add-hook 'web-mode-hook #'setup-tide-mode)
    #+end_src
 ** js2-mode
    #+begin_src emacs-lisp
@@ -1190,8 +1189,7 @@
          (if (locate-dominating-file default-directory ".prettierrc")
              (prettier-js-mode +1)))
        (add-hook 'js2-mode-hook 'maybe-use-prettier)
-
-       ;; (add-hook 'js2-mode-hook (lambda () (prettier-js-mode +1)))
+       (add-hook 'typescript-mode-hook 'maybe-use-prettier)
        )
    #+end_src
 * Org-Mode
