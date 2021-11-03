@@ -1037,45 +1037,6 @@
          (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
    #+end_src
 * Front-end
-** typescript
-   #+begin_src emacs-lisp
-     (use-package typescript-mode
-       :mode (("\\.ts\\'" . typescript-mode)
-              ("\\.tsx\\'" . typescript-mode))
-       :hook (typescript-mode . lsp-deferred)
-       :config
-       ;; (flycheck-add-mode 'javascript-eslint 'typescript-mode)
-       (flycheck-mode +1)
-       (setq typescript-indent-level 2))
-   #+end_src
-** tide
-   #+begin_src emacs-lisp
-     (use-package tide
-       :ensure t
-       :config
-       (setq tide-completion-enable-autoimport-suggestions t)
-       )
-
-     (defun setup-tide-mode ()
-       "Setup tide mode for other mode."
-       (interactive)
-       (message "setup tide mode ....")
-       (tide-setup)
-       (flycheck-mode +1)
-       (setq flycheck-check-syntax-automatically '(save mode-enabled))
-       (eldoc-mode +1)
-       (tide-hl-identifier-mode +1)
-       (define-key tide-mode-map (kbd "s-.") 'tide-references)
-       (define-key tide-references-mode-map (kbd "v") 'tide-goto-reference)
-
-       (setq company-backends
-             '((company-tide :with company-tabnine :separate)
-               (company-dabbrev-code company-keywords company-files)
-               (company-abbrev company-yasnippet)))
-       )
-
-     (add-hook 'js2-mode-hook #'setup-tide-mode)
-   #+end_src
 ** js2-mode
    #+begin_src emacs-lisp
      (use-package js2-mode
@@ -1108,13 +1069,52 @@
        (setq-default js2-strict-trailing-comma-warning nil) ;; jshint does not warn about this now for some reason
        )
    #+end_src
+** typescript
+   #+begin_src emacs-lisp
+     (use-package typescript-mode
+       :mode (("\\.ts\\'" . typescript-mode)
+              ("\\.tsx\\'" . typescript-mode))
+       ;; :hook (typescript-mode . lsp-deferred)
+       :config
+       ;; (flycheck-add-mode 'javascript-eslint 'typescript-mode)
+       (flycheck-mode +1)
+       (setq typescript-indent-level 2))
+   #+end_src
+** tide
+   #+begin_src emacs-lisp
+     (use-package tide
+       :ensure t
+       :config
+       (setq tide-completion-enable-autoimport-suggestions t)
+       )
+
+     (defun setup-tide-mode ()
+       "Setup tide mode for other mode."
+       (interactive)
+       (message "setup tide mode ....")
+       (tide-setup)
+       (flycheck-mode +1)
+       (setq flycheck-check-syntax-automatically '(save mode-enabled))
+       (eldoc-mode +1)
+       (tide-hl-identifier-mode +1)
+       (define-key tide-mode-map (kbd "s-.") 'tide-references)
+       (define-key tide-references-mode-map (kbd "v") 'tide-goto-reference)
+
+       (setq company-backends
+             '((company-tide :with company-tabnine :separate)
+               (company-dabbrev-code company-keywords company-files)
+               (company-abbrev company-yasnippet)))
+       )
+
+     (add-hook 'js2-mode-hook 'setup-tide-mode)
+     (add-hook 'typescript-mode-hook 'setup-tide-mode)
+   #+end_src
 ** rjsx
    #+begin_src emacs-lisp
      (use-package rjsx-mode
        :ensure t
        :mode (("\\.js\\'" . rjsx-mode)
               ("\\.jsx\\'" . rjsx-mode))
-       ;; :hook (rjsx-mode . lsp-deferred)
        :config
        (add-hook 'rjsx-mode-hook
                  (lambda()
