@@ -825,7 +825,7 @@
        :config
        (global-company-mode t)
 
-       (setq company-idle-delay 0
+       (setq company-idle-delay 0.2
              company-show-numbers t
              company-minimum-prefix-length 2)
 
