@@ -824,7 +824,7 @@
                    ("C-p" . company-select-previous))
        :config
        (global-company-mode t)
-
+       (setq company-tooltip-maximum-width 70)
        (setq company-idle-delay 0.2
              company-show-numbers t
              company-minimum-prefix-length 2)
@@ -1025,10 +1025,7 @@
        :hook ((rust-mode . lsp-deferred))
        :bind (("C-c C-c" . rust-run))
        :bind (:map rust-mode-map
-                   ("C-<return>" . open-line-below-semicolon))
-       :config
-       (setq rust-format-on-save t
-             indent-tabs-mode nil))
+                   ("C-<return>" . open-line-below-semicolon)))
 
      (use-package flycheck-rust
        :ensure t
