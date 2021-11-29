@@ -2,8 +2,7 @@
 ** Packages Sources
    #+BEGIN_SRC emacs-lisp
      (setq package-archives '(("melpa" . "http://melpa.org/packages/")
-                              ("gnu" . "http://elpa.gnu.org/packages/")
-                              ("org" . "http://orgmode.org/elpa/")))
+                              ("gnu" . "http://elpa.gnu.org/packages/")))
    #+END_SRC
 ** use-package
    #+begin_src emacs-lisp
@@ -991,7 +990,8 @@
      (use-package lsp-java
        :ensure t
        :defer t
-       :hook (java-mode . lsp)
+       :hook ((java-mode . lsp)
+              (before-save . lsp-format-buffer))
        :config
        ;;java1.8
        (setq lsp-java-jdt-download-url  "https://download.eclipse.org/jdtls/milestones/0.57.0/jdt-language-server-0.57.0-202006172108.tar.gz")
@@ -1034,48 +1034,12 @@
          (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
    #+end_src
 * Front-end
-** js2-mode
+** js-mode
    #+begin_src emacs-lisp
-     (use-package js2-mode
-       :ensure t
-       :hook ((js2-mode . js2-imenu-extras-mode))
-       :mode "\\.js\\'"
-       :custom (js-indent-level 2)
-       :config
-       (setq-default indent-tabs-mode nil)
-       (setq js-indent-level 2)
-       (setq-default js2-basic-offset 2)
-
-       (setq-default js2-allow-rhino-new-expr-initializer nil)
-       (setq-default js2-auto-indent-p nil)
-       (setq-default js2-enter-indents-newline nil)
-       (setq-default js2-global-externs '("module" "require" "buster" "sinon" "assert" "refute" "setTimeout" "clearTimeout" "setInterval" "clearInterval" "location" "__dirname" "console" "JSON"))
-       (setq-default js2-idle-timer-delay 0.1)
-       (setq-default js2-indent-on-enter-key nil)
-       (setq-default js2-mirror-mode nil)
-       (setq-default js2-strict-inconsistent-return-warning nil)
-       (setq-default js2-auto-indent-p t)
-       (setq-default js2-include-rhino-externs nil)
-       (setq-default js2-include-gears-externs nil)
-       (setq-default js2-concat-multiline-strings 'eol)
-       (setq-default js2-rebind-eol-bol-keys nil)
-
-       ;; Let flycheck handle parse errors
-       (setq-default js2-show-parse-errors nil)
-       (setq-default js2-strict-missing-semi-warning nil)
-       (setq-default js2-strict-trailing-comma-warning nil) ;; jshint does not warn about this now for some reason
+     (use-package js-mode
+       :mode (("\\.js\\'" . js-mode)
+              ("\\.jsx\\'" . js-mode))
        )
-   #+end_src
-** typescript
-   #+begin_src emacs-lisp
-     (use-package typescript-mode
-       :mode (("\\.ts\\'" . typescript-mode)
-              ("\\.tsx\\'" . typescript-mode))
-       :hook (typescript-mode . lsp-deferred)
-       :config
-       ;; (flycheck-add-mode 'javascript-eslint 'typescript-mode)
-       (flycheck-mode +1)
-       (setq typescript-indent-level 2))
    #+end_src
 ** tide
    #+begin_src emacs-lisp
@@ -1103,22 +1067,37 @@
                (company-abbrev company-yasnippet)))
        )
 
-     (add-hook 'js2-mode-hook 'setup-tide-mode)
+     (add-hook 'js-mode-hook 'setup-tide-mode)
      ;; (add-hook 'typescript-mode-hook 'setup-tide-mode)
    #+end_src
-** rjsx
+** prettier-js
    #+begin_src emacs-lisp
-     (use-package rjsx-mode
+     (use-package prettier-js
        :ensure t
-       :mode (("\\.js\\'" . rjsx-mode)
-              ("\\.jsx\\'" . rjsx-mode))
+       ;; :custom
+       ;; (prettier-js-args '("--print-width" "80"
+       ;;                     "--bracket-spacing" "false"
+       ;;                     "--semi" "true"
+       ;;                     ))
        :config
-       (add-hook 'rjsx-mode-hook
-                 (lambda()
-                   (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
-                   ;; (flycheck-select-checker 'javascript-eslint)
-                   ))
+       (defun maybe-use-prettier ()
+         "Enable prettier-js-mode if an rc file is located."
+         (if (locate-dominating-file default-directory ".prettierrc")
+             (prettier-js-mode +1)))
+       (add-hook 'js-mode-hook 'maybe-use-prettier)
+       (add-hook 'typescript-mode-hook 'maybe-use-prettier)
        )
+   #+end_src
+** typescript
+   #+begin_src emacs-lisp
+     (use-package typescript-mode
+       :mode (("\\.ts\\'" . typescript-mode)
+              ("\\.tsx\\'" . typescript-mode))
+       :hook (typescript-mode . lsp-deferred)
+       :config
+       ;; (flycheck-add-mode 'javascript-eslint 'typescript-mode)
+       (flycheck-mode +1)
+       (setq typescript-indent-level 2))
    #+end_src
 ** Vue
    #+begin_src emacs-lisp
@@ -1172,24 +1151,6 @@
                    (with-eval-after-load 'projectile
                      (add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
                      (add-to-list 'projectile-project-root-files-bottom-up "BUILD")))))
-   #+end_src
-** prettier-js
-   #+begin_src emacs-lisp
-     (use-package prettier-js
-       :ensure t
-       ;; :custom
-       ;; (prettier-js-args '("--print-width" "80"
-       ;;                     "--bracket-spacing" "false"
-       ;;                     "--semi" "true"
-       ;;                     ))
-       :config
-       (defun maybe-use-prettier ()
-         "Enable prettier-js-mode if an rc file is located."
-         (if (locate-dominating-file default-directory ".prettierrc")
-             (prettier-js-mode +1)))
-       (add-hook 'js2-mode-hook 'maybe-use-prettier)
-       (add-hook 'typescript-mode-hook 'maybe-use-prettier)
-       )
    #+end_src
 * Org-Mode
 ** org
