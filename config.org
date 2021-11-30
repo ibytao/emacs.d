@@ -1130,7 +1130,7 @@
   (use-package emmet-mode
     :hook ((sgml-mode . emmet-mode)
            (css-mode . emmet-mode)
-           (js-mode . emmet-jsx-major-modes))
+           (js-mode . emmet-mode))
     :bind (("C-'" . emmet-expand-line))
     )
 #+end_src
@@ -1166,7 +1166,7 @@
 ** org
 #+begin_src emacs-lisp
      (use-package org
-       :ensure org-plus-contrib
+       :ensure org-contrib
        :config
        (require 'org-tempo)
        (add-hook 'org-mode-hook (lambda () (setq truncate-lines nil)))
