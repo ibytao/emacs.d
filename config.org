@@ -1038,8 +1038,8 @@
 ** js-mode
 #+begin_src emacs-lisp
   (use-package js-mode
-    :mode (("\\.js\\'" . js-mode)
-           ("\\.jsx\\'" . js-mode))
+    :mode (("\\.js\\'" . js-jsx-mode)
+           ("\\.jsx\\'" . js-jsx-mode))
     :custom (js-indent-level 2))
 #+end_src
 ** tide
@@ -1124,15 +1124,6 @@
   (use-package scss-mode
     :hook (scss-mode . lsp-deferred)
     :mode "\\.scss\\'")
-#+end_src
-** emmet
-#+begin_src emacs-lisp
-  (use-package emmet-mode
-    :hook ((sgml-mode . emmet-mode)
-           (css-mode . emmet-mode)
-           (js-mode . emmet-mode))
-    :bind (("C-'" . emmet-expand-line))
-    )
 #+end_src
 ** dart&flutter
 #+begin_src emacs-lisp
