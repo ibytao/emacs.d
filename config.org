@@ -997,6 +997,17 @@
     :config
     ;;java1.8
     (setq lsp-java-jdt-download-url  "https://download.eclipse.org/jdtls/milestones/0.57.0/jdt-language-server-0.57.0-202006172108.tar.gz")
+
+    (setq lombok-path (substitute-in-file-name "$HOME/.m2/repository/org/projectlombok/lombok/1.18.12/lombok-1.18.12.jar"))
+
+    (setq lsp-java-vmargs
+          (list "-noverify"
+                "-Xmx1G"
+                "-XX:+UseG1GC"
+                "-XX:+UseStringDeduplication"
+                (concat "-javaagent:" lombok-path)
+                (concat "-Xbootclasspath/a:" lombok-path)))
+
     )
 
   (add-hook 'lsp-mode-hook #'lsp-lens-mode)
