@@ -76,7 +76,7 @@
   (add-hook 'before-save-hook 'delete-trailing-whitespace)       ; delete traniling whitespace
   (add-to-list 'default-frame-alist '(fullscreen . maximized))   ; full screen
 
-  (set-fringe-mode '(0 . 1))
+  ;; (set-fringe-mode '(0 . 1))
 
   (when (memq window-system '(mac ns))
     (add-to-list 'default-frame-alist '(ns-appearance . 'dark))
@@ -678,7 +678,6 @@
     :ensure t
     :config
     (global-diff-hl-mode)
-    (diff-hl-margin-mode)
     (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
     )
@@ -734,7 +733,7 @@
     ;; (("M-'" . lsp-find-references)
     ;;  ("M-/" . lsp-find-implementation))
     :init
-    (setq lsp-keymap-prefix "s-l")
+    (setq lsp-keymap-prefix "C-c l")
     (add-hook 'lsp-completion-mode-hook
               (lambda ()
                 (when lsp-completion-mode
