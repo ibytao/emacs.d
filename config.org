@@ -890,6 +890,7 @@
 ** yaml
 #+begin_src emacs-lisp
   (use-package yaml-mode
+    :hook ((yaml-mode . lsp)
     :mode "\\.yml\\'")
 #+end_src
 ** Json
@@ -993,6 +994,8 @@
     :defer t
     :hook ((java-mode . lsp)
            (before-save . lsp-format-buffer))
+    :init
+    (setenv "JAVA_HOME" (shell-command-to-string "printf %s \"$(/usr/libexec/java_home)\""))
     :config
     ;;java1.8
     (setq lsp-java-jdt-download-url  "https://download.eclipse.org/jdtls/milestones/0.57.0/jdt-language-server-0.57.0-202006172108.tar.gz")
@@ -1007,11 +1010,17 @@
                 (concat "-javaagent:" lombok-path)
                 (concat "-Xbootclasspath/a:" lombok-path)))
 
+
+    (require 'lsp-java-boot)
+
+    ;; to enable the lenses
+    (add-hook 'lsp-mode-hook #'lsp-lens-mode)
+    (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+
+    (add-hook 'java-mode-hook (lambda () (gradle-mode 1)))
     )
 
-  (add-hook 'lsp-mode-hook #'lsp-lens-mode)
-  (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
-  (add-hook 'java-mode-hook (lambda () (gradle-mode 1)))
+
 #+end_src
 ** Go
 #+begin_src emacs-lisp
