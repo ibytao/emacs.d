@@ -115,8 +115,8 @@
 
   ;; https://github.com/manateelazycat/company-english-helper
   ;; toggle-company-english-helper
-  (add-to-list 'load-path (expand-file-name "~/.emacs.d/elpa/company-english-helper"))
-  (require 'company-english-helper)
+  ;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/elpa/company-english-helper"))
+  ;; (require 'company-english-helper)
 #+end_src
 ** Theme
 #+begin_src emacs-lisp
@@ -727,6 +727,7 @@
 ** lsp
 #+begin_src emacs-lisp
   (use-package lsp-mode
+    :ensure t
     :hook ((lsp-mode . lsp-enable-which-key-integration))
     :commands (lsp lsp-deferred)
     ;; :bind
@@ -890,12 +891,14 @@
 ** yaml
 #+begin_src emacs-lisp
   (use-package yaml-mode
-    :hook ((yaml-mode . lsp)
+    :ensure t
+    :hook (yaml-mode . lsp)
     :mode "\\.yml\\'")
 #+end_src
 ** Json
 #+begin_src emacs-lisp
   (use-package json-mode
+    :ensure t
     :delight "J "
     :mode "\\.json\\'"
     :hook (before-save . my/json-mode-before-save-hook)
