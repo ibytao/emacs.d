@@ -58,7 +58,7 @@
    mark-ring-max 128                                             ; Maximum length of mark ring
    scroll-conservatively most-positive-fixnum                    ; Always scroll by one line
    select-enable-clipboard t                                     ; Merge system's and Emacs' clipboard
-   tab-width 4                                                   ; Set width for tabs
+   tab-width 2                                                   ; Set width for tabs
    use-package-always-ensure t                                   ; Avoid the :ensure keyword for each package
    user-full-name "Buck"                                         ; Set the full name of the current user
    user-mail-address "buck@gmail.com"                            ; Set the email address of the current user
@@ -834,6 +834,13 @@
           '((company-capf :with company-tabnine :separate)
             (company-dabbrev-code company-keywords company-files)
             (company-abbrev company-yasnippet)))
+
+    (add-hook 'emacs-lisp-mode-hook
+              (lambda ()
+                (setq company-backends
+                      '((company-capf :with company-tabnine :separate)
+                        (company-dabbrev-code company-keywords company-files)
+                        (company-abbrev company-yasnippet)))))
     )
 #+end_src
 ** flycheck
@@ -914,7 +921,12 @@
                    (not (loop for x across array always (numberp x)))))
              (json-encoding-separator (if json-encoding-pretty-print "," ", ")))
         (funcall encode array)))
-    :config (advice-add 'json-encode-array :around #'my/json-array-of-numbers-on-one-line))
+    :config
+    (advice-add 'json-encode-array :around #'my/json-array-of-numbers-on-one-line)
+    (add-hook 'json-mode-hook
+              (lambda ()
+                (make-local-variable 'js-indent-level)
+                (setq js-indent-level 2))))
 #+end_src
 ** dockerfile
 #+begin_src emacs-lisp
@@ -1032,10 +1044,6 @@
     :mode (("\\.go\\'" . go-mode))
     :hook ((go-mode . lsp-deferred))
     :config
-    (add-hook 'go-mode-hook
-              (lambda ()
-                (setq-default tab-width 2)))
-
     (defun lsp-go-install-save-hooks ()
       (add-hook 'before-save-hook #'lsp-format-buffer t t)
       (add-hook 'before-save-hook #'lsp-organize-imports t t))
@@ -1058,25 +1066,17 @@
       (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
 #+end_src
 * Front-end
-** js-mode
-#+begin_src emacs-lisp
-  (use-package js-mode
-    :mode (("\\.js\\'" . js-jsx-mode)
-           ("\\.jsx\\'" . js-jsx-mode))
-    :custom (js-indent-level 2))
-#+end_src
 ** tide
 #+begin_src emacs-lisp
   (use-package tide
     :ensure t
     :config
-    (setq tide-completion-enable-autoimport-suggestions t)
-    )
+    (setq tide-completion-enable-autoimport-suggestions t))
 
   (defun setup-tide-mode ()
     "Setup tide mode for other mode."
     (interactive)
-    (message "setup tide mode ....")
+    ;; (message "setup tide mode ....")
     (tide-setup)
     (flycheck-mode +1)
     (setq flycheck-check-syntax-automatically '(save mode-enabled))
@@ -1090,9 +1090,6 @@
             (company-dabbrev-code company-keywords company-files)
             (company-abbrev company-yasnippet)))
     )
-
-  (add-hook 'js-mode-hook 'setup-tide-mode)
-  ;; (add-hook 'typescript-mode-hook 'setup-tide-mode)
 #+end_src
 ** prettier-js
 #+begin_src emacs-lisp
@@ -1108,19 +1105,28 @@
       "Enable prettier-js-mode if an rc file is located."
       (if (locate-dominating-file default-directory ".prettierrc")
           (prettier-js-mode +1)))
-    (add-hook 'js-mode-hook 'maybe-use-prettier)
-    (add-hook 'typescript-mode-hook 'maybe-use-prettier)
+    (add-hook 'web-mode-hook 'maybe-use-prettier)
     )
+#+end_src
+** web-mode
+#+begin_src emacs-lisp
+  (use-package web-mode
+    :ensure t
+    :mode (("\\.tsx\\'" . web-mode)
+           ("\\.js\\'" . web-mode)
+           ("\\.jsx\\'" . web-mode))
+    :hook (web-mode . setup-tide-mode)
+    :custom
+    (web-mode-markup-indent-offset 2)
+    (web-mode-css-indent-offset 2)
+    (web-mode-code-indent-offset 2))
 #+end_src
 ** typescript
 #+begin_src emacs-lisp
   (use-package typescript-mode
-    :mode (("\\.ts\\'" . typescript-mode)
-           ("\\.tsx\\'" . typescript-mode))
+    :mode (("\\.ts\\'" . typescript-mode))
     :hook (typescript-mode . lsp-deferred)
     :config
-    ;; (flycheck-add-mode 'javascript-eslint 'typescript-mode)
-    (flycheck-mode +1)
     (setq typescript-indent-level 2))
 #+end_src
 ** Vue
