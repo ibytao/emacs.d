@@ -813,6 +813,11 @@
   (use-package company-tabnine
     :ensure t)
 
+  (use-package company-statistics
+    :ensure t
+    :config
+    (company-statistics-mode))
+
   (use-package company
     :ensure t
     :bind (:map company-active-map
@@ -1042,13 +1047,7 @@
   (use-package go-mode
     :ensure t
     :mode (("\\.go\\'" . go-mode))
-    :hook ((go-mode . lsp-deferred))
-    :config
-    (defun lsp-go-install-save-hooks ()
-      (add-hook 'before-save-hook #'lsp-format-buffer t t)
-      (add-hook 'before-save-hook #'lsp-organize-imports t t))
-    (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
-    )
+    :hook ((go-mode . lsp-deferred)))
 #+end_src
 ** rust
 #+begin_src emacs-lisp
@@ -1106,20 +1105,56 @@
       (if (locate-dominating-file default-directory ".prettierrc")
           (prettier-js-mode +1)))
     (add-hook 'web-mode-hook 'maybe-use-prettier)
+    (add-hook 'js-mode-hook 'maybe-use-prettier)
+    )
+#+end_src
+** js-mode
+#+begin_src emacs-lisp
+  (use-package js-mode
+    ;; :mode (("\\.js\\'" . js-jsx-mode)
+    ;;        ("\\.jsx\\'" . js-jsx-mode))
+    :hook ((js-mode . setup-tide-mode))
+    :custom
+    (js-indent-level 2)
+    (typescript-indent-level 2))
+
+  (use-package emmet-mode
+    :ensure t
+    :hook (web-mode css-mode scss-mode sgml-mode js-mode)
+    :bind ("TAB" . emmet-expand-line)
+    :config
+    (add-hook 'emmet-mode-hook (lambda()
+                                 (setq emmet-indent-after-insert t)))
+    (eval-after-load "emmet-mode"
+      (lambda ()
+         (define-key emmet-mode-keymap (kbd "C-j") nil)
+         (define-key emmet-mode-keymap (kbd "<C-return>") nil))
+      ))
+  (use-package mode-local
+    :ensure t
+    :config
+    (setq-mode-local js-mode emmet-expand-jsx-className? t)
+    (setq-mode-local web-mode emmet-expand-jsx-className? nil)
     )
 #+end_src
 ** web-mode
 #+begin_src emacs-lisp
   (use-package web-mode
     :ensure t
-    :mode (("\\.tsx\\'" . web-mode)
-           ("\\.js\\'" . web-mode)
-           ("\\.jsx\\'" . web-mode))
-    :hook (web-mode . setup-tide-mode)
+    :mode (("\\.tsx\\'" . web-mode))
     :custom
     (web-mode-markup-indent-offset 2)
     (web-mode-css-indent-offset 2)
     (web-mode-code-indent-offset 2))
+
+  (add-hook 'web-mode-hook
+            (lambda ()
+              ;; short circuit js mode and just do everything in jsx-mode
+              (if (equal web-mode-content-type "javascript")
+                  (web-mode-set-content-type "jsx")
+                (message "now set to: %s" web-mode-content-type))
+              (when (string-equal "tsx" (file-name-extension buffer-file-name)) (lsp))
+              (when (string-equal "js" (file-name-extension buffer-file-name)) (setup-tide-mode))))
 #+end_src
 ** typescript
 #+begin_src emacs-lisp
