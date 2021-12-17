@@ -1,3 +1,4 @@
+#+STARTUP: show2levels
 * Emacs Initialization
 ** Packages Sources
 #+BEGIN_SRC emacs-lisp
