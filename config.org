@@ -1028,11 +1028,11 @@
                 (concat "-Xbootclasspath/a:" lombok-path)))
 
 
-    (require 'lsp-java-boot)
+    ;; (require 'lsp-java-boot)
 
     ;; to enable the lenses
-    (add-hook 'lsp-mode-hook #'lsp-lens-mode)
-    (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+    ;; (add-hook 'lsp-mode-hook #'lsp-lens-mode)
+    ;; (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
 
     (add-hook 'java-mode-hook (lambda () (gradle-mode 1)))
     )
@@ -1108,6 +1108,7 @@
 ** js-mode
 #+begin_src emacs-lisp
   (use-package js-mode
+    :ensure nil
     ;; :mode (("\\.js\\'" . js-jsx-mode)
     ;;        ("\\.jsx\\'" . js-jsx-mode))
     :hook ((js-mode . setup-tide-mode))
