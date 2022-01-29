@@ -758,7 +758,8 @@
     (lsp-ui-doc-max-width 150)
     (lsp-ui-doc-max-height 30)
     (lsp-ui-doc-use-childframe t)
-    (lsp-ui-doc-use-webkit t)
+    (lsp-ui-doc-show-with-cursor t)
+    (lsp-ui-doc-show-with-mouse nil)
     ;; lsp-ui-flycheck
     (lsp-ui-flycheck-enable nil)
     ;; lsp-ui-sideline
@@ -791,7 +792,7 @@
           ("M-/" . lsp-ui-peek-find-implementation)
           ;; ("C-c m"   . lsp-ui-imenu)
           ;; ("C-c s"   . lsp-ui-sideline-mode)
-          ("s-i"   . ladicle/toggle-lsp-ui-doc)
+          ("s-d"   . ladicle/toggle-lsp-ui-doc)
           )
     :hook
     (lsp-mode . lsp-ui-mode)
