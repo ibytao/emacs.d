@@ -441,6 +441,9 @@
     :init
     (setq counsel-find-file-ignore-regexp (regexp-opt '(".git" ".DS_Store")))
     (setq recentf-max-saved-items 200))
+
+  (use-package smex
+    :ensure t)
 #+end_src
 ** swiper
 #+begin_src emacs-lisp
@@ -722,6 +725,13 @@
                 ("<C-tab>" . origami-recursively-toggle-node)
                 ("<S-tab>" . origami-toggle-all-nodes)))
 #+end_src
+** webkit
+#+begin_src emacs-lisp
+  (use-package webkit
+    :bind ("s-b" 'webkit)) ;; Bind to whatever global key binding you want if you want
+  (use-package 'webkit-ace) ;; If you want link hinting
+  (use-package 'webkit-dark) ;; If you want to use the simple dark mode
+#+end_src
 * Languages
 ** lsp
 #+begin_src emacs-lisp
@@ -758,6 +768,7 @@
     (lsp-ui-doc-max-width 150)
     (lsp-ui-doc-max-height 30)
     (lsp-ui-doc-use-childframe t)
+    (lsp-ui-doc-use-webkit t)
     (lsp-ui-doc-show-with-cursor t)
     (lsp-ui-doc-show-with-mouse nil)
     ;; lsp-ui-flycheck
