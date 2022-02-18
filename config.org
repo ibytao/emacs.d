@@ -560,7 +560,6 @@
     :ensure t
     :config
     (smartparens-global-mode t)
-    (add-hook 'org-mode-hook (lambda () (smartparens-mode -1)))
     (add-hook 'clojure-mode-hook (lambda () (smartparens-mode -1)))
     (add-hook 'emacs-lisp-mode-hook (lambda () (smartparens-mode -1)))
     (add-hook 'cider-repl-mode-hook (lambda () (smartparens-mode -1)))
@@ -958,6 +957,7 @@
     (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
     (add-to-list 'auto-mode-alist '("\\.cljs$" . clojurescript-mode))
     (add-to-list 'auto-mode-alist '("\\.cljc$" . clojurec-mode))
+    (require 'smartparens-clojure)
     )
 #+end_src
 ** clj-refactor
@@ -1128,7 +1128,9 @@
     :hook ((js-mode . setup-tide-mode))
     :custom
     (js-indent-level 2)
-    (typescript-indent-level 2))
+    (typescript-indent-level 2)
+    :config
+    (require 'smartparens-javascript))
 
   (use-package emmet-mode
     :ensure t
@@ -1154,11 +1156,14 @@
 #+begin_src emacs-lisp
   (use-package web-mode
     :ensure t
-    :mode (("\\.tsx\\'" . web-mode))
+    :mode (("\\.tsx\\'" . web-mode)
+           ("\\.js\\'" . web-mode))
     :custom
     (web-mode-markup-indent-offset 2)
     (web-mode-css-indent-offset 2)
-    (web-mode-code-indent-offset 2))
+    (web-mode-code-indent-offset 2)
+    :config
+    (require 'smartparens-html))
 
   (add-hook 'web-mode-hook
             (lambda ()
@@ -1233,21 +1238,22 @@
 * Org-Mode
 ** org
 #+begin_src emacs-lisp
-     (use-package org
-       :ensure org-contrib
-       :config
-       (require 'org-tempo)
-       (add-hook 'org-mode-hook (lambda () (setq truncate-lines nil)))
-       (setq org-cycle-separator-lines 1)
+  (use-package org
+    :ensure org-contrib
+    :config
+    (require 'smartparens-org)
+    (require 'org-tempo)
+    (add-hook 'org-mode-hook (lambda () (setq truncate-lines nil)))
+    (setq org-cycle-separator-lines 1)
 
-       (setq org-confirm-babel-evaluate nil)
-       (require 'ob-js)
-       (org-babel-do-load-languages 'org-babel-load-languages
-                                    '((python . t)
-                                      (emacs-lisp . t)
-                                      (sh . t)
-                                      (js . t)))
-       )
+    (setq org-confirm-babel-evaluate nil)
+    (require 'ob-js)
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 '((python . t)
+                                   (emacs-lisp . t)
+                                   (sh . t)
+                                   (js . t)))
+    )
    #+end_src
 ** cal-china-x
    #+begin_src emacs-lisp
