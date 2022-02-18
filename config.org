@@ -1065,7 +1065,9 @@
     :hook ((rust-mode . lsp-deferred))
     :bind (("C-c C-c" . rust-run))
     :bind (:map rust-mode-map
-                ("C-<return>" . open-line-below-semicolon)))
+                ("C-<return>" . open-line-below-semicolon))
+    :config
+    (require 'smartparens-rust))
 
   (use-package flycheck-rust
     :ensure t
