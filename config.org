@@ -1026,6 +1026,7 @@
     :init
     (setenv "JAVA_HOME" (shell-command-to-string "printf %s \"$(/usr/libexec/java_home)\""))
     :config
+    (setq lsp-java-save-actions-organize-imports t)
     ;;java1.8
     (setq lsp-java-jdt-download-url  "https://download.eclipse.org/jdtls/milestones/0.57.0/jdt-language-server-0.57.0-202006172108.tar.gz")
 
@@ -1056,7 +1057,8 @@
   (use-package go-mode
     :ensure t
     :mode (("\\.go\\'" . go-mode))
-    :hook ((go-mode . lsp-deferred)))
+    :hook ((go-mode . lsp-deferred)
+           (before-save . lsp-organize-imports)))
 #+end_src
 ** rust
 #+begin_src emacs-lisp
