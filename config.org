@@ -1134,19 +1134,19 @@
     :config
     (require 'smartparens-javascript))
 
-  (use-package emmet-mode
-    :ensure t
-    :hook (web-mode css-mode scss-mode sgml-mode js-mode)
-    :config
-    (add-hook 'emmet-mode-hook (lambda()
-                                 (setq emmet-indent-after-insert t)
-                                 (define-key emmet-mode-keymap (kbd "TAB") 'emmet-expand-line)))
+  ;; (use-package emmet-mode
+  ;;   :ensure t
+  ;;   :hook (web-mode css-mode scss-mode sgml-mode js-mode)
+  ;;   :config
+  ;;   (add-hook 'emmet-mode-hook (lambda()
+  ;;                                (setq emmet-indent-after-insert t)
+  ;;                                (define-key emmet-mode-keymap (kbd "TAB") 'emmet-expand-line)))
 
-    (eval-after-load "emmet-mode"
-      (lambda ()
-         (define-key emmet-mode-keymap (kbd "C-j") nil)
-         (define-key emmet-mode-keymap (kbd "<C-return>") nil))
-      ))
+  ;;   (eval-after-load "emmet-mode"
+  ;;     (lambda ()
+  ;;        (define-key emmet-mode-keymap (kbd "C-j") nil)
+  ;;        (define-key emmet-mode-keymap (kbd "<C-return>") nil))
+  ;;     ))
   (use-package mode-local
     :ensure t
     :config
