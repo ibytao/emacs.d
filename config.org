@@ -1184,17 +1184,6 @@
     :config
     (setq typescript-indent-level 2))
 #+end_src
-** Vue
-#+begin_src emacs-lisp
-  (use-package vue-mode
-    :delight "V "
-    :hook ((vue-mode . lsp-deferred))
-    :mode ("\\.vue\\'")
-    :custom
-    ;; 0, 1, or 2, representing (respectively) none, low, and high coloring
-    (mmm-submode-decoration-level 0)
-    (vue-html-extra-indent 2))
-#+end_src
 ** css–less-scss
 #+begin_src emacs-lisp
   (use-package css-mode
