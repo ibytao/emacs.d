@@ -5,6 +5,21 @@
   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                            ("gnu" . "https://elpa.gnu.org/packages/")
                            ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+
+  ;;straight
+  (defvar bootstrap-version)
+  (let ((bootstrap-file
+         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+        (bootstrap-version 5))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
+  (setq package-enable-at-startup nil)
 #+END_SRC
 ** use-package
 #+begin_src emacs-lisp
@@ -116,6 +131,14 @@
   ;; toggle-company-english-helper
   ;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/elpa/company-english-helper"))
   ;; (require 'company-english-helper)
+
+  ;; create dir
+  (defadvice find-file (before make-directory-maybe (filename &optional wildcards) activate)
+    "Create parent directory if not exists while visiting file."
+    (unless (file-exists-p filename)
+      (let ((dir (file-name-directory filename)))
+        (unless (file-exists-p dir)
+          (make-directory dir t)))))
 #+end_src
 ** Theme
 #+begin_src emacs-lisp
@@ -818,6 +841,14 @@
   (add-hook 'dap-stopped-hook
             (lambda (arg) (call-interactively #'dap-hydra)))
 #+end_src
+** lsp-volar
+#+begin_src emacs-lisp
+  (straight-use-package
+   '(lsp-volar :type git :host github :repo "jadestrong/lsp-volar"))
+
+  (use-package lsp-volar
+    :straight t)
+#+end_src
 ** company
 #+begin_src emacs-lisp
   (use-package company-tabnine
@@ -1125,8 +1156,8 @@
 #+begin_src emacs-lisp
   (use-package js-mode
     :ensure nil
-    ;; :mode (("\\.js\\'" . js-jsx-mode)
-    ;;        ("\\.jsx\\'" . js-jsx-mode))
+    :mode (("\\.js\\'" . js-jsx-mode)
+           ("\\.jsx\\'" . js-jsx-mode))
     :hook ((js-mode . setup-tide-mode))
     :custom
     (js-indent-level 2)
@@ -1147,12 +1178,12 @@
   ;;        (define-key emmet-mode-keymap (kbd "C-j") nil)
   ;;        (define-key emmet-mode-keymap (kbd "<C-return>") nil))
   ;;     ))
-  (use-package mode-local
-    :ensure t
-    :config
-    (setq-mode-local js-mode emmet-expand-jsx-className? t)
-    (setq-mode-local web-mode emmet-expand-jsx-className? nil)
-    )
+  ;; (use-package mode-local
+  ;;   :ensure t
+  ;;   :config
+  ;;   (setq-mode-local js-mode emmet-expand-jsx-className? t)
+  ;;   (setq-mode-local web-mode emmet-expand-jsx-className? nil)
+  ;;   )
 #+end_src
 ** web-mode
 #+begin_src emacs-lisp
@@ -1165,19 +1196,20 @@
     (web-mode-css-indent-offset 2)
     (web-mode-code-indent-offset 2)
     :config
-    (setq web-mode-script-padding 4)
-    (setq web-mode-style-padding 4)
+    (setq web-mode-script-padding 0)
+    (setq web-mode-style-padding 0)
+    (setq web-mode-block-padding 0)
     (require 'smartparens-html))
 
   (add-hook 'web-mode-hook
             (lambda ()
               ;; short circuit js mode and just do everything in jsx-mode
-              (if (equal web-mode-content-type "javascript")
-                  (web-mode-set-content-type "jsx")
-                (message "now set to: %s" web-mode-content-type))
+              ;; (if (equal web-mode-content-type "javascript")
+              ;;     (web-mode-set-content-type "jsx")
+              ;;   (message "now set to: %s" web-mode-content-type))
+              (setq lsp-enable-indentation nil)
               (when (string-equal "tsx" (file-name-extension buffer-file-name)) (lsp))
-              (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp))
-              (when (string-equal "js" (file-name-extension buffer-file-name)) (lsp))))
+              (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp))))
 #+end_src
 ** typescript
 #+begin_src emacs-lisp
