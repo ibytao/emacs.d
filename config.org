@@ -542,7 +542,8 @@
 #+begin_src emacs-lisp
   (use-package undo-tree
     :config
-    (global-undo-tree-mode))
+    (global-undo-tree-mode)
+    (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))))
 #+end_src
 ** session
 #+begin_src emacs-lisp
@@ -1199,7 +1200,7 @@
     (setq web-mode-script-padding 0)
     (setq web-mode-style-padding 0)
     (setq web-mode-block-padding 0)
-    (require 'smartparens-html))
+    (setf (alist-get 'web-mode lsp--formatting-indent-alist) 'web-mode-code-indent-offset))
 
   (add-hook 'web-mode-hook
             (lambda ()
