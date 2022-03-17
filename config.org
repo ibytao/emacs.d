@@ -756,7 +756,7 @@
   (use-package 'webkit-dark) ;; If you want to use the simple dark mode
 #+end_src
 * Languages
-** lsp
+** lsp-mode
 #+begin_src emacs-lisp
   (use-package lsp-mode
     :ensure t
@@ -772,7 +772,7 @@
                 (when lsp-completion-mode
                   (setq company-backends
                         '((company-capf :with company-tabnine :separate)
-                          (company-dabbrev-code company-keywords company-files)
+                          (company-dabbrev-code company-keywords company-css company-files)
                           (company-abbrev company-yasnippet)))
                   ;; (set (make-local-variable 'company-backends)
                   ;;      (remq 'company-capf company-backends))
@@ -873,13 +873,14 @@
     :config
     (global-company-mode t)
     (setq company-tooltip-maximum-width 70)
-    (setq company-idle-delay 0.2
+    (setq company-idle-delay 0.1
           company-show-numbers t
-          company-minimum-prefix-length 2)
+          company-minimum-prefix-length 2
+          company-tooltip-flip-when-above t)
 
     (setq company-backends
           '((company-capf :with company-tabnine :separate)
-            (company-dabbrev-code company-keywords company-files)
+            (company-dabbrev-code company-keywords company-css company-files)
             (company-abbrev company-yasnippet)))
 
     (add-hook 'emacs-lisp-mode-hook
@@ -1192,6 +1193,14 @@
     :ensure t
     :mode (("\\.tsx\\'" . web-mode)
            ("\\.vue\\'" . web-mode))
+    :hook ((web-mode . (lambda ()
+                         ;; short circuit js mode and just do everything in jsx-mode
+                         ;; (if (equal web-mode-content-type "javascript")
+                         ;;     (web-mode-set-content-type "jsx")
+                         ;;   (message "now set to: %s" web-mode-content-type))
+                         ;; (setq lsp-enable-indentation nil)
+                         (when (string-equal "tsx" (file-name-extension buffer-file-name)) (lsp))
+                         (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp)))))
     :custom
     (web-mode-markup-indent-offset 2)
     (web-mode-css-indent-offset 2)
@@ -1201,16 +1210,6 @@
     (setq web-mode-style-padding 0)
     (setq web-mode-block-padding 0)
     (setf (alist-get 'web-mode lsp--formatting-indent-alist) 'web-mode-code-indent-offset))
-
-  (add-hook 'web-mode-hook
-            (lambda ()
-              ;; short circuit js mode and just do everything in jsx-mode
-              ;; (if (equal web-mode-content-type "javascript")
-              ;;     (web-mode-set-content-type "jsx")
-              ;;   (message "now set to: %s" web-mode-content-type))
-              (setq lsp-enable-indentation nil)
-              (when (string-equal "tsx" (file-name-extension buffer-file-name)) (lsp))
-              (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp))))
 #+end_src
 ** typescript
 #+begin_src emacs-lisp
@@ -1219,20 +1218,6 @@
     :hook (typescript-mode . lsp-deferred)
     :config
     (setq typescript-indent-level 2))
-#+end_src
-** css–less-scss
-#+begin_src emacs-lisp
-  (use-package css-mode
-    :hook (css-mode . lsp-deferred)
-    :custom (css-indent-offset 2))
-
-  (use-package less-css-mode
-    :hook (less-mode . lsp-deferred)
-    :mode "\\.less\\'")
-
-  (use-package scss-mode
-    :hook (scss-mode . lsp-deferred)
-    :mode "\\.scss\\'")
 #+end_src
 ** dart&flutter
 #+begin_src emacs-lisp
