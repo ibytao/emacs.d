@@ -545,14 +545,15 @@
     (global-undo-tree-mode)
     (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))))
 #+end_src
-** session
+** goto-chg
 #+begin_src emacs-lisp
-  (use-package session
-    :ensure t
-    :bind
-    (("C-;" . session-jump-to-last-change))
-    :config
-    (setq session-jump-undo-threshold 100))
+  (straight-use-package
+   '(lsp-volar :type git :host github :repo "emacs-evil/goto-chg"))
+
+  (use-package goto-chg
+    :straight t
+    :bind (("C-." . goto-last-change)
+           ("C-;" . goto-last-change-reverse)))
 #+end_src
 ** magit
 #+begin_src emacs-lisp
