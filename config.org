@@ -552,8 +552,8 @@
 
   (use-package goto-chg
     :straight t
-    :bind (("C-." . goto-last-change)
-           ("C-;" . goto-last-change-reverse)))
+    :bind (("C-;" . goto-last-change)
+           ("C-'" . goto-last-change-reverse)))
 #+end_src
 ** magit
 #+begin_src emacs-lisp
@@ -583,8 +583,29 @@
 #+begin_src emacs-lisp
   (use-package smartparens
     :ensure t
+    :bind (:map smartparens-mode-map
+                ("C-M-a" . sp-beginning-of-sexp)
+                ("C-M-e" . sp-end-of-sexp)
+
+                ("C-<down>" . sp-down-sexp)
+                ("C-<up>"   . sp-up-sexp)
+                ("M-<down>" . sp-backward-down-sexp)
+                ("M-<up>"   . sp-backward-up-sexp)
+
+                ("C-M-f" . sp-forward-sexp)
+                ("C-M-b" . sp-backward-sexp)
+
+                ("C-M-n" . sp-next-sexp)
+                ("C-M-p" . sp-previous-sexp)
+
+                ("C-M-t" . sp-transpose-sexp)
+                ("C-M-k" . sp-kill-sexp)
+                ("C-k"   . sp-kill-hybrid-sexp)
+                ("M-k"   . sp-backward-kill-sexp))
+
     :config
     (smartparens-global-mode t)
+
     (add-hook 'clojure-mode-hook (lambda () (smartparens-mode -1)))
     (add-hook 'emacs-lisp-mode-hook (lambda () (smartparens-mode -1)))
     (add-hook 'cider-repl-mode-hook (lambda () (smartparens-mode -1)))
@@ -594,11 +615,13 @@
 #+begin_src emacs-lisp
   (use-package ace-jump-mode
     :ensure t
+    :bind (("s-m" . ace-jump-mode))
+    :hook (ace-jump-mode-end . forward-word)
     :config
     ;; you can select the key you prefer to
-    (define-key org-mode-map (kbd "C-j") nil)
-    (define-key paredit-mode-map (kbd "C-j") nil)
-    (define-key global-map (kbd "C-j") 'ace-jump-mode)
+    ;; (define-key org-mode-map (kbd "C-j") nil)
+    ;; (define-key paredit-mode-map (kbd "C-j") nil)
+    ;; (define-key global-map (kbd "C-j") 'ace-jump-mode)
     )
 #+end_src
 ** projectile
@@ -772,14 +795,17 @@
               (lambda ()
                 (when lsp-completion-mode
                   (setq company-backends
-                        '((company-capf :with company-tabnine :separate)
-                          (company-dabbrev-code company-keywords company-css company-files)
+                        '((company-capf :with company-dabbrev-code :separate)
+                          (company-keywords company-css company-files)
                           (company-abbrev company-yasnippet)))
                   ;; (set (make-local-variable 'company-backends)
                   ;;      (remq 'company-capf company-backends))
                   )))
     :config
     (setq lsp-completion-enable-additional-text-edit nil)
+    (setq lsp-eldoc-enable-hover nil)
+    (setq lsp-modeline-diagnostics-enable nil)
+    (setq lsp-signature-render-documentation nil)
     (setq lsp-signature-auto-activate nil))
 
   (use-package lsp-ui :ensure t
@@ -853,8 +879,8 @@
 #+end_src
 ** company
 #+begin_src emacs-lisp
-  (use-package company-tabnine
-    :ensure t)
+  ;; (use-package company-tabnine
+  ;;   :ensure t)
 
   (use-package company-statistics
     :ensure t
@@ -874,21 +900,21 @@
     :config
     (global-company-mode t)
     (setq company-tooltip-maximum-width 70)
-    (setq company-idle-delay 0.1
+    (setq company-idle-delay 0
           company-show-numbers t
-          company-minimum-prefix-length 2
+          company-minimum-prefix-length 1
           company-tooltip-flip-when-above t)
 
     (setq company-backends
-          '((company-capf :with company-tabnine :separate)
-            (company-dabbrev-code company-keywords company-css company-files)
+          '((company-capf :with company-dabbrev-code :separate)
+            (company-keywords company-css company-files)
             (company-abbrev company-yasnippet)))
 
     (add-hook 'emacs-lisp-mode-hook
               (lambda ()
                 (setq company-backends
-                      '((company-capf :with company-tabnine :separate)
-                        (company-dabbrev-code company-keywords company-files)
+                      '((company-capf :with company-dabbrev-code :separate)
+                        (company-keywords company-files)
                         (company-abbrev company-yasnippet)))))
     )
 #+end_src
@@ -990,9 +1016,7 @@
     :config
     (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
     (add-to-list 'auto-mode-alist '("\\.cljs$" . clojurescript-mode))
-    (add-to-list 'auto-mode-alist '("\\.cljc$" . clojurec-mode))
-    (require 'smartparens-clojure)
-    )
+    (add-to-list 'auto-mode-alist '("\\.cljc$" . clojurec-mode)))
 #+end_src
 ** clj-refactor
 #+begin_src emacs-lisp
@@ -1056,12 +1080,13 @@
     :ensure t
     :defer t
     :hook ((java-mode . lsp)
+           (java-mode . gradle-mode)
            (before-save . lsp-format-buffer))
     :init
     (setenv "JAVA_HOME" (shell-command-to-string "printf %s \"$(/usr/libexec/java_home)\""))
     :config
     (setq lsp-java-save-actions-organize-imports t)
-    ;;java1.8
+    ;; java1.8
     (setq lsp-java-jdt-download-url  "https://download.eclipse.org/jdtls/milestones/0.57.0/jdt-language-server-0.57.0-202006172108.tar.gz")
 
     (setq lombok-path (substitute-in-file-name "$HOME/.m2/repository/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar"))
@@ -1080,8 +1105,6 @@
     ;; to enable the lenses
     ;; (add-hook 'lsp-mode-hook #'lsp-lens-mode)
     ;; (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
-
-    (add-hook 'java-mode-hook (lambda () (gradle-mode 1)))
     )
 
 
@@ -1132,8 +1155,8 @@
     (define-key tide-references-mode-map (kbd "v") 'tide-goto-reference)
 
     (setq company-backends
-          '((company-tide :with company-tabnine :separate)
-            (company-dabbrev-code company-keywords company-files)
+          '((company-tide :with company-dabbrev-code :separate)
+            (company-keywords company-css company-files)
             (company-abbrev company-yasnippet)))
     )
 #+end_src
@@ -1146,54 +1169,46 @@
     ;;                     "--bracket-spacing" "false"
     ;;                     "--semi" "true"
     ;;                     ))
+    :hook ((web-mode . maybe-use-prettier)
+           (rjsx-mode . maybe-use-prettier))
     :config
     (defun maybe-use-prettier ()
       "Enable prettier-js-mode if an rc file is located."
       (if (locate-dominating-file default-directory ".prettierrc")
-          (prettier-js-mode +1)))
-    (add-hook 'web-mode-hook 'maybe-use-prettier)
-    (add-hook 'js-mode-hook 'maybe-use-prettier)
+          (prettier-js-mode +1)))  
     )
 #+end_src
-** js-mode
+** add-node-modules-path
 #+begin_src emacs-lisp
-  (use-package js-mode
-    :ensure nil
-    :mode (("\\.js\\'" . js-jsx-mode)
-           ("\\.jsx\\'" . js-jsx-mode))
-    :hook ((js-mode . setup-tide-mode))
-    :custom
-    (js-indent-level 2)
-    (typescript-indent-level 2)
-    :config
-    (require 'smartparens-javascript))
+  (use-package add-node-modules-path
+    :ensure t
+    :hook ((rjsx-mode . add-node-modules-path)
+           (typescript-mode . add-node-modules-path)
+           (web-mode . add-node-modules-path)))
+#+end_src
+** tailwindcss
+#+begin_src emacs-lisp
+  (straight-use-package
+   '(lsp-tailwindcss :type git :host github :repo "merrickluo/lsp-tailwindcss"))
 
-  ;; (use-package emmet-mode
-  ;;   :ensure t
-  ;;   :hook (web-mode css-mode scss-mode sgml-mode js-mode)
-  ;;   :config
-  ;;   (add-hook 'emmet-mode-hook (lambda()
-  ;;                                (setq emmet-indent-after-insert t)
-  ;;                                (define-key emmet-mode-keymap (kbd "TAB") 'emmet-expand-line)))
-
-  ;;   (eval-after-load "emmet-mode"
-  ;;     (lambda ()
-  ;;        (define-key emmet-mode-keymap (kbd "C-j") nil)
-  ;;        (define-key emmet-mode-keymap (kbd "<C-return>") nil))
-  ;;     ))
-  ;; (use-package mode-local
-  ;;   :ensure t
-  ;;   :config
-  ;;   (setq-mode-local js-mode emmet-expand-jsx-className? t)
-  ;;   (setq-mode-local web-mode emmet-expand-jsx-className? nil)
-  ;;   )
+  (use-package lsp-tailwindcss
+    :init
+    (setq lsp-tailwindcss-add-on-mode t))
+#+end_src
+** emment
+#+begin_src emacs-lisp
+  (use-package emmet-mode
+    :ensure t
+    :hook (web-mode css-mode scss-mode sgml-mode typescript-tsx-mode rjsx-mode)
+    :bind (:map emmet-mode-keymap
+                ("<C-return>" . nil)))
+  
 #+end_src
 ** web-mode
 #+begin_src emacs-lisp
   (use-package web-mode
     :ensure t
-    :mode (("\\.tsx\\'" . web-mode)
-           ("\\.vue\\'" . web-mode))
+    :mode (("\\.vue\\'" . web-mode))
     :hook ((web-mode . (lambda ()
                          ;; short circuit js mode and just do everything in jsx-mode
                          ;; (if (equal web-mode-content-type "javascript")
@@ -1203,22 +1218,61 @@
                          (when (string-equal "tsx" (file-name-extension buffer-file-name)) (lsp))
                          (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp)))))
     :custom
+    (web-mode-enable-comment-annotation nil)
     (web-mode-markup-indent-offset 2)
-    (web-mode-css-indent-offset 2)
     (web-mode-code-indent-offset 2)
+    (web-mode-css-indent-offset 2)
     :config
     (setq web-mode-script-padding 0)
     (setq web-mode-style-padding 0)
     (setq web-mode-block-padding 0)
-    (setf (alist-get 'web-mode lsp--formatting-indent-alist) 'web-mode-code-indent-offset))
+    (setf (alist-get 'web-mode lsp--formatting-indent-alist) 'web-mode-code-indent-offset)
+    (setq web-mode-enable-current-column-highlight t)
+    )
+#+end_src
+** rjsx-mode
+#+begin_src emacs-lisp
+  (use-package rjsx-mode
+    :ensure t
+    :mode (("\\.jsx?\\'" . rjsx-mode))
+    :hook ((rjsx-mode . setup-tide-mode))
+    :config
+    (setq js-indent-level 2)
+
+    ;; Let flycheck handle parse errors
+    (setq-default js2-show-parse-errors nil)
+    (setq-default js2-strict-missing-semi-warning nil)
+    (setq-default js2-strict-trailing-comma-warning nil) ;; jshint does not warn about this now for some reason
+
+    (add-hook 'rjsx-mode-hook
+              (lambda()
+                (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
+                ;; (flycheck-select-checker 'javascript-eslint)
+                )))
 #+end_src
 ** typescript
 #+begin_src emacs-lisp
   (use-package typescript-mode
-    :mode (("\\.ts\\'" . typescript-mode))
-    :hook (typescript-mode . lsp-deferred)
+    :ensure t
+    :mode (("\\.ts\\'" . typescript-mode)
+           ("\\.tsx\\'" . typescript-tsx-mode)
+           )  
+    :hook ((typescript-mode . lsp-deferred))
+    :init
+    (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
     :config
     (setq typescript-indent-level 2))
+
+  (use-package tree-sitter
+    :ensure t
+    :hook ((typescript-tsx-mode . tree-sitter-hl-mode)))
+
+  (use-package tree-sitter-langs
+    :ensure t
+    :after tree-sitter
+    :config
+    (tree-sitter-require 'tsx)
+    (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx)))
 #+end_src
 ** dart&flutter
 #+begin_src emacs-lisp
