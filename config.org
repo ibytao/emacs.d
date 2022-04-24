@@ -664,6 +664,11 @@
       :command "npm"
       :args '("run" "dev")
       :cwd "~/Workspace/cloud_pro")
+    (prodigy-define-service
+      :name "decision-engine"
+      :command "npm"
+      :args '("run" "dev")
+      :cwd "~/Workspace/decision-engine")
     )
 #+end_src
 ** guide-key
@@ -1169,8 +1174,7 @@
     ;;                     "--bracket-spacing" "false"
     ;;                     "--semi" "true"
     ;;                     ))
-    :hook ((web-mode . maybe-use-prettier)
-           (rjsx-mode . maybe-use-prettier))
+    :hook ((rjsx-mode . maybe-use-prettier))
     :config
     (defun maybe-use-prettier ()
       "Enable prettier-js-mode if an rc file is located."
@@ -1239,6 +1243,19 @@
     :config
     (setq js-indent-level 2)
 
+    (setq-default js2-allow-rhino-new-expr-initializer nil)
+    (setq-default js2-auto-indent-p nil)
+    (setq-default js2-enter-indents-newline nil)
+    (setq-default js2-global-externs '("module" "require" "buster" "sinon" "assert" "refute" "setTimeout" "clearTimeout" "setInterval" "clearInterval" "location" "__dirname" "console" "JSON" "process"))
+    (setq-default js2-idle-timer-delay 0.1)
+    (setq-default js2-indent-on-enter-key nil)
+    (setq-default js2-mirror-mode nil)
+    (setq-default js2-strict-inconsistent-return-warning nil)
+    (setq-default js2-auto-indent-p t)
+    (setq-default js2-include-rhino-externs nil)
+    (setq-default js2-include-gears-externs nil)
+    (setq-default js2-concat-multiline-strings 'eol)
+    (setq-default js2-rebind-eol-bol-keys nil)
     ;; Let flycheck handle parse errors
     (setq-default js2-show-parse-errors nil)
     (setq-default js2-strict-missing-semi-warning nil)
