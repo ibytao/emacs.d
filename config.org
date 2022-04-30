@@ -807,6 +807,7 @@
                   ;;      (remq 'company-capf company-backends))
                   )))
     :config
+    (setq lsp-before-save-edits nil)
     (setq lsp-completion-enable-additional-text-edit nil)
     (setq lsp-eldoc-enable-hover nil)
     (setq lsp-modeline-diagnostics-enable nil)
@@ -1169,17 +1170,14 @@
 #+begin_src emacs-lisp
   (use-package prettier-js
     :ensure t
-    ;; :custom
-    ;; (prettier-js-args '("--print-width" "80"
-    ;;                     "--bracket-spacing" "false"
-    ;;                     "--semi" "true"
-    ;;                     ))
-    :hook ((rjsx-mode . maybe-use-prettier))
+    :hook ((rjsx-mode . maybe-use-prettier)
+           (web-mode . maybe-use-prettier)
+           (typescript-tsx-mode . maybe-use-prettier))
     :config
     (defun maybe-use-prettier ()
       "Enable prettier-js-mode if an rc file is located."
       (if (locate-dominating-file default-directory ".prettierrc")
-          (prettier-js-mode +1)))  
+          (prettier-js-mode +1)))
     )
 #+end_src
 ** add-node-modules-path
@@ -1210,17 +1208,19 @@
 #+end_src
 ** web-mode
 #+begin_src emacs-lisp
+  (setq-default css-indent-offset 2)
+
   (use-package web-mode
     :ensure t
     :mode (("\\.vue\\'" . web-mode))
-    :hook ((web-mode . (lambda ()
+    :hook (web-mode . (lambda ()
                          ;; short circuit js mode and just do everything in jsx-mode
                          ;; (if (equal web-mode-content-type "javascript")
                          ;;     (web-mode-set-content-type "jsx")
                          ;;   (message "now set to: %s" web-mode-content-type))
                          ;; (setq lsp-enable-indentation nil)
-                         (when (string-equal "tsx" (file-name-extension buffer-file-name)) (lsp))
-                         (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp)))))
+                         ;; (when (string-equal "tsx" (file-name-extension buffer-file-name)) (setup-tide-mode))
+                         (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp-deferred))))
     :custom
     (web-mode-enable-comment-annotation nil)
     (web-mode-markup-indent-offset 2)
