@@ -8,7 +8,6 @@ elpa
 ido.last
 projectile-bookmarks.eld
 recentf
-smex-items
 bookmarks
 config.pdf
 config.tex
@@ -35,3 +34,4 @@ company-statistics-cache.el
 eln-cache
 straight
 undo
+.amx-items

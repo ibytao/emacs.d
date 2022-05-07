@@ -89,6 +89,7 @@
   (blink-cursor-mode t)                                          ; blink cursor
   (add-hook 'before-save-hook 'delete-trailing-whitespace)       ; delete traniling whitespace
   (add-to-list 'default-frame-alist '(fullscreen . maximized))   ; full screen
+  (global-visual-line-mode t)
 
   ;; (set-fringe-mode '(0 . 1))
 
@@ -172,7 +173,8 @@
   ;;   (solaire-global-mode +1))
 
   ;; ----------------------------------------------------------------------------------------------------
-  ;; (add-to-list 'load-path "~/.emacs.d/elpa/emacs-color-theme-solarized/")
+  ;; (straight-use-package
+  ;;  '(lsp-volar :type git :host github :repo "sellout/emacs-color-theme-solarized"))
   ;; (use-package color-theme
   ;;   :config
   ;;   (require 'color-theme-solarized)
@@ -221,6 +223,7 @@
     (setq solarized-height-plus-4 1.2)
 
     (load-theme 'solarized-dark t)
+    (set-face-attribute 'cursor nil :inverse-video nil)
     )
 
   (use-package spaceline
@@ -405,7 +408,7 @@
 ** all-the-icons
 #+begin_src emacs-lisp
   (use-package all-the-icons
-    :ensure t)
+    :if (display-graphic-p))
 #+end_src
 ** dired
 #+begin_src emacs-lisp
@@ -434,11 +437,9 @@
                 ("C-h" . delete-backward-char)
                 ("<return>" . ivy-alt-done))
     :config
-    (ivy-mode 1)
     (setq ivy-use-virtual-buffers nil)
     (setq enable-recursive-minibuffers t)
-    (setq ivy-height 10)
-    (setq ivy-initial-inputs-alist nil)
+    ;; (setq ivy-height 10)
     (setq ivy-count-format "%d/%d ")
     (setq ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
 
@@ -447,7 +448,60 @@
      '(("d" delete-file "delete")
        ("r" rename-file "rename")
        ("x" counsel-find-file-as-root "open as root"))
-     ))
+     )
+
+    (setq ivy-initial-inputs-alist
+          '((counsel-M-x . "^")
+            (ivy-switch-buffer . "^")
+            (ivy-switch-buffer-other-window . "^")
+            (counsel-describe-function . "^")
+            (counsel-describe-variable . "^")
+            (t . "")))
+
+    :hook ((after-init . ivy-mode)
+           (ivy-occur-mode . hl-line-mode))
+    )
+#+end_src
+** all-the-icons-ivy-rich
+#+begin_src emacs-lisp
+  (use-package all-the-icons-ivy-rich
+    :ensure t
+    :init (all-the-icons-ivy-rich-mode 1))
+#+end_src
+** ivy-rich
+#+begin_src emacs-lisp
+  (use-package ivy-rich
+    :ensure t
+    :config
+    (setq ivy-rich-path-style 'abbrev)
+
+    (setcdr (assq t ivy-format-functions-alist)
+            #'ivy-format-function-line)
+
+    (ivy-rich-mode 1))
+#+end_src
+** ivy-posframe
+#+begin_src emacs-lisp
+  (use-package ivy-posframe
+    :ensure t
+    :config
+    (setq ivy-posframe-border-width 2)
+    (setq ivy-posframe-parameters
+          '((left-fringe . 4)
+            (right-fringe . 4)
+            (internal-border-width . 4)))
+
+    (setq ivy-posframe-height-alist
+          '((swiper . 15)
+            (t . 10)))
+
+    (setq ivy-posframe-display-functions-alist
+          '((swiper . ivy-display-function-fallback)
+            (swiper-isearch . ivy-display-function-fallback)
+            (counsel-M-x . ivy-display-function-fallback)
+            (t . ivy-posframe-display-at-frame-center)))
+
+    :hook (after-init . ivy-posframe-mode))
 #+end_src
 ** counsel
 #+begin_src emacs-lisp
@@ -464,16 +518,35 @@
     :init
     (setq counsel-find-file-ignore-regexp (regexp-opt '(".git" ".DS_Store")))
     (setq recentf-max-saved-items 200))
-
-  (use-package smex
-    :ensure t)
+#+end_src
+** wgrep
+#+begin_src emacs-lisp
+  (use-package wgrep
+    :config
+    (setq wgrep-auto-save-buffer t))
+#+end_src
+** amx
+#+begin_src emacs-lisp
+  (use-package amx
+    :ensure t
+    :after ivy
+    :custom
+    (amx-backend 'auto)
+    (amx-save-file "~/.emacs.d/.amx-items")
+    (amx-history-length 50)
+    (amx-show-key-bindings nil)
+    :config
+    (amx-mode 1))
 #+end_src
 ** swiper
 #+begin_src emacs-lisp
   (use-package swiper
     :ensure t
+    :after ivy
     :bind (("C-r" . swiper-thing-at-point)
-           ("C-s" . swiper)))
+           ("C-s" . swiper-isearch)
+           :map swiper-map
+           ("M-%" . swiper-query-replace)))
 #+end_src
 ** expand-region
 #+begin_src emacs-lisp
@@ -542,8 +615,9 @@
 #+begin_src emacs-lisp
   (use-package undo-tree
     :config
-    (global-undo-tree-mode)
-    (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))))
+    (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
+    (setq undo-tree-auto-save-history nil)
+    (global-undo-tree-mode 1))
 #+end_src
 ** goto-chg
 #+begin_src emacs-lisp
@@ -688,6 +762,7 @@
   (use-package perspective
     :ensure t
     :config
+    (customize-set-variable 'persp-mode-prefix-key (kbd "C-c j"))
     (unless (equal persp-mode t)
       (persp-mode)))
 #+end_src
@@ -785,6 +860,45 @@
   (use-package 'webkit-dark) ;; If you want to use the simple dark mode
 #+end_src
 * Languages
+** company
+#+begin_src emacs-lisp
+  ;; (use-package company-tabnine
+  ;;   :ensure t)
+
+  (use-package company-statisticsa
+    :ensure t
+    :config
+    (company-statistics-mode))
+
+  (defun setup-company-backends ()
+    (setq company-backends
+          '(company-tide company-capf
+            (company-files company-dabbrev-code company-keywords company-yasnippet)
+           (company-abbrev company-dabbrev)))
+    )
+
+  (use-package company
+    :ensure t
+    :bind (:map company-active-map
+                ("C-n" . company-select-next)
+                ("C-p" . company-select-previous)
+                ("C-s" . company-filter-candidates)
+                ("C-w" . kill-region-or-backward-word)
+                :map company-search-map
+                ("C-n" . company-select-next)
+                ("C-p" . company-select-previous))
+    :hook ((emacs-lisp-mode . setup-company-backends))
+    :config
+    (global-company-mode t)
+    (setup-company-backends)
+    ;;(setq company-dabbrev-other-buffers t)
+    (setq lsp-completion-provider :none)
+    (setq company-idle-delay 0
+          company-show-numbers t
+          company-minimum-prefix-length 1
+          company-tooltip-align-annotations t
+          company-tooltip-maximum-width 70))
+#+end_src
 ** lsp-mode
 #+begin_src emacs-lisp
   (use-package lsp-mode
@@ -799,15 +913,9 @@
     (add-hook 'lsp-completion-mode-hook
               (lambda ()
                 (when lsp-completion-mode
-                  (setq company-backends
-                        '((company-capf :with company-dabbrev-code :separate)
-                          (company-keywords company-css company-files)
-                          (company-abbrev company-yasnippet)))
-                  ;; (set (make-local-variable 'company-backends)
-                  ;;      (remq 'company-capf company-backends))
-                  )))
+                  (setup-company-backends))))
     :config
-    (setq lsp-before-save-edits nil)
+    (setq lsp-before-save-edits nil) ;; not auto remove do not use variable
     (setq lsp-completion-enable-additional-text-edit nil)
     (setq lsp-eldoc-enable-hover nil)
     (setq lsp-modeline-diagnostics-enable nil)
@@ -882,47 +990,6 @@
 
   (use-package lsp-volar
     :straight t)
-#+end_src
-** company
-#+begin_src emacs-lisp
-  ;; (use-package company-tabnine
-  ;;   :ensure t)
-
-  (use-package company-statistics
-    :ensure t
-    :config
-    (company-statistics-mode))
-
-  (use-package company
-    :ensure t
-    :bind (:map company-active-map
-                ("C-n" . company-select-next)
-                ("C-p" . company-select-previous)
-                ("C-s" . company-filter-candidates)
-                ("C-w" . kill-region-or-backward-word))
-    :bind (:map company-search-map
-                ("C-n" . company-select-next)
-                ("C-p" . company-select-previous))
-    :config
-    (global-company-mode t)
-    (setq company-tooltip-maximum-width 70)
-    (setq company-idle-delay 0
-          company-show-numbers t
-          company-minimum-prefix-length 1
-          company-tooltip-flip-when-above t)
-
-    (setq company-backends
-          '((company-capf :with company-dabbrev-code :separate)
-            (company-keywords company-css company-files)
-            (company-abbrev company-yasnippet)))
-
-    (add-hook 'emacs-lisp-mode-hook
-              (lambda ()
-                (setq company-backends
-                      '((company-capf :with company-dabbrev-code :separate)
-                        (company-keywords company-files)
-                        (company-abbrev company-yasnippet)))))
-    )
 #+end_src
 ** flycheck
 #+begin_src emacs-lisp
@@ -1156,15 +1223,10 @@
     (flycheck-mode +1)
     (setq flycheck-check-syntax-automatically '(save mode-enabled))
     (eldoc-mode +1)
+    (company-mode +1)
     (tide-hl-identifier-mode +1)
     (define-key tide-mode-map (kbd "s-.") 'tide-references)
-    (define-key tide-references-mode-map (kbd "v") 'tide-goto-reference)
-
-    (setq company-backends
-          '((company-tide :with company-dabbrev-code :separate)
-            (company-keywords company-css company-files)
-            (company-abbrev company-yasnippet)))
-    )
+    (define-key tide-references-mode-map (kbd "v") 'tide-goto-reference))
 #+end_src
 ** prettier-js
 #+begin_src emacs-lisp
@@ -1204,7 +1266,7 @@
     :hook (web-mode css-mode scss-mode sgml-mode typescript-tsx-mode rjsx-mode)
     :bind (:map emmet-mode-keymap
                 ("<C-return>" . nil)))
-  
+
 #+end_src
 ** web-mode
 #+begin_src emacs-lisp
@@ -1214,13 +1276,13 @@
     :ensure t
     :mode (("\\.vue\\'" . web-mode))
     :hook (web-mode . (lambda ()
-                         ;; short circuit js mode and just do everything in jsx-mode
-                         ;; (if (equal web-mode-content-type "javascript")
-                         ;;     (web-mode-set-content-type "jsx")
-                         ;;   (message "now set to: %s" web-mode-content-type))
-                         ;; (setq lsp-enable-indentation nil)
-                         ;; (when (string-equal "tsx" (file-name-extension buffer-file-name)) (setup-tide-mode))
-                         (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp-deferred))))
+                        ;; short circuit js mode and just do everything in jsx-mode
+                        ;; (if (equal web-mode-content-type "javascript")
+                        ;;     (web-mode-set-content-type "jsx")
+                        ;;   (message "now set to: %s" web-mode-content-type))
+                        ;; (setq lsp-enable-indentation nil)
+                        ;; (when (string-equal "tsx" (file-name-extension buffer-file-name)) (setup-tide-mode))
+                        (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp-deferred))))
     :custom
     (web-mode-enable-comment-annotation nil)
     (web-mode-markup-indent-offset 2)
@@ -1239,10 +1301,9 @@
   (use-package rjsx-mode
     :ensure t
     :mode (("\\.jsx?\\'" . rjsx-mode))
-    :hook ((rjsx-mode . setup-tide-mode))
+    :hook (rjsx-mode . setup-tide-mode)
     :config
     (setq js-indent-level 2)
-
     (setq-default js2-allow-rhino-new-expr-initializer nil)
     (setq-default js2-auto-indent-p nil)
     (setq-default js2-enter-indents-newline nil)
@@ -1265,15 +1326,15 @@
               (lambda()
                 (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
                 ;; (flycheck-select-checker 'javascript-eslint)
-                )))
+                ))
+    )
 #+end_src
 ** typescript
 #+begin_src emacs-lisp
   (use-package typescript-mode
     :ensure t
     :mode (("\\.ts\\'" . typescript-mode)
-           ("\\.tsx\\'" . typescript-tsx-mode)
-           )  
+           ("\\.tsx\\'" . typescript-tsx-mode))
     :hook ((typescript-mode . lsp-deferred))
     :init
     (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
@@ -1338,86 +1399,86 @@
                                    (sh . t)
                                    (js . t)))
     )
-   #+end_src
+#+end_src
 ** cal-china-x
-   #+begin_src emacs-lisp
-     ;;农历
-     (use-package cal-china-x
-       :ensure t
-       :config
-       (setq mark-holidays-in-calendar t)
+#+begin_src emacs-lisp
+  ;;农历
+  (use-package cal-china-x
+    :ensure t
+    :config
+    (setq mark-holidays-in-calendar t)
 
-       (setq holidays '(
-                        ;;公历节日
-                        (holiday-fixed 2 14 "情人节")
-                        (holiday-fixed 9 10 "教师节")
-                        (holiday-float 6 0 3 "父亲节")
-                        ;;农历节日
-                        (holiday-lunar 1 1 "春节" 0)
-                        (holiday-lunar 1 15 "元宵节" 0)
-                        (holiday-solar-term "清明" "清明节")
-                        (holiday-lunar 5 5 "端午节" 0)
-                        (holiday-lunar 7 7 "七夕情人节" 0)
-                        (holiday-lunar 8 15 "中秋节" 0)
-                        ;;纪念日
-                        (holiday-fixed 12 1 "儿子生日")
-                        (holiday-fixed 2 18 "老婆生日" 0)
-                        (holiday-lunar 11 28 "我的生日" 0)
-                        )
-             )
+    (setq holidays '(
+                     ;;公历节日
+                     (holiday-fixed 2 14 "情人节")
+                     (holiday-fixed 9 10 "教师节")
+                     (holiday-float 6 0 3 "父亲节")
+                     ;;农历节日
+                     (holiday-lunar 1 1 "春节" 0)
+                     (holiday-lunar 1 15 "元宵节" 0)
+                     (holiday-solar-term "清明" "清明节")
+                     (holiday-lunar 5 5 "端午节" 0)
+                     (holiday-lunar 7 7 "七夕情人节" 0)
+                     (holiday-lunar 8 15 "中秋节" 0)
+                     ;;纪念日
+                     (holiday-fixed 12 1 "儿子生日")
+                     (holiday-fixed 2 18 "老婆生日" 0)
+                     (holiday-lunar 11 28 "我的生日" 0)
+                     )
+          )
 
-       ;;只显示我定制的节假日
-       (setq calendar-holidays (append cal-china-x-chinese-holidays holidays))
-
-
-       (setq org-agenda-format-date 'd/org-agenda-format-date-aligned)
-       (defun d/org-agenda-format-date-aligned (date)
-         "Format a DATE string for display in the daily/weekly agenda, or timeline.
-           This function makes sure that dates are aligned for easy reading."
-         (message "format----------------------------date-------------")
-         (require 'cal-iso)
-         (let* ((dayname (aref cal-china-x-days
-                               (calendar-day-of-week date)))
-                (day (cadr date))
-                (month (car date))
-                (year (nth 2 date))
-                (cn-date (calendar-chinese-from-absolute (calendar-absolute-from-gregorian date)))
-                (cn-month (cl-caddr cn-date))
-                (cn-day (cl-cadddr cn-date))
-                (cn-month-string (concat (aref cal-china-x-month-name
-                                               (1- (floor cn-month)))
-                                         (if (integerp cn-month)
-                                             ""
-                                           "(闰月)")))
-                (cn-day-string (aref cal-china-x-day-name
-                                     (1- cn-day))))
-           (format "%04d-%02d-%02d 星期%s %s%s" year month
-                   day dayname cn-month-string cn-day-string)))
+    ;;只显示我定制的节假日
+    (setq calendar-holidays (append cal-china-x-chinese-holidays holidays))
 
 
-       )
-   #+end_src
+    (setq org-agenda-format-date 'd/org-agenda-format-date-aligned)
+    (defun d/org-agenda-format-date-aligned (date)
+      "Format a DATE string for display in the daily/weekly agenda, or timeline.
+        This function makes sure that dates are aligned for easy reading."
+      (message "format----------------------------date-------------")
+      (require 'cal-iso)
+      (let* ((dayname (aref cal-china-x-days
+                            (calendar-day-of-week date)))
+             (day (cadr date))
+             (month (car date))
+             (year (nth 2 date))
+             (cn-date (calendar-chinese-from-absolute (calendar-absolute-from-gregorian date)))
+             (cn-month (cl-caddr cn-date))
+             (cn-day (cl-cadddr cn-date))
+             (cn-month-string (concat (aref cal-china-x-month-name
+                                            (1- (floor cn-month)))
+                                      (if (integerp cn-month)
+                                          ""
+                                        "(闰月)")))
+             (cn-day-string (aref cal-china-x-day-name
+                                  (1- cn-day))))
+        (format "%04d-%02d-%02d 星期%s %s%s" year month
+                day dayname cn-month-string cn-day-string)))
+
+
+    )
+#+end_src
 ** org-bullets
-   #+begin_src emacs-lisp
-     (use-package org-bullets
-       :ensure t
-       :config
-       (add-hook 'org-mode-hook (lambda () (org-bullets-mode t)))
-       (setq org-hide-leading-stars t)
-       (setq org-bullets-bullet-list '("☯" "✿" "✚" "◉" "❀"))
-       (setq org-ellipsis "⤵") ;; ⤵ ↴ ⬎ ⤷
-       (set-face-attribute 'org-ellipsis nil :underline nil)
-       (setq org-log-done 'time))
-   #+end_src
+#+begin_src emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode t)))
+    (setq org-hide-leading-stars t)
+    (setq org-bullets-bullet-list '("☯" "✿" "✚" "◉" "❀"))
+    (setq org-ellipsis "⤵") ;; ⤵ ↴ ⬎ ⤷
+    (set-face-attribute 'org-ellipsis nil :underline nil)
+    (setq org-log-done 'time))
+#+end_src
 ** reveal
-   #+begin_src emacs-lisp
-     (use-package ox-reveal
-       :ensure t
-       :config
-       (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
-       (setq org-reveal-mathjax t)
-       )
+#+begin_src emacs-lisp
+  (use-package ox-reveal
+    :ensure t
+    :config
+    (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
+    (setq org-reveal-mathjax t)
+    )
 
-     (use-package htmlize
-       :ensure t)
-   #+end_src
+  (use-package htmlize
+    :ensure t)
+#+end_src
