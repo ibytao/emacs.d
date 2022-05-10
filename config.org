@@ -172,23 +172,6 @@
   ;;   ;;(solaire-mode-swap-bg)
   ;;   (solaire-global-mode +1))
 
-  ;; ----------------------------------------------------------------------------------------------------
-  ;; (straight-use-package
-  ;;  '(lsp-volar :type git :host github :repo "sellout/emacs-color-theme-solarized"))
-  ;; (use-package color-theme
-  ;;   :config
-  ;;   (require 'color-theme-solarized)
-  ;;   (color-theme-initialize)
-  ;;   ;; set dark theme
-  ;;   (color-theme-solarized-dark)
-  ;;   ;; set light theme
-  ;;   ;; (color-theme-solarized-light)
-  ;;   (setq solarized-italic nil)
-  ;;   (setq solarized-bold nil)
-  ;;   (setq solarized-underline nil)
-  ;;   (setq solarized-broken-srgb t)
-  ;;   )
-
   (use-package solarized-theme
     :ensure t
     :config
@@ -277,8 +260,7 @@
 
     ;; 'slant, 'arrow, 'cup, 'wave, 'none
     (setq spaceline-all-the-icons-separator-type 'wave)
-    (setq spaceline-all-the-icons-slim-render t)
-    )
+    (setq spaceline-all-the-icons-slim-render t))
 
   ;; org block code style
   (custom-set-faces
@@ -862,15 +844,15 @@
   ;; (use-package company-tabnine
   ;;   :ensure t)
 
-  (use-package company-statisticsa
-    :ensure t
-    :hook (after-init . company-statistics-mode))
+  ;; (use-package company-statisticsa
+  ;;   :ensure t
+  ;;   :hook (after-init . company-statistics-mode))
 
   (defun setup-company-backends ()
     (setq company-backends
           '(company-files
-            (company-tide :with company-dabbrev-code :with company-yasnippet :separate)
             (company-capf :with company-yasnippet :separate)
+            (company-tide :with company-yasnippet :with company-dabbrev-code :separate)
             (company-abbrev company-dabbrev))))
 
   (use-package company
@@ -883,7 +865,6 @@
                 :map company-search-map
                 ("C-n" . company-select-next)
                 ("C-p" . company-select-previous))
-    :hook ((emacs-lisp-mode . setup-company-backends))
     :config
     (global-company-mode t)
     (setup-company-backends)
@@ -1106,34 +1087,6 @@
     (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)
     )
 #+end_src
-** php
-#+begin_src emacs-lisp
-  (use-package php-mode
-    :ensure t
-    :mode "[^.][^t][^p][^l]\\.php$"
-    ;; :bind (("m-." . ac-php-find-symbol-at-point)
-    ;;        ("m-," . ac-php-location-stack-back))
-    :config
-    (eval-after-load 'php-mode
-      '(require 'php-ext))
-    (define-key php-mode-map  (kbd "m-.") 'ac-php-find-symbol-at-point)   ;goto define
-    (define-key php-mode-map  (kbd "m-,") 'ac-php-location-stack-back)    ;go back
-    (add-hook 'php-mode-hook
-              (lambda ()
-                ;; (paredit-mode t)
-                (setq-default tab-width 4)
-                (setq c-basic-offset 4)
-                (require 'company-php)
-                (company-mode t)
-                (ac-php-core-eldoc-setup) ;; enable eldoc
-                (make-local-variable 'company-backends)
-                (add-to-list 'company-backends 'company-ac-php-backend)))
-    (setq php-file-patterns nil)
-    ;; (add-to-list 'auto-mode-alist '("[^.][^t][^p][^l]\\.php$" . php-mode))
-    (add-to-list 'auto-mode-alist '("\\.tpl.php$" . html-mode))
-    (eval-after-load "php-mode" '(define-key php-mode-map (kbd "C-.") nil))
-    )
-#+end_src
 ** python
 #+begin_src emacs-lisp
   (use-package lsp-python-ms
@@ -1226,6 +1179,8 @@
     (eldoc-mode +1)
     (company-mode +1)
     (tide-hl-identifier-mode +1)
+    ;; aligns annotation to the right hand side
+    (setq company-tooltip-align-annotations t)
     (define-key tide-mode-map (kbd "s-.") 'tide-references)
     (define-key tide-references-mode-map (kbd "v") 'tide-goto-reference))
 #+end_src
@@ -1308,7 +1263,7 @@
     (setq-default js2-allow-rhino-new-expr-initializer nil)
     (setq-default js2-auto-indent-p nil)
     (setq-default js2-enter-indents-newline nil)
-    (setq-default js2-global-externs '("module" "require" "buster" "sinon" "assert" "refute" "setTimeout" "clearTimeout" "setInterval" "clearInterval" "location" "__dirname" "console" "JSON" "process"))
+    (setq-default js2-global-externs '("module" "require" "buster" "sinon" "assert" "refute" "setTimeout" "clearTimeout" "setInterval" "clearInterval" "location" "__dirname" "console" "JSON" "process" "setImmediate"))
     (setq-default js2-idle-timer-delay 0.1)
     (setq-default js2-indent-on-enter-key nil)
     (setq-default js2-mirror-mode nil)
