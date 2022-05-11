@@ -89,9 +89,10 @@
   (blink-cursor-mode t)                                          ; blink cursor
   (add-hook 'before-save-hook 'delete-trailing-whitespace)       ; delete traniling whitespace
   (add-to-list 'default-frame-alist '(fullscreen . maximized))   ; full screen
-  (global-visual-line-mode t)
+  ;;(global-visual-line-mode t)
+  (setq-default truncate-lines t)
 
-  ;; (set-fringe-mode '(0 . 1))
+  (setq directory-abbrev-alist '(("~" . "/Users/buck")))
 
   (when (memq window-system '(mac ns))
     (add-to-list 'default-frame-alist '(ns-appearance . 'dark))
@@ -443,24 +444,6 @@
            (ivy-occur-mode . hl-line-mode))
     )
 #+end_src
-** all-the-icons-ivy-rich
-#+begin_src emacs-lisp
-  (use-package all-the-icons-ivy-rich
-    :ensure t
-    :init (all-the-icons-ivy-rich-mode 1))
-#+end_src
-** ivy-rich
-#+begin_src emacs-lisp
-  (use-package ivy-rich
-    :ensure t
-    :config
-    (setq ivy-rich-path-style 'abbrev)
-
-    (setcdr (assq t ivy-format-functions-alist)
-            #'ivy-format-function-line)
-
-    (ivy-rich-mode 1))
-#+end_src
 ** ivy-posframe
 #+begin_src emacs-lisp
   (use-package ivy-posframe
@@ -468,18 +451,18 @@
     :config
     (setq ivy-posframe-border-width 2)
     (setq ivy-posframe-parameters
-          '((left-fringe . 4)
-            (right-fringe . 4)
-            (internal-border-width . 4)))
+          '((left-fringe . 8)
+            (right-fringe . 8)
+            (internal-border-width . 8)))
 
     (setq ivy-posframe-height-alist
           '((swiper . 15)
             (t . 10)))
-
+    (setq ivy-posframe-width 100)
     (setq ivy-posframe-display-functions-alist
-          '((swiper . ivy-display-function-fallback)
-            (swiper-isearch . ivy-display-function-fallback)
-            (counsel-M-x . ivy-display-function-fallback)
+          '(;;(swiper . ivy-display-function-fallback)
+            ;;(swiper-isearch . ivy-display-function-fallback)
+            ;;(counsel-M-x . ivy-posframe-display-at-point)
             (t . ivy-posframe-display-at-frame-center)))
 
     :hook (after-init . ivy-posframe-mode))
@@ -514,7 +497,7 @@
     :custom
     (amx-backend 'auto)
     (amx-save-file "~/.emacs.d/.amx-items")
-    (amx-history-length 50)
+    (amx-history-length 100)
     (amx-show-key-bindings nil)
     :config
     (amx-mode 1))
@@ -525,7 +508,7 @@
     :ensure t
     :after ivy
     :bind (("C-r" . swiper-thing-at-point)
-           ("C-s" . swiper-isearch)
+           ("C-s" . swiper)
            :map swiper-map
            ("M-%" . swiper-query-replace)))
 #+end_src
@@ -852,6 +835,7 @@
     (setq company-backends
           '(company-files
             (company-capf :with company-yasnippet :separate)
+            (company-css :with company-yasnippet :separate)
             (company-tide :with company-yasnippet :with company-dabbrev-code :separate)
             (company-abbrev company-dabbrev))))
 
@@ -865,6 +849,7 @@
                 :map company-search-map
                 ("C-n" . company-select-next)
                 ("C-p" . company-select-previous))
+    :hook (after-init . company-mode)
     :config
     (global-company-mode t)
     (setup-company-backends)
