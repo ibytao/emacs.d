@@ -5,7 +5,18 @@
   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                            ("gnu" . "https://elpa.gnu.org/packages/")
                            ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+#+END_SRC
+** use-package
+#+begin_src emacs-lisp
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
 
+  (use-package delight :ensure t)
+  (use-package use-package-ensure-system-package :ensure t)
+#+end_src
+** straight
+#+begin_src emacs-lisp
   ;;straight
   (defvar bootstrap-version)
   (let ((bootstrap-file
@@ -20,15 +31,8 @@
         (eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage))
   (setq package-enable-at-startup nil)
-#+END_SRC
-** use-package
-#+begin_src emacs-lisp
-  (unless (package-installed-p 'use-package)
-    (package-refresh-contents)
-    (package-install 'use-package))
 
-  (use-package delight :ensure t)
-  (use-package use-package-ensure-system-package :ensure t)
+  (straight-use-package 'use-package)
 #+end_src
 ** dufuns
 #+begin_src emacs-lisp
@@ -585,11 +589,8 @@
 #+end_src
 ** goto-chg
 #+begin_src emacs-lisp
-  (straight-use-package
-   '(lsp-volar :type git :host github :repo "emacs-evil/goto-chg"))
-
   (use-package goto-chg
-    :straight t
+    :straight (goto-chg :type git :host github :repo "emacs-evil/goto-chg")
     :bind (("C-;" . goto-last-change)
            ("C-'" . goto-last-change-reverse)))
 #+end_src
@@ -952,11 +953,8 @@
 #+end_src
 ** lsp-volar
 #+begin_src emacs-lisp
-  (straight-use-package
-   '(lsp-volar :type git :host github :repo "jadestrong/lsp-volar"))
-
   (use-package lsp-volar
-    :straight t)
+    :straight (lsp-volar :type git :host github :repo "jadestrong/lsp-volar"))
 #+end_src
 ** flycheck
 #+begin_src emacs-lisp
@@ -1193,10 +1191,8 @@
 #+end_src
 ** tailwindcss
 #+begin_src emacs-lisp
-  (straight-use-package
-   '(lsp-tailwindcss :type git :host github :repo "merrickluo/lsp-tailwindcss"))
-
   (use-package lsp-tailwindcss
+    :straight (lsp-tailwindcss :type git :host github :repo "merrickluo/lsp-tailwindcss")
     :init
     (setq lsp-tailwindcss-add-on-mode t))
 #+end_src
