@@ -1,7 +1,7 @@
 .DS_Store
 .last-package-update-day
 auto-save-list
-backups
+.backups
 config.el
 custom.el
 elpa

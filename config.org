@@ -51,6 +51,8 @@
   (use-package exec-path-from-shell
     :config
     (when (memq window-system '(mac ns x))
+      (dolist (var '("JAVA_HOME" "FrameworkPathOverride"))
+        (add-to-list 'exec-path-from-shell-variables var))
       (exec-path-from-shell-initialize)))
 
   ;; (when (memq window-system '(mac ns x))
@@ -82,6 +84,7 @@
    use-package-always-ensure t                                   ; Avoid the :ensure keyword for each package
    vc-follow-symlinks t                                          ; Always follow the symlinks
    view-read-only t)                                             ; Always open read-only buffers in view-mode
+
   (cd "~/")                                                      ; Move to the user directory
   (column-number-mode 1)                                         ; Show the column number
   (display-time-mode nil)                                        ; Enable time in the mode-line
@@ -92,11 +95,12 @@
   (setq-default cursor-type 'bar)                                ; set cursor style
   (blink-cursor-mode t)                                          ; blink cursor
   (add-hook 'before-save-hook 'delete-trailing-whitespace)       ; delete traniling whitespace
-  (add-to-list 'default-frame-alist '(fullscreen . maximized))   ; full screen
-  ;;(global-visual-line-mode t)
+  ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))   ; full screen
+  ;; (global-visual-line-mode t)
   (setq-default truncate-lines t)
 
-  (setq directory-abbrev-alist '(("~" . "/Users/buck")))
+  (setq read-process-output-max (* 1024 1024)) ;; 1mb
+  ;; (setenv "LSP_USE_PLISTS" "true")
 
   (when (memq window-system '(mac ns))
     (add-to-list 'default-frame-alist '(ns-appearance . 'dark))
@@ -113,7 +117,11 @@
   ;; Write backup files to own directory
   (setq backup-directory-alist
         `(("." . ,(expand-file-name
-                   (concat user-emacs-directory "backups")))))
+                   (concat user-emacs-directory ".backups")))))
+  (setq backup-by-copying t)
+  ;;(setq make-backup-files nil)
+  (setq create-lockfiles nil)
+
   (setq custom-file "~/.emacs.d/custom-variables.el")
   (when (file-exists-p custom-file)
     (load custom-file))
@@ -450,26 +458,26 @@
 #+end_src
 ** ivy-posframe
 #+begin_src emacs-lisp
-  (use-package ivy-posframe
-    :ensure t
-    :config
-    (setq ivy-posframe-border-width 2)
-    (setq ivy-posframe-parameters
-          '((left-fringe . 8)
-            (right-fringe . 8)
-            (internal-border-width . 8)))
+  ;; (use-package ivy-posframe
+  ;;   :ensure t
+  ;;   :config
+  ;;   (setq ivy-posframe-border-width 2)
+  ;;   (setq ivy-posframe-parameters
+  ;;         '((left-fringe . 8)
+  ;;           (right-fringe . 8)
+  ;;           (internal-border-width . 8)))
 
-    (setq ivy-posframe-height-alist
-          '((swiper . 15)
-            (t . 10)))
-    (setq ivy-posframe-width 100)
-    (setq ivy-posframe-display-functions-alist
-          '(;;(swiper . ivy-display-function-fallback)
-            ;;(swiper-isearch . ivy-display-function-fallback)
-            ;;(counsel-M-x . ivy-posframe-display-at-point)
-            (t . ivy-posframe-display-at-frame-center)))
+  ;;   (setq ivy-posframe-height-alist
+  ;;         '((swiper . 15)
+  ;;           (t . 10)))
+  ;;   (setq ivy-posframe-width 100)
+  ;;   (setq ivy-posframe-display-functions-alist
+  ;;         '(;;(swiper . ivy-display-function-fallback)
+  ;;           ;;(swiper-isearch . ivy-display-function-fallback)
+  ;;           ;;(counsel-M-x . ivy-posframe-display-at-point)
+  ;;           (t . ivy-posframe-display-at-frame-center)))
 
-    :hook (after-init . ivy-posframe-mode))
+  ;;   :hook (after-init . ivy-posframe-mode))
 #+end_src
 ** counsel
 #+begin_src emacs-lisp
@@ -832,12 +840,16 @@
   ;;   :ensure t
   ;;   :hook (after-init . company-statistics-mode))
 
+  (use-package company-restclient
+    :ensure t)
+
   (defun setup-company-backends ()
     (setq company-backends
           '(company-files
             (company-capf :with company-yasnippet :separate)
             (company-css :with company-yasnippet :separate)
             (company-tide :with company-yasnippet :with company-dabbrev-code :separate)
+            (company-restclient)
             (company-abbrev company-dabbrev))))
 
   (use-package company
@@ -878,12 +890,11 @@
                 (when lsp-completion-mode
                   (setup-company-backends))))
     :config
-    (setq lsp-javascript-format-insert-space-after-opening-and-before-closing-nonempty-parenthesis nil)
-    (setq lsp-typescript-format-insert-space-after-opening-and-before-closing-nonempty-parenthesis nil)
-    (setq lsp-javascript-format-insert-space-after-opening-and-before-closing-nonempty-braces nil)
-    (setq lsp-typescript-format-insert-space-after-opening-and-before-closing-nonempty-braces nil)
-
+    (setq +format-with-lsp nil)
     (setq lsp-before-save-edits nil) ;; not auto remove do not use variable
+
+    (setq lsp-log-io t)
+  
     (setq lsp-completion-enable-additional-text-edit nil)
     (setq lsp-eldoc-enable-hover nil)
     (setq lsp-modeline-diagnostics-enable nil)
@@ -950,11 +961,6 @@
 
   (add-hook 'dap-stopped-hook
             (lambda (arg) (call-interactively #'dap-hydra)))
-#+end_src
-** lsp-volar
-#+begin_src emacs-lisp
-  (use-package lsp-volar
-    :straight (lsp-volar :type git :host github :repo "jadestrong/lsp-volar"))
 #+end_src
 ** flycheck
 #+begin_src emacs-lisp
@@ -1090,10 +1096,7 @@
     :ensure t
     :defer t
     :hook ((java-mode . lsp)
-           (java-mode . gradle-mode)
-           (before-save . lsp-format-buffer))
-    :init
-    (setenv "JAVA_HOME" (shell-command-to-string "printf %s \"$(/usr/libexec/java_home)\""))
+           (java-mode . gradle-mode))
     :config
     (setq lsp-java-save-actions-organize-imports t)
     ;; java1.8
@@ -1125,7 +1128,8 @@
     :ensure t
     :mode (("\\.go\\'" . go-mode))
     :hook ((go-mode . lsp-deferred)
-           (before-save . lsp-organize-imports)))
+           (before-save . lsp-organize-imports)
+           (before-save . gofmt-before-save)))
 #+end_src
 ** rust
 #+begin_src emacs-lisp
@@ -1225,13 +1229,12 @@
     (web-mode-markup-indent-offset 2)
     (web-mode-code-indent-offset 2)
     (web-mode-css-indent-offset 2)
+    
     :config
     (setq web-mode-script-padding 0)
     (setq web-mode-style-padding 0)
     (setq web-mode-block-padding 0)
-    (setf (alist-get 'web-mode lsp--formatting-indent-alist) 'web-mode-code-indent-offset)
-    (setq web-mode-enable-current-column-highlight t)
-    )
+    (setq web-mode-enable-current-column-highlight t))
 #+end_src
 ** rjsx-mode
 #+begin_src emacs-lisp
