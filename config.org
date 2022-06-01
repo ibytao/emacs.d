@@ -663,7 +663,6 @@
   (use-package ace-jump-mode
     :ensure t
     :bind (("C-c j" . ace-jump-mode))
-    :hook (ace-jump-mode-end . forward-word)
     :config
     ;; you can select the key you prefer to
     ;; (define-key org-mode-map (kbd "C-j") nil)
@@ -871,8 +870,7 @@
     (setq company-idle-delay 0
           company-show-numbers t
           company-minimum-prefix-length 1
-          company-tooltip-align-annotations t
-          company-tooltip-maximum-width 70))
+          company-tooltip-align-annotations t))
 #+end_src
 ** lsp-mode
 #+begin_src emacs-lisp
@@ -890,11 +888,12 @@
                 (when lsp-completion-mode
                   (setup-company-backends))))
     :config
+    (setq lsp-log-io t)
+
     (setq +format-with-lsp nil)
     (setq lsp-before-save-edits nil) ;; not auto remove do not use variable
 
-    (setq lsp-log-io t)
-  
+    (setq lsp-headerline-breadcrumb-enable nil)
     (setq lsp-completion-enable-additional-text-edit nil)
     (setq lsp-eldoc-enable-hover nil)
     (setq lsp-modeline-diagnostics-enable nil)
