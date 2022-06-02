@@ -1147,7 +1147,7 @@
     (with-eval-after-load 'rust-mode
       (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
 #+end_src
-* Front&end
+* Front-End
 ** tide
 #+begin_src emacs-lisp
   (use-package tide
