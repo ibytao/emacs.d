@@ -377,6 +377,41 @@
   (global-set-key (kbd "s-[") 'prev-window)
   (global-set-key (kbd "s-]") 'other-window)
 
+  ;; switch buffer selected
+  (defun my-change-buffer (change-buffer)
+    "Call CHANGE-BUFFER until current buffer is not in `my-skippable-buffers'."
+    (let ((initial (current-buffer)))
+      (funcall change-buffer)
+      (let ((first-change (current-buffer)))
+        (catch 'loop
+          (while (not (string-match "\\`[^*]" (buffer-name)))
+            (funcall change-buffer)
+            (when (eq (current-buffer) first-change)
+              (switch-to-buffer initial)
+              (throw 'loop t)))))))
+
+  (defun my-next-buffer ()
+    "Variant of `next-buffer' that skips `my-skippable-buffers'."
+    (interactive)
+    (my-change-buffer 'next-buffer))
+
+  (defun my-previous-buffer ()
+    "Variant of `previous-buffer' that skips `my-skippable-buffers'."
+    (interactive)
+    (my-change-buffer 'previous-buffer))
+
+
+  (global-set-key (kbd "s-p") 'my-previous-buffer)
+  (global-set-key (kbd "s-n") 'my-next-buffer)
+
+  (defun my-switch-to-buffer ()
+    (interactive)
+    (let ((completion-regexp-list '("\\`[^*]"
+                                    "\\`\\([^T]\\|T\\($\\|[^A]\\|A\\($\\|[^G]\\|G\\($\\|[^S]\\|S.\\)\\)\\)\\).*")))
+      (call-interactively 'switch-to-buffer)))
+
+  (global-set-key (kbd "C-u") 'my-switch-to-buffer)
+
   ;; move line up
   (defun move-line-up ()
     (interactive)
@@ -489,7 +524,7 @@
            ("M-y" . counsel-yank-pop)
            ("C-o" . counsel-recentf)
            ("C-x b" . persp-ivy-switch-buffer)
-           ("C-u" . persp-ivy-switch-buffer)
+           ("C-x j" . counsel-rg)
            ("C-x C-b" . ibuffer-list-buffers))
     :init
     (setq counsel-find-file-ignore-regexp (regexp-opt '(".git" ".DS_Store")))
@@ -1072,8 +1107,7 @@
       ;; This choice of keybinding leaves cider-macroexpand-1 unbound
       (cljr-add-keybindings-with-prefix "C-c C-m"))
 
-    (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)
-    )
+    (add-hook 'clojure-mode-hook #'my-clojure-mode-hook))
 #+end_src
 ** python
 #+begin_src emacs-lisp
@@ -1118,8 +1152,6 @@
     ;; (add-hook 'lsp-mode-hook #'lsp-lens-mode)
     ;; (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
     )
-
-
 #+end_src
 ** Go
 #+begin_src emacs-lisp
