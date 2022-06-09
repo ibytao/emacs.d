@@ -877,9 +877,12 @@
   (use-package company-restclient
     :ensure t)
 
+  (use-package company-solidity
+    :ensure t)
+
   (defun setup-company-backends ()
     (setq company-backends
-          '(company-files
+          '(company-files company-solidity
             (company-capf :with company-yasnippet :separate)
             (company-css :with company-yasnippet :separate)
             (company-tide :with company-yasnippet :with company-dabbrev-code :separate)
@@ -1178,6 +1181,11 @@
     :config
     (with-eval-after-load 'rust-mode
       (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
+#+end_src
+** solidity
+#+begin_src emacs-lisp
+  (use-package solidity-mode
+    :ensure t)
 #+end_src
 * Front-End
 ** tide
