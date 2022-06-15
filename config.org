@@ -54,14 +54,6 @@
       (dolist (var '("JAVA_HOME" "FrameworkPathOverride"))
         (add-to-list 'exec-path-from-shell-variables var))
       (exec-path-from-shell-initialize)))
-
-  ;; (when (memq window-system '(mac ns x))
-  ;;   (let ((path (shell-command-to-string ". ~/.bash_profile; echo -n $PATH")))
-  ;;     (setenv "PATH" path)
-  ;;     (setq exec-path
-  ;;           (append
-  ;;            (split-string-and-unquote path ":")
-  ;;            exec-path))))
 #+end_src
 * Start Up
 ** Better defaults
@@ -742,12 +734,27 @@
       :name "cloud-pro"
       :command "npm"
       :args '("run" "dev")
-      :cwd "~/Workspace/cloud_pro")
+      :cwd "~/Workspace/cloud-pro")
+    (prodigy-define-service
+      :name "marketing-strategy"
+      :command "npm"
+      :args '("run" "dev")
+      :cwd "~/Workspace/marketing-strategy")
     (prodigy-define-service
       :name "decision-engine"
       :command "npm"
       :args '("run" "dev")
       :cwd "~/Workspace/decision-engine")
+    (prodigy-define-service
+      :name "norm-center"
+      :command "npm"
+      :args '("run" "dev")
+      :cwd "~/Workspace/norm-center")
+    (prodigy-define-service
+      :name "ladder-dataSource"
+      :command "npm"
+      :args '("run" "dev")
+      :cwd "~/Workspace/ladder-dataSource")
     )
 #+end_src
 ** guide-key
