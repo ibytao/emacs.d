@@ -1321,7 +1321,7 @@
     :ensure t
     :mode (("\\.ts\\'" . typescript-mode)
            ("\\.tsx\\'" . typescript-tsx-mode))
-    :hook ((typescript-mode . lsp-deferred))
+    :hook ((typescript-mode . setup-tide-mode))
     :init
     (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
     :config
