@@ -398,7 +398,7 @@
 
   (defun my-switch-to-buffer ()
     (interactive)
-    (let ((completion-regexp-list '("\\`[^*\\|magit]"
+    (let ((completion-regexp-list '("\\`[^*]"
                                     "\\`\\([^T]\\|T\\($\\|[^A]\\|A\\($\\|[^G]\\|G\\($\\|[^S]\\|S.\\)\\)\\)\\).*")))
       (call-interactively 'switch-to-buffer)))
 
@@ -459,6 +459,7 @@
                 ("C-h" . delete-backward-char)
                 ("<return>" . ivy-alt-done))
     :config
+    (setq recentf-filename-handlers '(abbreviate-file-name))
     (setq ivy-use-virtual-buffers nil)
     (setq enable-recursive-minibuffers t)
     ;; (setq ivy-height 10)
@@ -633,6 +634,7 @@
   (use-package magit
     :ensure t
     :config
+    (setq magit-buffer-name-format "*%x%M%v: %t%x")
     (global-set-key (kbd "C-x m") 'magit)
     )
 #+end_src
