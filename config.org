@@ -323,6 +323,22 @@
   ;; Perform general cleanup.
   (global-set-key (kbd "C-c n") 'cleanup-buffer)
 
+  (defun my/select-current-line-and-forward-line (arg)
+    "Select the current line and move the cursor by ARG lines IF
+  no region is selected.
+
+  If a region is already selected when calling this command, only move
+  the cursor by ARG lines."
+    (interactive "p")
+    (when (not (use-region-p))
+      (forward-line 0)
+      (set-mark-command nil))
+    (forward-line arg))
+  ;; Note that I would not recommend binding this command to `C-S-SPC'.
+  ;; From my personal experience, the default binding to `C-S-SPC' to
+  ;; `recenter-top-bottom' is very useful.
+  (global-set-key (kbd "C-S-SPC") #'my/select-current-line-and-forward-line)
+
   ;;org
   (defun my-org-hook ()
     ;; (define-key org-mode-map (kbd "<C-o>") 'org-open-line)
@@ -376,7 +392,7 @@
       (funcall change-buffer)
       (let ((first-change (current-buffer)))
         (catch 'loop
-          (while (not (string-match "\\`[^*\\|magit]" (buffer-name)))
+          (while (not (string-match "\\`[^*]" (buffer-name)))
             (funcall change-buffer)
             (when (eq (current-buffer) first-change)
               (switch-to-buffer initial)
@@ -400,7 +416,7 @@
     (interactive)
     (let ((completion-regexp-list '("\\`[^*]"
                                     "\\`\\([^T]\\|T\\($\\|[^A]\\|A\\($\\|[^G]\\|G\\($\\|[^S]\\|S.\\)\\)\\)\\).*")))
-      (call-interactively 'switch-to-buffer)))
+      (call-interactively 'persp-ivy-switch-buffer)))
 
   (global-set-key (kbd "C-u") 'my-switch-to-buffer)
 
