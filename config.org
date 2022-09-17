@@ -51,9 +51,10 @@
   (use-package exec-path-from-shell
     :config
     (when (memq window-system '(mac ns x))
-      (dolist (var '("JAVA_HOME" "FrameworkPathOverride"))
+      (dolist (var '("JAVA_HOME" "DOTNET_ROOT"))
         (add-to-list 'exec-path-from-shell-variables var))
-      (exec-path-from-shell-initialize)))
+      (exec-path-from-shell-initialize)
+      ))
 #+end_src
 * Start Up
 ** Better defaults
@@ -904,6 +905,7 @@
             (company-capf :with company-yasnippet :separate)
             (company-css :with company-yasnippet :separate)
             (company-tide :with company-yasnippet :with company-dabbrev-code :separate)
+            (company-omnisharp :with company-yasnippet :with company-dabbrev-code :separate)
             (company-restclient)
             (company-abbrev company-dabbrev))))
 
@@ -1202,6 +1204,20 @@
 #+begin_src emacs-lisp
   (use-package solidity-mode
     :ensure t)
+#+end_src
+** csharp
+#+begin_src emacs-lisp
+  (use-package csharp-mode
+    :ensure t)
+
+  (use-package omnisharp
+    :ensure t
+    :hook ((csharp-mode . omnisharp-mode)
+           (before-save . omnisharp-code-format-entire-file))
+    :config
+    (setq omnisharp-server-executable-path "~/.emacs.d/.cache/omnisharp-osx-arm64-net6.0/OmniSharp")
+    (setenv "FrameworkPathOverride" "/Library/Frameworks/Mono.framework/Versions/6.12.0")
+    )
 #+end_src
 * Front-End
 ** tide
