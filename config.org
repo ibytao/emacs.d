@@ -817,7 +817,7 @@
     (setq gts-default-translator
           (gts-translator
            :picker (gts-noprompt-picker)
-           :engines (gts-google-rpc-engine)
+           :engines (gts-google-engine)
            :render (gts-buffer-render)))
     )
 
@@ -1208,6 +1208,7 @@
 ** csharp
 #+begin_src emacs-lisp
   (use-package csharp-mode
+    :hook ((csharp-mode . flycheck-mode))
     :ensure t)
 
   (use-package omnisharp
