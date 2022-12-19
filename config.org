@@ -901,7 +901,8 @@
 
   (defun setup-company-backends ()
     (setq company-backends
-          '(company-files company-solidity
+          '(company-files
+            company-solidity
             (company-capf :with company-yasnippet :separate)
             (company-css :with company-yasnippet :separate)
             (company-tide :with company-yasnippet :with company-dabbrev-code :separate)
@@ -1016,6 +1017,21 @@
 
   (add-hook 'dap-stopped-hook
             (lambda (arg) (call-interactively #'dap-hydra)))
+#+end_src
+** eglot
+#+begin_src emacs-lisp
+  (use-package eglot
+    :ensure t
+    :bind (:map eglot-mode-map
+                ("s-." . xref-find-references)
+                ("M-." . xref-find-definitions))
+    :config
+    (add-to-list 'eglot-server-programs
+                 `(rust-mode . ("rust-analyzer"
+                                :initializationOptions (:cargo (:features "all"))))
+                 `(dart-mode . ("dart language-server"))
+                 )
+    )
 #+end_src
 ** flycheck
 #+begin_src emacs-lisp
@@ -1357,7 +1373,7 @@
     :ensure t
     :mode (("\\.ts\\'" . typescript-mode)
            ("\\.tsx\\'" . typescript-tsx-mode))
-    :hook ((typescript-mode . setup-tide-mode))
+    :hook ((typescript-mode . lsp-deferred))
     :init
     (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
     :config
@@ -1379,28 +1395,17 @@
   (use-package lsp-dart
     :ensure t
     :defer t
-    :hook ((dart-mode . lsp)
-           (dart-mode . (lambda ()
-                          (add-hook 'after-save-hook
-                                    (lambda ()
-                                      (lsp-format-buffer)
-                                      (flutter-hot-reload)))))))
-
-  (use-package flutter
-    :ensure t
-    :defer t
-    :after dart-mode
-    :bind (:map dart-mode-map
-                ("C-M-x" . #'flutter-run-or-hot-reload))
-    :custom
-    (flutter-sdk-path "~/SDK/flutter/")
+    :hook ((dart-mode . eglot-ensure)
+           (before-save . my/dart-mode-before-save-hook))
+    :preface
+    (defun my/dart-mode-before-save-hook ()
+      (when (eq major-mode 'dart-mode)
+        (eglot-format)))
     :config
-    (add-hook 'dart-mode-hook
-              (lambda ()
-                (add-hook 'after-save-hook #'flutter-hot-reload)
-                (with-eval-after-load 'projectile
-                  (add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
-                  (add-to-list 'projectile-project-root-files-bottom-up "BUILD")))))
+    (setq lsp-dart-dap-flutter-hot-reload-on-save t)
+    (with-eval-after-load 'projectile
+      (add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
+      (add-to-list 'projectile-project-root-files-bottom-up "BUILD")))
 #+end_src
 * Org-Mode
 ** org
