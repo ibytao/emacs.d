@@ -941,10 +941,10 @@
     ;;  ("M-/" . lsp-find-implementation))
     :init
     (setq lsp-keymap-prefix "C-c l")
-    (add-hook 'lsp-completion-mode-hook
-              (lambda ()
-                (when lsp-completion-mode
-                  (setup-company-backends))))
+    ;; (add-hook 'lsp-completion-mode-hook
+    ;;           (lambda ()
+    ;;             (when lsp-completion-mode
+    ;;               (setup-company-backends))))
     :config
     (setq lsp-log-io t)
 
