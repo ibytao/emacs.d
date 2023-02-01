@@ -902,7 +902,6 @@
   (defun setup-company-backends ()
     (setq company-backends
           '(company-files
-            company-solidity
             (company-capf :with company-yasnippet :separate)
             (company-css :with company-yasnippet :separate)
             (company-tide :with company-yasnippet :with company-dabbrev-code :separate)
@@ -928,7 +927,7 @@
     ;;(setq lsp-completion-provider :none)
     (setq company-idle-delay 0
           company-show-numbers t
-          company-minimum-prefix-length 1
+          company-minimum-prefix-length 0
           company-tooltip-align-annotations t))
 #+end_src
 ** lsp-mode
@@ -1017,21 +1016,6 @@
 
   (add-hook 'dap-stopped-hook
             (lambda (arg) (call-interactively #'dap-hydra)))
-#+end_src
-** eglot
-#+begin_src emacs-lisp
-  (use-package eglot
-    :ensure t
-    :bind (:map eglot-mode-map
-                ("s-." . xref-find-references)
-                ("M-." . xref-find-definitions))
-    :config
-    (add-to-list 'eglot-server-programs
-                 `(rust-mode . ("rust-analyzer"
-                                :initializationOptions (:cargo (:features "all"))))
-                 `(dart-mode . ("dart language-server"))
-                 )
-    )
 #+end_src
 ** flycheck
 #+begin_src emacs-lisp
@@ -1221,11 +1205,6 @@
     (with-eval-after-load 'rust-mode
       (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
 #+end_src
-** solidity
-#+begin_src emacs-lisp
-  (use-package solidity-mode
-    :ensure t)
-#+end_src
 ** csharp
 #+begin_src emacs-lisp
   (use-package csharp-mode
@@ -1395,7 +1374,7 @@
   (use-package lsp-dart
     :ensure t
     :defer t
-    :hook ((dart-mode . eglot-ensure)
+    :hook ((dart-mode . lsp-deferred)
            (before-save . my/dart-mode-before-save-hook))
     :preface
     (defun my/dart-mode-before-save-hook ()
