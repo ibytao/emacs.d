@@ -1379,8 +1379,9 @@
     :preface
     (defun my/dart-mode-before-save-hook ()
       (when (eq major-mode 'dart-mode)
-        (eglot-format)))
+        (lsp-format-buffer)))
     :config
+    (setq lsp-dart-flutter-widget-guides nil)
     (setq lsp-dart-dap-flutter-hot-reload-on-save t)
     (with-eval-after-load 'projectile
       (add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
