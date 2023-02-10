@@ -927,7 +927,7 @@
     ;;(setq lsp-completion-provider :none)
     (setq company-idle-delay 0
           company-show-numbers t
-          company-minimum-prefix-length 0
+          company-minimum-prefix-length 1
           company-tooltip-align-annotations t))
 #+end_src
 ** lsp-mode
@@ -941,10 +941,11 @@
     ;;  ("M-/" . lsp-find-implementation))
     :init
     (setq lsp-keymap-prefix "C-c l")
-    ;; (add-hook 'lsp-completion-mode-hook
-    ;;           (lambda ()
-    ;;             (when lsp-completion-mode
-    ;;               (setup-company-backends))))
+    (add-hook 'lsp-completion-mode-hook
+              (lambda ()
+                (if (eq major-mode 'dart-mode)
+                  (setq company-minimum-prefix-length 0)
+                  (setq company-minimum-prefix-length 1))))
     :config
     (setq lsp-log-io t)
 
