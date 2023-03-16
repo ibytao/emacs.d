@@ -502,26 +502,26 @@
 #+end_src
 ** ivy-posframe
 #+begin_src emacs-lisp
-  (use-package ivy-posframe
-    :ensure t
-    :config
-    (setq ivy-posframe-border-width 2)
-    (setq ivy-posframe-parameters
-          '((left-fringe . 8)
-            (right-fringe . 8)
-            (internal-border-width . 8)))
+  ;; (use-package ivy-posframe
+  ;;   :ensure t
+  ;;   :config
+  ;;   (setq ivy-posframe-border-width 2)
+  ;;   (setq ivy-posframe-parameters
+  ;;         '((left-fringe . 8)
+  ;;           (right-fringe . 8)
+  ;;           (internal-border-width . 8)))
 
-    (setq ivy-posframe-height-alist
-          '((swiper . 15)
-            (t . 10)))
-    (setq ivy-posframe-width 100)
-    (setq ivy-posframe-display-functions-alist
-          '(;;(swiper . ivy-display-function-fallback)
-            ;;(swiper-isearch . ivy-display-function-fallback)
-            ;;(counsel-M-x . ivy-posframe-display-at-point)
-            (t . ivy-posframe-display-at-frame-center)))
+  ;;   (setq ivy-posframe-height-alist
+  ;;         '((swiper . 15)
+  ;;           (t . 10)))
+  ;;   (setq ivy-posframe-width 100)
+  ;;   (setq ivy-posframe-display-functions-alist
+  ;;         '(;;(swiper . ivy-display-function-fallback)
+  ;;           ;;(swiper-isearch . ivy-display-function-fallback)
+  ;;           ;;(counsel-M-x . ivy-posframe-display-at-point)
+  ;;           (t . ivy-posframe-display-at-frame-center)))
 
-    :hook (after-init . ivy-posframe-mode))
+  ;;   :hook (after-init . ivy-posframe-mode))
 #+end_src
 ** counsel
 #+begin_src emacs-lisp
