@@ -915,9 +915,6 @@
   (use-package company-restclient
     :ensure t)
 
-  (use-package company-solidity
-    :ensure t)
-
   (defun setup-company-backends ()
     (setq company-backends
           '(company-files
