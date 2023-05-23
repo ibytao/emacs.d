@@ -908,9 +908,9 @@
   ;; (use-package company-tabnine
   ;;   :ensure t)
 
-  ;; (use-package company-statisticsa
-  ;;   :ensure t
-  ;;   :hook (after-init . company-statistics-mode))
+  (use-package company-statistics
+    :ensure t
+    :hook (after-init . company-statistics-mode))
 
   (use-package company-restclient
     :ensure t)
@@ -964,6 +964,9 @@
                   (setq company-minimum-prefix-length 1))))
     :config
     (setq lsp-log-io t)
+
+    (setq lsp-enable-snippet nil)
+    (setq lsp-completion-provider :none)
 
     (setq +format-with-lsp nil)
     (setq lsp-before-save-edits nil) ;; not auto remove do not use variable
