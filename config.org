@@ -619,8 +619,8 @@
        ("n" mc/mark-next-like-this "next")
        ("p" mc/mark-previous-like-this "previous")
 
-       ("k" mc/skip-to-previous-like-this "skip-n")
-       ("j" mc/skip-to-next-like-this "skip-p")
+       ("k" mc/skip-to-previous-like-this "skip-p")
+       ("j" mc/skip-to-next-like-this "skip-n")
 
        ("u" mc/unmark-next-like-this "unmark-n")
        ("U" mc/unmark-previous-like-this "unmark-p")
