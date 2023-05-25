@@ -911,9 +911,9 @@
   ;; (use-package company-tabnine
   ;;   :ensure t)
 
-  (use-package company-statistics
-    :ensure t
-    :hook (after-init . company-statistics-mode))
+  ;; (use-package company-statistics
+  ;;   :ensure t
+  ;;   :hook (after-init . company-statistics-mode))
 
   (use-package company-restclient
     :ensure t)
