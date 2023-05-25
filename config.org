@@ -501,6 +501,19 @@
     :hook ((after-init . ivy-mode)
            (ivy-occur-mode . hl-line-mode)))
 #+end_src
+** ivy-avy
+#+begin_src emacs-lisp 
+  (use-package ivy-avy
+    ensure t)
+#+end_src
+** avy
+#+begin_src emacs-lisp
+  (use-package avy
+    :ensure t
+    :bind (("C-;" . avy-goto-char-timer)
+           ("C-c j" . avy-resume))
+    :config)
+#+end_src
 ** ivy-posframe
 #+begin_src emacs-lisp
   ;; (use-package ivy-posframe
@@ -540,11 +553,15 @@
     (setq counsel-find-file-ignore-regexp (regexp-opt '(".git" ".DS_Store")))
     (setq recentf-max-saved-items 200))
 #+end_src
-** wgrep
+** swiper
 #+begin_src emacs-lisp
-  (use-package wgrep
-    :config
-    (setq wgrep-auto-save-buffer t))
+  (use-package swiper
+    :ensure t
+    :after ivy
+    :bind (("C-r" . swiper-thing-at-point)
+           ("C-s" . swiper)
+           :map swiper-map
+           ("M-%" . swiper-query-replace)))
 #+end_src
 ** amx
 #+begin_src emacs-lisp
@@ -559,15 +576,19 @@
     :config
     (amx-mode 1))
 #+end_src
-** swiper
+** undo
 #+begin_src emacs-lisp
-  (use-package swiper
-    :ensure t
-    :after ivy
-    :bind (("C-r" . swiper-thing-at-point)
-           ("C-s" . swiper)
-           :map swiper-map
-           ("M-%" . swiper-query-replace)))
+  (use-package undo-tree
+    :config
+    (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
+    (setq undo-tree-auto-save-history nil)
+    (global-undo-tree-mode 1))
+#+end_src
+** wgrep
+#+begin_src emacs-lisp
+  (use-package wgrep
+    :config
+    (setq wgrep-auto-save-buffer t))
 #+end_src
 ** expand-region
 #+begin_src emacs-lisp
@@ -608,13 +629,22 @@
     (global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
     (global-set-key (kbd "C->") 'mc/mark-next-like-this)
     (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+    (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+
+    (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+    (global-set-key (kbd "C-S-c C-e") 'mc/edit-ends-of-lines)
+    (global-set-key (kbd "C-S-c C-a") 'mc/edit-beginnings-of-lines)
 
     (global-set-key
      (kbd "C-c m")
      (defhydra hydra-mc (:columns 6 :color pink)
        "multiple-cursors"
-       ("l" mc/edit-lines "lines")
-       ("e" mc/edit-ends-of-lines "end-lines")
+       ("e" mc/mark-more-like-this-extended "extended")
+       ("w" mc/mark-next-word-like-this "next-word")
+       ("W" mc/mark-previous-word-like-this "previous-word")
+       ("A" mc/mark-all-words-like-this "all-words")
+       ("s" mc/mark-next-symbol-like-this "next-symbol")
+       ("S" mc/mark-previous-symbol-like-this "previous-symbol")
 
        ("n" mc/mark-next-like-this "next")
        ("p" mc/mark-previous-like-this "previous")
@@ -632,21 +662,6 @@
        ("q" nil "Quit" :color blue)))
     )
 #+END_SRC
-** undo
-#+begin_src emacs-lisp
-  (use-package undo-tree
-    :config
-    (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
-    (setq undo-tree-auto-save-history nil)
-    (global-undo-tree-mode 1))
-#+end_src
-** goto-chg
-#+begin_src emacs-lisp
-  (use-package goto-chg
-    :straight (goto-chg :type git :host github :repo "emacs-evil/goto-chg")
-    :bind (("C-;" . goto-last-change)
-           ("C-'" . goto-last-change-reverse)))
-#+end_src
 ** magit
 #+begin_src emacs-lisp
   (use-package magit
@@ -703,18 +718,6 @@
     (add-hook 'clojure-mode-hook (lambda () (smartparens-mode -1)))
     (add-hook 'emacs-lisp-mode-hook (lambda () (smartparens-mode -1)))
     (add-hook 'cider-repl-mode-hook (lambda () (smartparens-mode -1)))
-    )
-#+end_src
-** ace-jump-mode
-#+begin_src emacs-lisp
-  (use-package ace-jump-mode
-    :ensure t
-    :bind (("C-c j" . ace-jump-mode))
-    :config
-    ;; you can select the key you prefer to
-    ;; (define-key org-mode-map (kbd "C-j") nil)
-    ;; (define-key paredit-mode-map (kbd "C-j") nil)
-    ;; (define-key global-map (kbd "C-j") 'ace-jump-mode)
     )
 #+end_src
 ** projectile
@@ -1408,25 +1411,6 @@
       (add-to-list 'projectile-project-root-files-bottom-up "BUILD")))
 #+end_src
 * Org-Mode
-** org
-#+begin_src emacs-lisp
-  (use-package org
-    :ensure org-contrib
-    :config
-    (require 'smartparens-org)
-    (require 'org-tempo)
-    (add-hook 'org-mode-hook (lambda () (setq truncate-lines nil)))
-    (setq org-cycle-separator-lines 1)
-
-    (setq org-confirm-babel-evaluate nil)
-    (require 'ob-js)
-    (org-babel-do-load-languages 'org-babel-load-languages
-                                 '((python . t)
-                                   (emacs-lisp . t)
-                                   (sh . t)
-                                   (js . t)))
-    )
-#+end_src
 ** cal-china-x
 #+begin_src emacs-lisp
   ;;农历
