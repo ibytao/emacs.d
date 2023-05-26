@@ -512,7 +512,29 @@
     :ensure t
     :bind (("C-;" . avy-goto-char-timer)
            ("C-c j" . avy-resume))
-    :config)
+    :config
+    (defun avy-action-mark-to-char (pt)
+      (activate-mark)
+      (goto-char pt))
+
+
+    (defun avy-action-kill-whole-line (pt)
+      (save-excursion
+        (goto-char pt)
+        (kill-whole-line))
+      (select-window
+       (cdr
+        (ring-ref avy-ring 0)))
+      t)
+
+    (defun avy-action-teleport-whole-line (pt)
+      (avy-action-kill-whole-line pt)
+      (save-excursion (yank)) t)
+
+    (setf (alist-get ?M avy-dispatch-alist) 'avy-action-mark-to-char
+          (alist-get ?K avy-dispatch-alist) 'avy-action-kill-whole-line
+          (alist-get ?T avy-dispatch-alist) 'avy-action-teleport-whole-line)
+    )
 #+end_src
 ** ivy-posframe
 #+begin_src emacs-lisp
