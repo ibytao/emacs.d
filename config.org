@@ -1258,7 +1258,8 @@
 
   (use-package omnisharp
     :ensure t
-    :hook ((csharp-mode . omnisharp-mode)
+    :hook ((csharp-mode . lsp-deferred)
+           (csharp-mode . omnisharp-mode)
            (before-save . my/csharp-mode-before-save-hook))
     :bind (("M-." . omnisharp-go-to-definition)
            ("s-." . omnisharp-find-usages))
@@ -1267,7 +1268,7 @@
       (when (eq major-mode 'csharp-mode)
         (omnisharp-code-format-entire-file)))
     :config
-    (setq omnisharp-server-executable-path "~/.emacs.d/.cache/omnisharp-osx-arm64-net6.0/OmniSharp")
+    ;; (setq omnisharp-server-executable-path "~/.emacs.d/.cache/omnisharp-osx-arm64-net6.0/OmniSharp")
     (setenv "FrameworkPathOverride" "/Library/Frameworks/Mono.framework/Versions/6.12.0"))
 #+end_src
 * Front-End
