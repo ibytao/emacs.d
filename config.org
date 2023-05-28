@@ -623,8 +623,8 @@
      ("C-M-@" . 'er/contract-region))
     :config
     (pending-delete-mode t)
-    (define-key input-decode-map [?\C-m] [C-m])
-    (global-set-key (kbd "<C-m>") #'er/expand-region)
+    ;; (define-key input-decode-map [?\C-m] [C-m])
+    ;; (global-set-key (kbd "<C-m>") #'er/expand-region)
     )
 #+end_src
 ** change-inner
@@ -684,6 +684,13 @@
        ("q" nil "Quit" :color blue)))
     )
 #+END_SRC
+** which-key
+#+begin_src emacs-lisp
+  (use-package which-key
+    :ensure t
+    :config
+    (which-key-mode))
+#+end_src
 ** magit
 #+begin_src emacs-lisp
   (use-package magit
@@ -739,8 +746,7 @@
 
     (add-hook 'clojure-mode-hook (lambda () (smartparens-mode -1)))
     (add-hook 'emacs-lisp-mode-hook (lambda () (smartparens-mode -1)))
-    (add-hook 'cider-repl-mode-hook (lambda () (smartparens-mode -1)))
-    )
+    (add-hook 'cider-repl-mode-hook (lambda () (smartparens-mode -1))))
 #+end_src
 ** projectile
 #+begin_src emacs-lisp
@@ -982,11 +988,11 @@
     ;;  ("M-/" . lsp-find-implementation))
     :init
     (setq lsp-keymap-prefix "C-c l")
-    (add-hook 'lsp-completion-mode-hook
-              (lambda ()
-                (if (eq major-mode 'dart-mode)
-                  (setq company-minimum-prefix-length 0)
-                  (setq company-minimum-prefix-length 1))))
+    ;; (add-hook 'lsp-completion-mode-hook
+    ;;           (lambda ()
+    ;;             (if (eq major-mode 'dart-mode)
+    ;;               (setq company-minimum-prefix-length 0)
+    ;;               (setq company-minimum-prefix-length 1))))
     :config
     (setq lsp-log-io t)
 
@@ -1056,8 +1062,6 @@
   (use-package dap-java :ensure nil)
   (use-package dap-go :ensure nil)
   (use-package lsp-treemacs)
-
-  (use-package which-key :config (which-key-mode))
 
   (add-hook 'dap-stopped-hook
             (lambda (arg) (call-interactively #'dap-hydra)))
