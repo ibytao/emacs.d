@@ -1419,12 +1419,13 @@
     (tree-sitter-require 'tsx)
     (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx)))
 #+end_src
-** dart&flutter
+** dart
 #+begin_src emacs-lisp
   (use-package lsp-dart
     :ensure t
     :defer t
     :hook ((dart-mode . lsp-deferred)
+           (dart-mode . smartparens-mode)
            (before-save . my/dart-mode-before-save-hook))
     :preface
     (defun my/dart-mode-before-save-hook ()
