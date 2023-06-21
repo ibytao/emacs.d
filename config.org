@@ -291,7 +291,7 @@
 
   ;; (set-face-attribute 'default nil :font "-*-Inconsolata Awesome-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
   ;; (set-face-attribute 'default nil :font "-*-Hack-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
-  (set-face-attribute 'default nil :font "-outline-Consolas-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
+  (set-face-attribute 'default nil :font "-outline-Consolas-normal-normal-normal-*-18-*-*-*-m-0-iso10646-1")
 
   ;; (set-face-attribute 'default nil :font "JetBrains Mono 16")
 
@@ -1240,7 +1240,7 @@
            (before-save . my/rust-mode-before-save-hook))
     :bind (("C-c C-c" . rust-run)
            (:map rust-mode-map
-                 ("C-<return>" . open-line-below-semicolon)))
+                 ("M-<return>" . open-line-below-semicolon)))
     :preface
     (defun my/rust-mode-before-save-hook ()
       (when (eq major-mode 'rust-mode)
