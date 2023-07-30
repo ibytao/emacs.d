@@ -502,7 +502,7 @@
            (ivy-occur-mode . hl-line-mode)))
 #+end_src
 ** ivy-avy
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
   (use-package ivy-avy
     ensure t)
 #+end_src
@@ -1229,7 +1229,6 @@
     :ensure t
     :mode (("\\.go\\'" . go-mode))
     :hook ((go-mode . lsp-deferred)
-           (before-save . lsp-organize-imports)
            (before-save . gofmt-before-save)))
 #+end_src
 ** rust
@@ -1356,7 +1355,7 @@
     (web-mode-markup-indent-offset 2)
     (web-mode-code-indent-offset 2)
     (web-mode-css-indent-offset 2)
-    
+
     :config
     (setq web-mode-script-padding 0)
     (setq web-mode-style-padding 0)
