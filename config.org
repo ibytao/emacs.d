@@ -741,7 +741,7 @@
                 ("C-k"   . sp-kill-hybrid-sexp)
                 ("M-k"   . sp-backward-kill-sexp))
 
-    :config
+    :init
     (smartparens-global-mode t)
 
     (add-hook 'clojure-mode-hook (lambda () (smartparens-mode -1)))
