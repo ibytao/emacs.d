@@ -443,6 +443,12 @@
   (global-set-key (kbd "C-S-p") (λ (ignore-errors (previous-line 5))))
   (global-set-key (kbd "C-S-f") (λ (ignore-errors (forward-char 5))))
   (global-set-key (kbd "C-S-b") (λ (ignore-errors (backward-char 5))))
+
+  ;; Translate the problematic keys to the function key Hyper,
+  ;; then bind this to the desired ctrl-i behavior
+  (keyboard-translate ?\C-i ?\H-i)
+  ;; (global-set-key [?\H-i] 'projectile-find-file)
+  (global-set-key [?\H-i] 'project-find-file)
 #+end_src
 * Advanced Configuration
 ** all-the-icons
@@ -747,33 +753,6 @@
     (add-hook 'clojure-mode-hook (lambda () (smartparens-mode -1)))
     (add-hook 'emacs-lisp-mode-hook (lambda () (smartparens-mode -1)))
     (add-hook 'cider-repl-mode-hook (lambda () (smartparens-mode -1))))
-#+end_src
-** projectile
-#+begin_src emacs-lisp
-  (use-package projectile
-    :ensure t
-    :bind (("C-c p" . projectile-command-map))
-    :custom ((projectile-completion-system 'ivy))
-    :init
-    (when (file-directory-p "~/Workspace")
-      (setq projectile-project-search-path '("~/Workspace")))
-    (setq projectile-switch-project-action #'projectile-dired)
-    :config
-    ;; Translate the problematic keys to the function key Hyper,
-    ;; then bind this to the desired ctrl-i behavior
-    (keyboard-translate ?\C-i ?\H-i)
-    ;; (global-set-key [?\H-i] 'projectile-find-file)
-    (global-set-key [?\H-i] 'project-find-file)
-
-    (projectile-mode +1)
-    (setq projectile-globally-ignored-files '( "TAGS" ".DS_Store" "." ".." ".git"))
-    ;; (setq projectile-enable-caching t)
-    ;; (setq projectile-file-exists-local-cache-expire (* 1 100))
-    )
-
-  (use-package counsel-projectile
-    :ensure t
-    :config (counsel-projectile-mode))
 #+end_src
 ** prodigy
 #+begin_src emacs-lisp
