@@ -1210,7 +1210,8 @@
     :ensure t
     :mode (("\\.go\\'" . go-mode))
     :hook ((go-mode . lsp-deferred)
-           (before-save . gofmt-before-save)))
+           (before-save . gofmt-before-save)
+           (before-save . lsp-organize-imports)))
 #+end_src
 ** rust
 #+begin_src emacs-lisp
