@@ -8,11 +8,12 @@
 (require 'org)
 (org-babel-load-file
  (expand-file-name "config.org"
-		   user-emacs-directory))
+                   user-emacs-directory))
 
 (if (file-exists-p (expand-file-name "config.el" user-emacs-directory))
     (load-file (expand-file-name "config.el" user-emacs-directory))
   (org-babel-load-file (expand-file-name "config.org" user-emacs-directory)))
 
 ;; Make gc pauses faster by decreasing the threshold.
-(setq gc-cons-threshold (* 2 1000 1000))
+(setq gc-cons-threshold (* 100 1024 1024)
+      read-process-output-max (* 1024 1024))
