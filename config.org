@@ -924,16 +924,27 @@
   ;;   :ensure t
   ;;   :hook (after-init . company-statistics-mode))
 
+  (defun company-yasnippet/disable-after-dot (fun command &optional arg &rest _ignore)
+    (if (eq command 'prefix)
+        (let ((prefix (funcall fun 'prefix)))
+          (when (and prefix (not
+                             (eq
+                              (char-before (- (point) (length prefix)))
+                              ?.)))
+            prefix))
+      (funcall fun command arg)))
+
+  (advice-add #'company-yasnippet :around #'company-yasnippet/disable-after-dot)
+
   (use-package company-restclient
     :ensure t)
 
   (defun setup-company-backends ()
     (setq company-backends
           '(company-files
-            (company-capf :with company-yasnippet :separate)
-            (company-css :with company-yasnippet :separate)
-            (company-tide company-yasnippet company-dabbrev-code :separate)
-            (company-omnisharp :with company-yasnippet :with company-dabbrev-code :separate)
+            (company-yasnippet company-capf :with company-dabbrev-code :separate)
+            (company-tide company-yasnippet :with company-dabbrev-code :separate)
+            (company-yasnippet company-omnisharp :with company-dabbrev-code :separate)
             (company-restclient)
             (company-abbrev company-dabbrev))))
 
@@ -1060,12 +1071,12 @@
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
     :ensure t
-    :hook ((lsp-mode . yas-minor-mode))
+    :hook ((lsp-mode . yas-minor-mode)
+           (rjsx-mode . yas-minor-mode))
     :config
     ;; (yas-global-mode 1)
     (yas-reload-all)
-    (use-package yasnippet-snippets :ensure t)
-    )
+    (use-package yasnippet-snippets :ensure t))
 #+END_SRC
 ** groovy
 #+begin_src emacs-lisp
@@ -1275,7 +1286,7 @@
     (flycheck-mode +1)
     (setq flycheck-check-syntax-automatically '(save mode-enabled))
     (eldoc-mode +1)
-    (company-mode +1)
+    ;; (company-mode +1)
     (tide-hl-identifier-mode +1)
     ;; aligns annotation to the right hand side
     (setq company-tooltip-align-annotations t)
@@ -1327,14 +1338,15 @@
   (use-package web-mode
     :ensure t
     :mode (("\\.vue\\'" . web-mode))
-    :hook (web-mode . (lambda ()
-                        ;; short circuit js mode and just do everything in jsx-mode
-                        ;; (if (equal web-mode-content-type "javascript")
-                        ;;     (web-mode-set-content-type "jsx")
-                        ;;   (message "now set to: %s" web-mode-content-type))
-                        ;; (setq lsp-enable-indentation nil)
-                        ;; (when (string-equal "tsx" (file-name-extension buffer-file-name)) (setup-tide-mode))
-                        (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp-deferred))))
+    :hook ((web-mode . yas-minor-mode)
+           (web-mode . (lambda ()
+                         ;; short circuit js mode and just do everything in jsx-mode
+                         ;; (if (equal web-mode-content-type "javascript")
+                         ;;     (web-mode-set-content-type "jsx")
+                         ;;   (message "now set to: %s" web-mode-content-type))
+                         ;; (setq lsp-enable-indentation nil)
+                         ;; (when (string-equal "tsx" (file-name-extension buffer-file-name)) (setup-tide-mode))
+                         (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp-deferred)))))
     :custom
     (web-mode-enable-comment-annotation nil)
     (web-mode-markup-indent-offset 2)
