@@ -853,8 +853,7 @@
     :config
     (global-diff-hl-mode)
     (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
-    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-    )
+    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 #+end_src
 ** restclient
 #+begin_src emacs-lisp
@@ -986,7 +985,7 @@
     ;;               (setq company-minimum-prefix-length 0)
     ;;               (setq company-minimum-prefix-length 1))))
     :config
-    (setq lsp-log-io t)
+    ;;(setq lsp-log-io t)
 
     (setq lsp-enable-snippet nil)
     (setq lsp-completion-provider :none)
@@ -1067,16 +1066,14 @@
     ;; (global-flycheck-mode t)
     )
 #+end_src
-** yasnippet
+** yasnippet-snippets
 #+BEGIN_SRC emacs-lisp
-  (use-package yasnippet
+  (use-package yasnippet-snippets
     :ensure t
     :hook ((lsp-mode . yas-minor-mode)
            (rjsx-mode . yas-minor-mode))
     :config
-    ;; (yas-global-mode 1)
-    (yas-reload-all)
-    (use-package yasnippet-snippets :ensure t))
+    (yas-reload-all))
 #+END_SRC
 ** groovy
 #+begin_src emacs-lisp
