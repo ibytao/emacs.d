@@ -943,7 +943,6 @@
           '(company-files
             (company-yasnippet company-capf :with company-dabbrev-code :separate)
             (company-tide company-yasnippet :with company-dabbrev-code :separate)
-            (company-yasnippet company-omnisharp :with company-dabbrev-code :separate)
             (company-restclient)
             (company-abbrev company-dabbrev))))
 
