@@ -214,9 +214,8 @@
     (setq solarized-height-plus-3 1.2)
     (setq solarized-height-plus-4 1.2)
 
-    (load-theme 'solarized-dark t)
-    (set-face-attribute 'cursor nil :inverse-video nil)
-    )
+    (load-theme 'solarized-dark)
+    (set-face-attribute 'cursor nil :inverse-video nil))
 
   (use-package spaceline
     :ensure t
