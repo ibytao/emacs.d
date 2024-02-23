@@ -1393,25 +1393,10 @@
 #+begin_src emacs-lisp
 	(use-package typescript-mode
 		:ensure t
-		:mode (("\\.ts\\'" . typescript-mode)
-					 ;; ("\\.tsx\\'" . typescript-tsx-mode)
-					 )
+		:mode (("\\.ts\\'" . typescript-mode))
 		:hook ((typescript-mode . lsp-deferred))
-		:init
-		(define-derived-mode typescript-tsx-mode typescript-mode "tsx")
 		:config
 		(setq typescript-indent-level 2))
-
-	(use-package tree-sitter
-		:ensure t
-		:hook ((typescript-tsx-mode . tree-sitter-hl-mode)))
-
-	(use-package tree-sitter-langs
-		:ensure t
-		:after tree-sitter
-		:config
-		(tree-sitter-require 'tsx)
-		(add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx)))
 #+end_src
 ** dart
 #+begin_src emacs-lisp
