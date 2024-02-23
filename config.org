@@ -52,8 +52,8 @@
     :defer 1
     :config
     (when (memq window-system '(mac ns x))
-      (setq exec-path-from-shell-check-startup-files nil)
-      (setq exec-path-from-shell-arguments nil)
+      ;;(setq exec-path-from-shell-check-startup-files nil)
+      ;;(setq exec-path-from-shell-arguments nil)
       (dolist (envvar '("JAVA_HOME" "DOTNET_ROOT"))
         (add-to-list 'exec-path-from-shell-variables envvar))
       (exec-path-from-shell-initialize)
@@ -1328,32 +1328,33 @@
 #+end_src
 ** web-mode
 #+begin_src emacs-lisp
-  (setq-default css-indent-offset 2)
+	(setq-default css-indent-offset 2)
 
-  (use-package web-mode
-    :ensure t
-    :mode (("\\.vue\\'" . web-mode))
-    :hook ((web-mode . yas-minor-mode)
-           (web-mode . (lambda ()
-                         ;; short circuit js mode and just do everything in jsx-mode
-                         ;; (if (equal web-mode-content-type "javascript")
-                         ;;     (web-mode-set-content-type "jsx")
-                         ;;   (message "now set to: %s" web-mode-content-type))
-                         ;; (setq lsp-enable-indentation nil)
-                         ;; (when (string-equal "tsx" (file-name-extension buffer-file-name)) (setup-tide-mode))
-                         (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp-deferred)))))
-    :custom
-    (indent-tabs-mode t)
-    (web-mode-enable-comment-annotation nil)
-    (web-mode-markup-indent-offset 2)
-    (web-mode-code-indent-offset 2)
-    (web-mode-css-indent-offset 2)
+	(use-package web-mode
+		:ensure t
+		:mode (("\\.vue\\'" . web-mode)
+					 ("\\.tsx\\'" . web-mode))
+		:hook ((web-mode . yas-minor-mode)
+					 (web-mode . (lambda ()
+												 ;; short circuit js mode and just do everything in jsx-mode
+												 ;; (if (equal web-mode-content-type "javascript")
+												 ;;     (web-mode-set-content-type "jsx")
+												 ;;   (message "now set to: %s" web-mode-content-type))
+												 ;; (setq lsp-enable-indentation nil)
+												 (when (string-equal "tsx" (file-name-extension buffer-file-name)) (lsp-deferred))
+												 (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp-deferred)))))
+		:custom
+		(indent-tabs-mode t)
+		(web-mode-enable-comment-annotation nil)
+		(web-mode-markup-indent-offset 2)
+		(web-mode-code-indent-offset 2)
+		(web-mode-css-indent-offset 2)
 
-    :config
-    (setq web-mode-script-padding 0)
-    (setq web-mode-style-padding 0)
-    (setq web-mode-block-padding 0)
-    (setq web-mode-enable-current-column-highlight t))
+		:config
+		(setq web-mode-script-padding 0)
+		(setq web-mode-style-padding 0)
+		(setq web-mode-block-padding 0)
+		(setq web-mode-enable-current-column-highlight t))
 #+end_src
 ** rjsx-mode
 #+begin_src emacs-lisp
@@ -1390,26 +1391,27 @@
 #+end_src
 ** typescript
 #+begin_src emacs-lisp
-  (use-package typescript-mode
-    :ensure t
-    :mode (("\\.ts\\'" . typescript-mode)
-           ("\\.tsx\\'" . typescript-tsx-mode))
-    :hook ((typescript-mode . lsp-deferred))
-    :init
-    (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
-    :config
-    (setq typescript-indent-level 2))
+	(use-package typescript-mode
+		:ensure t
+		:mode (("\\.ts\\'" . typescript-mode)
+					 ;; ("\\.tsx\\'" . typescript-tsx-mode)
+					 )
+		:hook ((typescript-mode . lsp-deferred))
+		:init
+		(define-derived-mode typescript-tsx-mode typescript-mode "tsx")
+		:config
+		(setq typescript-indent-level 2))
 
-  (use-package tree-sitter
-    :ensure t
-    :hook ((typescript-tsx-mode . tree-sitter-hl-mode)))
+	(use-package tree-sitter
+		:ensure t
+		:hook ((typescript-tsx-mode . tree-sitter-hl-mode)))
 
-  (use-package tree-sitter-langs
-    :ensure t
-    :after tree-sitter
-    :config
-    (tree-sitter-require 'tsx)
-    (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx)))
+	(use-package tree-sitter-langs
+		:ensure t
+		:after tree-sitter
+		:config
+		(tree-sitter-require 'tsx)
+		(add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx)))
 #+end_src
 ** dart
 #+begin_src emacs-lisp
