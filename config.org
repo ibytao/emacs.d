@@ -1058,11 +1058,10 @@
 #+end_src
 ** flycheck
 #+begin_src emacs-lisp
-  (use-package flycheck
-    :ensure t
-    :config
-    ;; (global-flycheck-mode t)
-    )
+	(use-package flycheck
+		:ensure t
+		:config
+		(setq flycheck-check-syntax-automatically '(mode-enabled save)))
 #+end_src
 ** yasnippet-snippets
 #+BEGIN_SRC emacs-lisp
@@ -1400,22 +1399,28 @@
 #+end_src
 ** dart
 #+begin_src emacs-lisp
-  (use-package lsp-dart
-    :ensure t
-    :defer t
-    :hook ((dart-mode . lsp-deferred)
-           (dart-mode . smartparens-mode)
-           (before-save . my/dart-mode-before-save-hook))
-    :preface
-    (defun my/dart-mode-before-save-hook ()
-      (when (eq major-mode 'dart-mode)
-        (lsp-format-buffer)))
-    :config
-    (setq lsp-dart-flutter-widget-guides nil)
-    (setq lsp-dart-dap-flutter-hot-reload-on-save t)
-    (with-eval-after-load 'projectile
-      (add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
-      (add-to-list 'projectile-project-root-files-bottom-up "BUILD")))
+	(use-package lsp-dart
+		:ensure t
+		:defer t
+		:hook ((dart-mode . lsp-deferred)
+					 (dart-mode . smartparens-mode)
+					 (before-save . my/dart-mode-before-save-hook))
+		:preface
+		(defun my/dart-mode-before-save-hook ()
+			(when (eq major-mode 'dart-mode)
+				(lsp-format-buffer)))
+		:config
+		(advice-add 'lsp-completion--looking-back-trigger-characterp :around
+								(defun lsp-completion--looking-back-trigger-characterp@fix-dart-trigger-characters (orig-fn trigger-characters)
+									(funcall orig-fn
+													 (if (and (derived-mode-p 'dart-mode) (not trigger-characters))
+															 ["." "=" "(" "$"]
+														 trigger-characters))))
+		(setq lsp-dart-flutter-widget-guides nil)
+		(setq lsp-dart-dap-flutter-hot-reload-on-save t)
+		(with-eval-after-load 'projectile
+			(add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
+			(add-to-list 'projectile-project-root-files-bottom-up "BUILD")))
 #+end_src
 * Org-Mode
 ** cal-china-x
