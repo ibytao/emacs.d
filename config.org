@@ -1421,6 +1421,11 @@
 		(with-eval-after-load 'projectile
 			(add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
 			(add-to-list 'projectile-project-root-files-bottom-up "BUILD")))
+
+	(use-package flutter
+		:after dart-mode
+		:bind (:map dart-mode-map
+								("C-M-x" . #'flutter-run-or-hot-reload)))
 #+end_src
 * Org-Mode
 ** cal-china-x
