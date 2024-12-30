@@ -459,21 +459,22 @@
 #+end_src
 ** dired
 #+begin_src emacs-lisp
-  (use-package dired
-    :ensure nil
-    :commands (dired dired-jump)
-    :bind (("C-x C-j" . dired-jump))
-    :config
-    (add-hook 'dired-mode-hook
-              (lambda ()
-                (define-key dired-mode-map (kbd "j") 'dired-up-directory)
-                (define-key dired-mode-map (kbd "k") 'dired-find-file)))
-    )
+	(use-package dired
+		:ensure nil
+		:commands (dired dired-jump)
+		:bind (("C-x C-j" . dired-jump))
+		:config
+		(add-hook 'dired-mode-hook
+							(lambda ()
+								(define-key dired-mode-map (kbd "j") 'dired-up-directory)
+								(define-key dired-mode-map (kbd "k") 'dired-find-file)
+								(define-key dired-mode-map (kbd "F") 'dired-create-empty-file)))
+		)
 
-  ;; (use-package all-the-icons-dired
-  ;;   :ensure t
-  ;;   :config
-  ;;   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+	;; (use-package all-the-icons-dired
+	;;   :ensure t
+	;;   :config
+	;;   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 #+end_src
 ** ivy
 #+begin_src emacs-lisp
@@ -811,30 +812,21 @@
 #+end_src
 ** translate
 #+begin_src emacs-lisp
-  (defun read-word ()
-    (interactive)
-    (let ((text (thing-at-point 'word)))
-      (if text
-          (shell-command (concat "say " (shell-quote-argument text)))
-        )))
-
-  (define-key global-map (kbd "C-c r") 'read-word)
+  (use-package plz
+  	:ensure t)
 
   (use-package go-translate
     :ensure t
-    :bind (("C-c t" . gts-do-translate))
+    :bind (("C-c t" . gt-do-translate))
     :config
-    ;; (setq go-translate-token-current (cons 430675 2721866130))
-    (setq gts-debug-p t)
-    (setq gts-translate-list '(("en" "zh")))
-    (setq gts-default-translator
-          (gts-translator
-           :picker (gts-noprompt-picker)
-           :engines (gts-google-engine)
-           :render (gts-buffer-render)))
-    )
-
-  (require 'insert-translated-name)
+  	(setq gt-default-http-client
+  				(gt-plz-http-client :args '("--proxy" "socks5://127.0.0.1:1080")))
+  	(setq gt-default-translator
+  				(gt-translator
+  				 :taker (gt-taker :langs '(en zh) :text 'word :prompt nil)
+  				 :engines (list (gt-google-engine)
+  												(gt-youdao-dict-engine))
+  				 :render (gt-buffer-render))))
 #+end_src
 ** beacon
 #+begin_src emacs-lisp
@@ -1212,6 +1204,13 @@
     ;; (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
     )
 #+end_src
+** kotlin
+#+begin_src emacs-lisp
+	(use-package kotlin-mode
+		:ensure t
+		:defer t
+		:hook ((kotlin-mode . lsp)))
+#+end_src
 ** Go
 #+begin_src emacs-lisp
   (use-package go-mode
@@ -1430,61 +1429,59 @@
 * Org-Mode
 ** cal-china-x
 #+begin_src emacs-lisp
-  ;;农历
-  (use-package cal-china-x
-    :ensure t
-    :config
-    (setq mark-holidays-in-calendar t)
+	(require 'org-tempo)
+	;;农历
+	(use-package cal-china-x
+		:ensure t
+		:config
+		(setq mark-holidays-in-calendar t)
 
-    (setq holidays '(
-                     ;;公历节日
-                     (holiday-fixed 2 14 "情人节")
-                     (holiday-fixed 9 10 "教师节")
-                     (holiday-float 6 0 3 "父亲节")
-                     ;;农历节日
-                     (holiday-lunar 1 1 "春节" 0)
-                     (holiday-lunar 1 15 "元宵节" 0)
-                     (holiday-solar-term "清明" "清明节")
-                     (holiday-lunar 5 5 "端午节" 0)
-                     (holiday-lunar 7 7 "七夕情人节" 0)
-                     (holiday-lunar 8 15 "中秋节" 0)
-                     ;;纪念日
-                     (holiday-fixed 12 1 "儿子生日")
-                     (holiday-fixed 2 18 "老婆生日" 0)
-                     (holiday-lunar 11 28 "我的生日" 0)
-                     )
-          )
+		(setq holidays '(
+										 ;;公历节日
+										 (holiday-fixed 2 14 "情人节")
+										 (holiday-fixed 9 10 "教师节")
+										 (holiday-float 6 0 3 "父亲节")
+										 ;;农历节日
+										 (holiday-lunar 1 1 "春节" 0)
+										 (holiday-lunar 1 15 "元宵节" 0)
+										 (holiday-solar-term "清明" "清明节")
+										 (holiday-lunar 5 5 "端午节" 0)
+										 (holiday-lunar 7 7 "七夕情人节" 0)
+										 (holiday-lunar 8 15 "中秋节" 0)
+										 ;;纪念日
+										 (holiday-fixed 12 1 "儿子生日")
+										 (holiday-fixed 2 18 "老婆生日" 0)
+										 (holiday-lunar 11 28 "我的生日" 0)
+										 )
+					)
 
-    ;;只显示我定制的节假日
-    (setq calendar-holidays (append cal-china-x-chinese-holidays holidays))
-
-
-    (setq org-agenda-format-date 'd/org-agenda-format-date-aligned)
-    (defun d/org-agenda-format-date-aligned (date)
-      "Format a DATE string for display in the daily/weekly agenda, or timeline.
-        This function makes sure that dates are aligned for easy reading."
-      (message "format----------------------------date-------------")
-      (require 'cal-iso)
-      (let* ((dayname (aref cal-china-x-days
-                            (calendar-day-of-week date)))
-             (day (cadr date))
-             (month (car date))
-             (year (nth 2 date))
-             (cn-date (calendar-chinese-from-absolute (calendar-absolute-from-gregorian date)))
-             (cn-month (cl-caddr cn-date))
-             (cn-day (cl-cadddr cn-date))
-             (cn-month-string (concat (aref cal-china-x-month-name
-                                            (1- (floor cn-month)))
-                                      (if (integerp cn-month)
-                                          ""
-                                        "(闰月)")))
-             (cn-day-string (aref cal-china-x-day-name
-                                  (1- cn-day))))
-        (format "%04d-%02d-%02d 星期%s %s%s" year month
-                day dayname cn-month-string cn-day-string)))
+		;;只显示我定制的节假日
+		(setq calendar-holidays (append cal-china-x-chinese-holidays holidays))
 
 
-    )
+		(setq org-agenda-format-date 'd/org-agenda-format-date-aligned)
+		(defun d/org-agenda-format-date-aligned (date)
+			"Format a DATE string for display in the daily/weekly agenda, or timeline.
+				This function makes sure that dates are aligned for easy reading."
+			(message "format----------------------------date-------------")
+			(require 'cal-iso)
+			(let* ((dayname (aref cal-china-x-days
+														(calendar-day-of-week date)))
+						 (day (cadr date))
+						 (month (car date))
+						 (year (nth 2 date))
+						 (cn-date (calendar-chinese-from-absolute (calendar-absolute-from-gregorian date)))
+						 (cn-month (cl-caddr cn-date))
+						 (cn-day (cl-cadddr cn-date))
+						 (cn-month-string (concat (aref cal-china-x-month-name
+																						(1- (floor cn-month)))
+																			(if (integerp cn-month)
+																					""
+																				"(闰月)")))
+						 (cn-day-string (aref cal-china-x-day-name
+																	(1- cn-day))))
+				(format "%04d-%02d-%02d 星期%s %s%s" year month
+								day dayname cn-month-string cn-day-string))))
 #+end_src
 ** org-bullets
 #+begin_src emacs-lisp
