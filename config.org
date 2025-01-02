@@ -1326,33 +1326,33 @@
 #+end_src
 ** web-mode
 #+begin_src emacs-lisp
-	(setq-default css-indent-offset 2)
+  (setq-default css-indent-offset 2)
 
-	(use-package web-mode
-		:ensure t
-		:mode (("\\.vue\\'" . web-mode)
-					 ("\\.tsx\\'" . web-mode))
-		:hook ((web-mode . yas-minor-mode)
-					 (web-mode . (lambda ()
-												 ;; short circuit js mode and just do everything in jsx-mode
-												 ;; (if (equal web-mode-content-type "javascript")
-												 ;;     (web-mode-set-content-type "jsx")
-												 ;;   (message "now set to: %s" web-mode-content-type))
-												 ;; (setq lsp-enable-indentation nil)
-												 (when (string-equal "tsx" (file-name-extension buffer-file-name)) (lsp-deferred))
-												 (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp-deferred)))))
-		:custom
-		(indent-tabs-mode t)
-		(web-mode-enable-comment-annotation nil)
-		(web-mode-markup-indent-offset 2)
-		(web-mode-code-indent-offset 2)
-		(web-mode-css-indent-offset 2)
+  (use-package web-mode
+  	:ensure t
+  	:mode (("\\.vue\\'" . web-mode)
+  				 ("\\.tsx\\'" . web-mode))
+  	:hook ((web-mode . yas-minor-mode)
+  				 (web-mode . (lambda ()
+  											 ;; short circuit js mode and just do everything in jsx-mode
+  											 ;; (if (equal web-mode-content-type "javascript")
+  											 ;;     (web-mode-set-content-type "jsx")
+  											 ;;   (message "now set to: %s" web-mode-content-type))
+  											 ;; (setq lsp-enable-indentation nil)
+  											 (when (string-equal "tsx" (file-name-extension buffer-file-name)) (lsp-deferred))
+  											 (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp-deferred)))))
+  	:custom
+  	(indent-tabs-mode t)
+  	(web-mode-enable-comment-annotation nil)
+  	(web-mode-markup-indent-offset 2)
+  	(web-mode-code-indent-offset 2)
+  	(web-mode-css-indent-offset 2)
 
-		:config
-		(setq web-mode-script-padding 0)
-		(setq web-mode-style-padding 0)
-		(setq web-mode-block-padding 0)
-		(setq web-mode-enable-current-column-highlight t))
+  	:config
+  	(setq web-mode-script-padding 0)
+  	(setq web-mode-style-padding 0)
+  	(setq web-mode-block-padding 0)
+  	(setq web-mode-enable-current-column-highlight t))
 #+end_src
 ** rjsx-mode
 #+begin_src emacs-lisp
@@ -1389,99 +1389,99 @@
 #+end_src
 ** typescript
 #+begin_src emacs-lisp
-	(use-package typescript-mode
-		:ensure t
-		:mode (("\\.ts\\'" . typescript-mode))
-		:hook ((typescript-mode . lsp-deferred))
-		:config
-		(setq typescript-indent-level 2))
+  (use-package typescript-mode
+  	:ensure t
+  	:mode (("\\.ts\\'" . typescript-mode))
+  	:hook ((typescript-mode . lsp-deferred))
+  	:config
+  	(setq typescript-indent-level 2))
 #+end_src
 ** dart
 #+begin_src emacs-lisp
-	(use-package lsp-dart
-		:ensure t
-		:defer t
-		:hook ((dart-mode . lsp-deferred)
-					 (dart-mode . smartparens-mode)
-					 (before-save . my/dart-mode-before-save-hook))
-		:preface
-		(defun my/dart-mode-before-save-hook ()
-			(when (eq major-mode 'dart-mode)
-				(lsp-format-buffer)))
-		:config
-		(advice-add 'lsp-completion--looking-back-trigger-characterp :around
-								(defun lsp-completion--looking-back-trigger-characterp@fix-dart-trigger-characters (orig-fn trigger-characters)
-									(funcall orig-fn
-													 (if (and (derived-mode-p 'dart-mode) (not trigger-characters))
-															 ["." "=" "(" "$"]
-														 trigger-characters))))
-		(setq lsp-dart-flutter-widget-guides nil)
-		(setq lsp-dart-dap-flutter-hot-reload-on-save t)
-		(with-eval-after-load 'projectile
-			(add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
-			(add-to-list 'projectile-project-root-files-bottom-up "BUILD")))
+  (use-package lsp-dart
+  	:ensure t
+  	:defer t
+  	:hook ((dart-mode . lsp-deferred)
+  				 (dart-mode . smartparens-mode)
+  				 (before-save . my/dart-mode-before-save-hook))
+  	:preface
+  	(defun my/dart-mode-before-save-hook ()
+  		(when (eq major-mode 'dart-mode)
+  			(lsp-format-buffer)))
+  	:config
+  	(advice-add 'lsp-completion--looking-back-trigger-characterp :around
+  							(defun lsp-completion--looking-back-trigger-characterp@fix-dart-trigger-characters (orig-fn trigger-characters)
+  								(funcall orig-fn
+  												 (if (and (derived-mode-p 'dart-mode) (not trigger-characters))
+  														 ["." "=" "(" "$"]
+  													 trigger-characters))))
+  	(setq lsp-dart-flutter-widget-guides nil)
+  	(setq lsp-dart-dap-flutter-hot-reload-on-save t)
+  	(with-eval-after-load 'projectile
+  		(add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
+  		(add-to-list 'projectile-project-root-files-bottom-up "BUILD")))
 
-	(use-package flutter
-		:after dart-mode
-		:bind (:map dart-mode-map
-								("C-M-x" . #'flutter-run-or-hot-reload)))
+  (use-package flutter
+  	:after dart-mode
+  	:bind (:map dart-mode-map
+  							("C-M-x" . #'flutter-run-or-hot-reload)))
 #+end_src
 * Org-Mode
 ** cal-china-x
 #+begin_src emacs-lisp
-	(require 'org-tempo)
-	;;农历
-	(use-package cal-china-x
-		:ensure t
-		:config
-		(setq mark-holidays-in-calendar t)
+  (require 'org-tempo)
+  ;;农历
+  (use-package cal-china-x
+  	:ensure t
+  	:config
+  	(setq mark-holidays-in-calendar t)
 
-		(setq holidays '(
-										 ;;公历节日
-										 (holiday-fixed 2 14 "情人节")
-										 (holiday-fixed 9 10 "教师节")
-										 (holiday-float 6 0 3 "父亲节")
-										 ;;农历节日
-										 (holiday-lunar 1 1 "春节" 0)
-										 (holiday-lunar 1 15 "元宵节" 0)
-										 (holiday-solar-term "清明" "清明节")
-										 (holiday-lunar 5 5 "端午节" 0)
-										 (holiday-lunar 7 7 "七夕情人节" 0)
-										 (holiday-lunar 8 15 "中秋节" 0)
-										 ;;纪念日
-										 (holiday-fixed 12 1 "儿子生日")
-										 (holiday-fixed 2 18 "老婆生日" 0)
-										 (holiday-lunar 11 28 "我的生日" 0)
-										 )
-					)
+  	(setq holidays '(
+  									 ;;公历节日
+  									 (holiday-fixed 2 14 "情人节")
+  									 (holiday-fixed 9 10 "教师节")
+  									 (holiday-float 6 0 3 "父亲节")
+  									 ;;农历节日
+  									 (holiday-lunar 1 1 "春节" 0)
+  									 (holiday-lunar 1 15 "元宵节" 0)
+  									 (holiday-solar-term "清明" "清明节")
+  									 (holiday-lunar 5 5 "端午节" 0)
+  									 (holiday-lunar 7 7 "七夕情人节" 0)
+  									 (holiday-lunar 8 15 "中秋节" 0)
+  									 ;;纪念日
+  									 (holiday-fixed 12 1 "儿子生日")
+  									 (holiday-fixed 2 18 "老婆生日" 0)
+  									 (holiday-lunar 11 28 "我的生日" 0)
+  									 )
+  				)
 
-		;;只显示我定制的节假日
-		(setq calendar-holidays (append cal-china-x-chinese-holidays holidays))
+  	;;只显示我定制的节假日
+  	(setq calendar-holidays (append cal-china-x-chinese-holidays holidays))
 
 
-		(setq org-agenda-format-date 'd/org-agenda-format-date-aligned)
-		(defun d/org-agenda-format-date-aligned (date)
-			"Format a DATE string for display in the daily/weekly agenda, or timeline.
-				This function makes sure that dates are aligned for easy reading."
-			(message "format----------------------------date-------------")
-			(require 'cal-iso)
-			(let* ((dayname (aref cal-china-x-days
-														(calendar-day-of-week date)))
-						 (day (cadr date))
-						 (month (car date))
-						 (year (nth 2 date))
-						 (cn-date (calendar-chinese-from-absolute (calendar-absolute-from-gregorian date)))
-						 (cn-month (cl-caddr cn-date))
-						 (cn-day (cl-cadddr cn-date))
-						 (cn-month-string (concat (aref cal-china-x-month-name
-																						(1- (floor cn-month)))
-																			(if (integerp cn-month)
-																					""
-																				"(闰月)")))
-						 (cn-day-string (aref cal-china-x-day-name
-																	(1- cn-day))))
-				(format "%04d-%02d-%02d 星期%s %s%s" year month
-								day dayname cn-month-string cn-day-string))))
+  	(setq org-agenda-format-date 'd/org-agenda-format-date-aligned)
+  	(defun d/org-agenda-format-date-aligned (date)
+  		"Format a DATE string for display in the daily/weekly agenda, or timeline.
+  			This function makes sure that dates are aligned for easy reading."
+  		(message "format----------------------------date-------------")
+  		(require 'cal-iso)
+  		(let* ((dayname (aref cal-china-x-days
+  													(calendar-day-of-week date)))
+  					 (day (cadr date))
+  					 (month (car date))
+  					 (year (nth 2 date))
+  					 (cn-date (calendar-chinese-from-absolute (calendar-absolute-from-gregorian date)))
+  					 (cn-month (cl-caddr cn-date))
+  					 (cn-day (cl-cadddr cn-date))
+  					 (cn-month-string (concat (aref cal-china-x-month-name
+  																					(1- (floor cn-month)))
+  																		(if (integerp cn-month)
+  																				""
+  																			"(闰月)")))
+  					 (cn-day-string (aref cal-china-x-day-name
+  																(1- cn-day))))
+  			(format "%04d-%02d-%02d 星期%s %s%s" year month
+  							day dayname cn-month-string cn-day-string))))
 #+end_src
 ** org-bullets
 #+begin_src emacs-lisp
