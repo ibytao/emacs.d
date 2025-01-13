@@ -15,25 +15,6 @@
   (use-package delight :ensure t)
   (use-package use-package-ensure-system-package :ensure t)
 #+end_src
-** straight
-#+begin_src emacs-lisp
-  ;;straight
-  (defvar bootstrap-version)
-  (let ((bootstrap-file
-         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-        (bootstrap-version 5))
-    (unless (file-exists-p bootstrap-file)
-      (with-current-buffer
-          (url-retrieve-synchronously
-           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-           'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage))
-  (setq package-enable-at-startup nil)
-
-  (straight-use-package 'use-package)
-#+end_src
 ** dufuns
 #+begin_src emacs-lisp
   ;; Functions (load all files in defuns-dir)
@@ -889,21 +870,6 @@
                 ("<C-tab>" . origami-recursively-toggle-node)
                 ("<S-tab>" . origami-toggle-all-nodes)))
 #+end_src
-** copilot
-#+begin_src emacs-lisp
-  (use-package copilot
-    :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
-    :ensure t
-    :config
-    ;; (add-hook 'prog-mode-hook 'copilot-mode)
-    (with-eval-after-load 'company
-      ;; disable inline previews
-      (delq 'company-preview-if-just-one-frontend company-frontends))
-
-
-    (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
-    (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion))
-#+end_src
 * Languages
 ** company
 #+begin_src emacs-lisp
@@ -1308,12 +1274,6 @@
            (typescript-mode . add-node-modules-path)
            (web-mode . add-node-modules-path)))
 #+end_src
-** tailwindcss
-#+begin_src emacs-lisp
-  (use-package lsp-tailwindcss
-    :straight (lsp-tailwindcss :type git :host github :repo "merrickluo/lsp-tailwindcss")
-    :init
-    (setq lsp-tailwindcss-add-on-mode t))
 #+end_src
 ** emment
 #+begin_src emacs-lisp
