@@ -1447,8 +1447,8 @@
 #+begin_src emacs-lisp
   (use-package org-bullets
     :ensure t
+    :hook ((org-mode . org-bullets-mode))
     :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode t)))
     (setq org-hide-leading-stars t)
     (setq org-bullets-bullet-list '("☯" "✿" "✚" "◉" "❀"))
     (setq org-ellipsis "⤵") ;; ⤵ ↴ ⬎ ⤷
@@ -1466,4 +1466,17 @@
 
   (use-package htmlize
     :ensure t)
+#+end_src
+** copilot
+#+begin_src emacs-lisp
+  (use-package copilot
+    :ensure t
+    :vc (:url "https://github.com/copilot-emacs/copilot.el"
+              ;; :rev :newest
+              :branch "main")
+    :hook (prog-mode . copilot-mode)
+  	:config
+  	(setq copilot-node-executable "~/.nvm/versions/node/v22.13.0/bin/node")
+  	(define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
+  	(define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)))
 #+end_src
