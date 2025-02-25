@@ -440,22 +440,22 @@
 #+end_src
 ** dired
 #+begin_src emacs-lisp
-	(use-package dired
-		:ensure nil
-		:commands (dired dired-jump)
-		:bind (("C-x C-j" . dired-jump))
-		:config
-		(add-hook 'dired-mode-hook
-							(lambda ()
-								(define-key dired-mode-map (kbd "j") 'dired-up-directory)
-								(define-key dired-mode-map (kbd "k") 'dired-find-file)
-								(define-key dired-mode-map (kbd "F") 'dired-create-empty-file)))
-		)
+  (use-package dired
+  	:ensure nil
+  	:commands (dired dired-jump)
+  	:bind (("C-x C-j" . dired-jump))
+  	:config
+  	(add-hook 'dired-mode-hook
+  						(lambda ()
+  							(define-key dired-mode-map (kbd "j") 'dired-up-directory)
+  							(define-key dired-mode-map (kbd "k") 'dired-find-file)
+  							(define-key dired-mode-map (kbd "F") 'dired-create-empty-file)))
+  	)
 
-	;; (use-package all-the-icons-dired
-	;;   :ensure t
-	;;   :config
-	;;   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+  ;; (use-package all-the-icons-dired
+  ;;   :ensure t
+  ;;   :config
+  ;;   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 #+end_src
 ** ivy
 #+begin_src emacs-lisp
@@ -808,15 +808,6 @@
   				 :engines (list (gt-google-engine)
   												(gt-youdao-dict-engine))
   				 :render (gt-buffer-render))))
-#+end_src
-** beacon
-#+begin_src emacs-lisp
-  (use-package beacon
-    :ensure t
-    :custom
-    (beacon-color "yellow")
-    :config
-    (beacon-mode 1))
 #+end_src
 ** diff-hl
 #+begin_src emacs-lisp
