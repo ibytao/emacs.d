@@ -76,6 +76,8 @@
   ;; (global-visual-line-mode t)
   (setq-default truncate-lines t)
 
+  (delete-selection-mode 1)
+
   (setq read-process-output-max (* 1024 1024)) ;; 1mb
   ;; (setenv "LSP_USE_PLISTS" "true")
 
@@ -1377,6 +1379,25 @@
   	:after dart-mode
   	:bind (:map dart-mode-map
   							("C-M-x" . #'flutter-run-or-hot-reload)))
+#+end_src
+** tailwindcss
+#+begin_src emacs-lisp
+  ;; tailwindcss LSP 客户端注册
+  (use-package lsp-tailwindcss
+    :ensure t
+    :after lsp-mode
+    :config
+    ;; 可选：开启扩展模式
+    (setq lsp-tailwindcss-add-on-mode t)
+    ;; 注册客户端
+    (lsp-register-client
+     (make-lsp-client
+      :new-connection (lsp-stdio-connection '("tailwindcss-language-server" "--stdio"))
+      :activation-fn (lambda (filename mode) ;; 文件激活条件
+                       (member mode '(html-mode css-mode web-mode
+  																							typescript-mode typescriptreact-mode
+  																							javascript-mode javascriptreact-mode)))
+      :server-id 'tailwindcss-ls)))
 #+end_src
 * Org-Mode
 ** cal-china-x
