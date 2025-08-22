@@ -865,148 +865,15 @@
                 ("<S-tab>" . origami-toggle-all-nodes)))
 #+end_src
 * Languages
-** company
+** lsp-bridge
 #+begin_src emacs-lisp
-  ;; (use-package company-tabnine
-  ;;   :ensure t)
-
-  ;; (use-package company-statistics
-  ;;   :ensure t
-  ;;   :hook (after-init . company-statistics-mode))
-
-  (defun company-yasnippet/disable-after-dot (fun command &optional arg &rest _ignore)
-    (if (eq command 'prefix)
-        (let ((prefix (funcall fun 'prefix)))
-          (when (and prefix (not
-                             (eq
-                              (char-before (- (point) (length prefix)))
-                              ?.)))
-            prefix))
-      (funcall fun command arg)))
-
-  (advice-add #'company-yasnippet :around #'company-yasnippet/disable-after-dot)
-
-  (use-package company-restclient
-    :ensure t)
-
-  (defun setup-company-backends ()
-    (setq company-backends
-          '(company-files
-            (company-yasnippet company-capf :with company-dabbrev-code :separate)
-            (company-tide company-yasnippet :with company-dabbrev-code :separate)
-            (company-restclient)
-            (company-abbrev company-dabbrev))))
-
-  (use-package company
-    :ensure t
-    :bind (:map company-active-map
-                ("C-n" . company-select-next)
-                ("C-p" . company-select-previous)
-                ("C-s" . company-filter-candidates)
-                ("C-w" . kill-region-or-backward-word)
-                :map company-search-map
-                ("C-n" . company-select-next)
-                ("C-p" . company-select-previous))
-    :hook (after-init . company-mode)
+  (use-package lsp-bridge
+    :load-path "~/.emacs.d/site-lisp/lsp-bridge"
+    :hook (prog-mode . (lambda () (require 'lsp-bridge)))
     :config
-    (global-company-mode t)
-    (setup-company-backends)
-    ;;(setq company-dabbrev-other-buffers t)
-    ;;(setq lsp-completion-provider :none)
-    (setq company-minimum-prefix-length 1
-          company-idle-delay 0.0
-          company-show-numbers t
-          company-tooltip-align-annotations t))
-#+end_src
-** lsp-mode
-#+begin_src emacs-lisp
-  (use-package lsp-mode
-    :ensure t
-    :hook ((lsp-mode . lsp-enable-which-key-integration))
-    :commands (lsp lsp-deferred)
-    ;; :bind
-    ;; (("M-'" . lsp-find-references)
-    ;;  ("M-/" . lsp-find-implementation))
-    :init
-    (setq lsp-keymap-prefix "C-c l")
-    ;; (add-hook 'lsp-completion-mode-hook
-    ;;           (lambda ()
-    ;;             (if (eq major-mode 'dart-mode)
-    ;;               (setq company-minimum-prefix-length 0)
-    ;;               (setq company-minimum-prefix-length 1))))
-    :config
-    ;;(setq lsp-log-io t)
-
-    (setq lsp-enable-snippet nil)
-    (setq lsp-completion-provider :none)
-    (setq lsp-semgrep-metrics-enabled nil)
-
-    (setq +format-with-lsp nil)
-    (setq lsp-before-save-edits nil) ;; not auto remove do not use variable
-
-    (setq lsp-headerline-breadcrumb-enable nil)
-    (setq lsp-completion-enable-additional-text-edit nil)
-    (setq lsp-eldoc-enable-hover nil)
-    (setq lsp-modeline-diagnostics-enable nil)
-    (setq lsp-signature-render-documentation nil)
-    (setq lsp-signature-auto-activate nil))
-
-  (use-package lsp-ui :ensure t
-    :custom
-    ;; lsp-ui-doc
-    (lsp-ui-doc-enable nil)
-    ;; (lsp-ui-doc-header t)
-    (lsp-ui-doc-include-signature t)
-    (lsp-ui-doc-position 'top) ;; top, bottom, or at-point
-    (lsp-ui-doc-max-width 150)
-    (lsp-ui-doc-max-height 30)
-    ;; (lsp-ui-doc-use-childframe t)
-    ;; (lsp-ui-doc-use-webkit t)
-    (lsp-ui-doc-show-with-cursor t)
-    (lsp-ui-doc-show-with-mouse nil)
-    ;; lsp-ui-flycheck
-    (lsp-ui-flycheck-enable nil)
-    ;; lsp-ui-sideline
-    (lsp-ui-sideline-enable nil)
-    (lsp-ui-sideline-ignore-duplicate t)
-    (lsp-ui-sideline-show-symbol t)
-    (lsp-ui-sideline-show-hover t)
-    (lsp-ui-sideline-show-diagnostics nil)
-    (lsp-ui-sideline-show-code-actions nil)
-    ;; lsp-ui-imenu
-    (lsp-ui-imenu-enable nil)
-    (lsp-ui-imenu-kind-position 'top)
-    ;; lsp-ui-peek
-    (lsp-ui-peek-enable t)
-    (lsp-ui-peek-peek-height 20)
-    (lsp-ui-peek-list-width 50)
-    (lsp-ui-peek-fontify 'on-demand) ;; never, on-demand, or always
-    :preface
-    (defun ladicle/toggle-lsp-ui-doc ()
-      (interactive)
-      (if lsp-ui-doc-mode
-          (progn
-            (lsp-ui-doc-mode -1)
-            (lsp-ui-doc--hide-frame))
-        (lsp-ui-doc-mode 1)))
-    :bind
-    (:map lsp-mode-map
-          ("s-." . lsp-ui-peek-find-references)
-          ("M-." . lsp-ui-peek-find-definitions)
-          ("M-/" . lsp-ui-peek-find-implementation)
-          ;; ("C-c m"   . lsp-ui-imenu)
-          ;; ("C-c s"   . lsp-ui-sideline-mode)
-          ("s-d"   . ladicle/toggle-lsp-ui-doc)
-          )
-    :after lsp-mode)
-  (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-  (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
-  (use-package dap-java :ensure nil)
-  (use-package dap-go :ensure nil)
-  (use-package lsp-treemacs)
-
-  (add-hook 'dap-stopped-hook
-            (lambda (arg) (call-interactively #'dap-hydra)))
+    ;; 自动补全（不需要 company）
+  	;;(setq lsp-bridge-log-level 'debug)
+    (global-lsp-bridge-mode))
 #+end_src
 ** flycheck
 #+begin_src emacs-lisp
@@ -1125,7 +992,7 @@
   (use-package lsp-python-ms
     :ensure t
     :init (setq lsp-python-ms-auto-install-server t)
-    :hook (python-mode . lsp-deferred))
+    :hook (python-mode . lsp-bridge-mode))
 
   (use-package pyvenv
     :diminish
@@ -1176,15 +1043,14 @@
   (use-package go-mode
     :ensure t
     :mode (("\\.go\\'" . go-mode))
-    :hook ((go-mode . lsp-deferred)
-           (before-save . gofmt-before-save)
-           (before-save . lsp-organize-imports)))
+    :hook ((go-mode . lsp-bridge-mode)
+  				 (go-mode . gofmt-before-save)))
 #+end_src
 ** rust
 #+begin_src emacs-lisp
   (use-package rust-mode
     :ensure t
-    :hook ((rust-mode . lsp-deferred)
+    :hook ((rust-mode . lsp-bridge-mode)
            (before-save . my/rust-mode-before-save-hook))
     :bind (("C-c C-c" . rust-run)
            (:map rust-mode-map
@@ -1210,7 +1076,7 @@
 
   (use-package omnisharp
     :ensure t
-    :hook ((csharp-mode . lsp-deferred)
+    :hook ((csharp-mode . lsp-bridge-mode)
            (csharp-mode . omnisharp-mode)
            (before-save . my/csharp-mode-before-save-hook))
     :bind (("M-." . omnisharp-go-to-definition)
@@ -1293,8 +1159,8 @@
   											 ;;     (web-mode-set-content-type "jsx")
   											 ;;   (message "now set to: %s" web-mode-content-type))
   											 ;; (setq lsp-enable-indentation nil)
-  											 (when (string-equal "tsx" (file-name-extension buffer-file-name)) (lsp-deferred))
-  											 (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp-deferred)))))
+  											 (when (string-equal "tsx" (file-name-extension buffer-file-name)) (lsp-bridge-mode))
+  											 (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp-bridge-mode)))))
   	:custom
   	(indent-tabs-mode t)
   	(web-mode-enable-comment-annotation nil)
@@ -1346,7 +1212,7 @@
   (use-package typescript-mode
   	:ensure t
   	:mode (("\\.ts\\'" . typescript-mode))
-  	:hook ((typescript-mode . lsp-deferred))
+  	:hook ((typescript-mode . lsp-bridge-mode))
   	:config
   	(setq typescript-indent-level 2))
 #+end_src
@@ -1355,7 +1221,7 @@
   (use-package lsp-dart
   	:ensure t
   	:defer t
-  	:hook ((dart-mode . lsp-deferred)
+  	:hook ((dart-mode . lsp-bridge-mode)
   				 (dart-mode . smartparens-mode)
   				 (before-save . my/dart-mode-before-save-hook))
   	:preface
@@ -1487,7 +1353,7 @@
     :vc (:url "https://github.com/copilot-emacs/copilot.el"
               ;; :rev :newest
               :branch "main")
-    :hook (prog-mode . copilot-mode)
+    ;;:hook (prog-mode . copilot-mode)
   	:config
   	(setq copilot-node-executable "~/.nvm/versions/node/v22.13.0/bin/node")
   	(define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
