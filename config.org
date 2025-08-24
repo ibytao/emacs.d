@@ -222,8 +222,8 @@
      ;; Your init file should contain only one such instance.
      ;; If there is more than one, they won't work right.
      '(markdown-code-face ((t (:inherit consolas))))
-     '(company-tooltip-selection
-       ((t (:background "#002b36" :foreground "#b58900" :weight normal))))
+
+
      '(magit-diff-context-highlight ((t (:extend t :background "#073642" :foreground "grey70"))))
      '(magit-section-highlight ((t (:extend t :background "#073642"))))
      '(mode-line ((t (:background "#657b83" :foreground "#002b36" :box nil :overline nil :underline nil))))
@@ -528,29 +528,6 @@
           (alist-get ?T avy-dispatch-alist) 'avy-action-teleport-whole-line)
     )
 #+end_src
-** ivy-posframe
-#+begin_src emacs-lisp
-  ;; (use-package ivy-posframe
-  ;;   :ensure t
-  ;;   :config
-  ;;   (setq ivy-posframe-border-width 2)
-  ;;   (setq ivy-posframe-parameters
-  ;;         '((left-fringe . 8)
-  ;;           (right-fringe . 8)
-  ;;           (internal-border-width . 8)))
-
-  ;;   (setq ivy-posframe-height-alist
-  ;;         '((swiper . 15)
-  ;;           (t . 10)))
-  ;;   (setq ivy-posframe-width 100)
-  ;;   (setq ivy-posframe-display-functions-alist
-  ;;         '(;;(swiper . ivy-display-function-fallback)
-  ;;           ;;(swiper-isearch . ivy-display-function-fallback)
-  ;;           ;;(counsel-M-x . ivy-posframe-display-at-point)
-  ;;           (t . ivy-posframe-display-at-frame-center)))
-
-  ;;   :hook (after-init . ivy-posframe-mode))
-#+end_src
 ** counsel
 #+begin_src emacs-lisp
   (use-package counsel
@@ -673,8 +650,7 @@
        ("m" mc/mark-all-dwim "dwim")
        ("r" mc/mark-all-in-region-regexp "regexp")
 
-       ("q" nil "Quit" :color blue)))
-    )
+       ("q" nil "Quit" :color blue))))
 #+END_SRC
 ** which-key
 #+begin_src emacs-lisp
@@ -739,39 +715,6 @@
     (add-hook 'clojure-mode-hook (lambda () (smartparens-mode -1)))
     (add-hook 'emacs-lisp-mode-hook (lambda () (smartparens-mode -1)))
     (add-hook 'cider-repl-mode-hook (lambda () (smartparens-mode -1))))
-#+end_src
-** prodigy
-#+begin_src emacs-lisp
-  (use-package prodigy
-    :ensure t
-    :bind (("C-c s" . prodigy))
-    :config
-    (prodigy-define-service
-      :name "cloud-pro"
-      :command "npm"
-      :args '("run" "dev")
-      :cwd "~/Workspace/cloud-pro")
-    (prodigy-define-service
-      :name "marketing-strategy"
-      :command "npm"
-      :args '("run" "dev")
-      :cwd "~/Workspace/marketing-strategy")
-    (prodigy-define-service
-      :name "decision-engine"
-      :command "npm"
-      :args '("run" "dev")
-      :cwd "~/Workspace/decision-engine")
-    (prodigy-define-service
-      :name "norm-center"
-      :command "npm"
-      :args '("run" "dev")
-      :cwd "~/Workspace/norm-center")
-    (prodigy-define-service
-      :name "ladder-dataSource"
-      :command "npm"
-      :args '("run" "dev")
-      :cwd "~/Workspace/ladder-dataSource")
-    )
 #+end_src
 ** guide-key
 #+begin_src emacs-lisp
@@ -870,11 +813,49 @@
   (use-package lsp-bridge
     :load-path "~/.emacs.d/site-lisp/lsp-bridge"
     :hook (prog-mode . (lambda () (require 'lsp-bridge)))
+    :init
+    (defcustom lsp-bridge-multi-lang-server-extension-list
+      '(
+        (("vue") . "vue")
+        (("ts") . "typescript_eslint")
+        (("tsx") . "react")
+        )
+      "The multi lang server rule for file extension."
+      :type 'cons)
     :config
-    ;; 自动补全（不需要 company）
-  	;;(setq lsp-bridge-log-level 'debug)
+  	(setq lsp-bridge-enable-completion-in-string t)
+  	(setq lsp-bridge-get-language-id
+          (lambda (project-path file-path server-name extension-name)
+            (when (string-equal server-name "tailwindcss")
+              (cond
+               ;; 处理 TypeScript 文件
+               ((string-equal extension-name "ts")
+                "typescript")
+               ;; 处理 TypeScript React 文件
+               ((string-equal extension-name "tsx")
+                "typescriptreact")
+               ;; 处理 JavaScript React 文件
+               ((string-equal extension-name "jsx")
+                "javascriptreact")
+               ;; 处理普通的 JavaScript 文件
+               ((string-equal extension-name "js")
+                "javascript")
+               ;; 处理 Svelte 文件
+               ((string-equal extension-name "svelte")
+                "svelte")
+  						 ;; 处理 Vue 文件
+  						 ((string-equal extension-name "vue")
+  							"vue")
+               ;; 默认情况，返回扩展名本身
+               (t extension-name)))))
+
+    (setq lsp-bridge-python-command (string-trim
+  																	 (shell-command-to-string "pyenv which python3")))
+
+    ;; (setq lsp-bridge-log-level 'debug)
     (global-lsp-bridge-mode))
 #+end_src
+**
 ** flycheck
 #+begin_src emacs-lisp
 	(use-package flycheck
@@ -886,18 +867,10 @@
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet-snippets
     :ensure t
-    :hook ((lsp-mode . yas-minor-mode)
-           (rjsx-mode . yas-minor-mode))
+    :hook ((ls-bridge-mode . yas-minor-mode))
     :config
     (yas-reload-all))
 #+END_SRC
-** groovy
-#+begin_src emacs-lisp
-  (use-package groovy-mode
-    :ensure t
-    :defer t
-    :hook (groovy-mode . lsp))
-#+end_src
 ** gradle
 #+begin_src emacs-lisp
   (use-package gradle-mode
@@ -921,50 +894,6 @@
     :after (:any sql sql-interactive-mode)
     :delight sql-mode "Σ ")
 #+end_src
-** protobuf
-#+begin_src emacs-lisp
-  (use-package protobuf-mode
-    :ensure t)
-#+end_src
-** yaml
-#+begin_src emacs-lisp
-  (use-package yaml-mode
-    :ensure t
-    :hook (yaml-mode . lsp)
-    :mode "\\.yml\\'")
-#+end_src
-** Json
-#+begin_src emacs-lisp
-  (use-package json-mode
-    :ensure t
-    :delight "J "
-    :mode "\\.json\\'"
-    :hook (before-save . my/json-mode-before-save-hook)
-    :preface
-    (defun my/json-mode-before-save-hook ()
-      (when (eq major-mode 'json-mode)
-        (json-pretty-print-buffer)))
-
-    (defun my/json-array-of-numbers-on-one-line (encode array)
-      "Prints the arrays of numbers in one line."
-      (let* ((json-encoding-pretty-print
-              (and json-encoding-pretty-print
-                   (not (loop for x across array always (numberp x)))))
-             (json-encoding-separator (if json-encoding-pretty-print "," ", ")))
-        (funcall encode array)))
-    :config
-    (advice-add 'json-encode-array :around #'my/json-array-of-numbers-on-one-line)
-    (add-hook 'json-mode-hook
-              (lambda ()
-                (make-local-variable 'js-indent-level)
-                (setq js-indent-level 2))))
-#+end_src
-** dockerfile
-#+begin_src emacs-lisp
-  (use-package dockerfile-mode
-    :ensure t
-    :hook (dockerfile-mode . lsp))
-#+end_src
 ** clojure
 #+begin_src emacs-lisp
   (use-package clojure-mode
@@ -986,57 +915,6 @@
       (cljr-add-keybindings-with-prefix "C-c C-m"))
 
     (add-hook 'clojure-mode-hook #'my-clojure-mode-hook))
-#+end_src
-** python
-#+begin_src emacs-lisp
-  (use-package lsp-python-ms
-    :ensure t
-    :init (setq lsp-python-ms-auto-install-server t)
-    :hook (python-mode . lsp-bridge-mode))
-
-  (use-package pyvenv
-    :diminish
-    :config
-    (setq pyvenv-mode-line-indicator
-          '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
-    (pyvenv-mode +1))
-#+end_src
-** java
-#+begin_src emacs-lisp
-  (use-package lsp-java
-    :ensure t
-    :defer t
-    :hook ((java-mode . lsp)
-           (java-mode . gradle-mode))
-    :config
-    (setq lsp-java-save-actions-organize-imports t)
-    ;; java1.8
-    (setq lsp-java-jdt-download-url  "https://download.eclipse.org/jdtls/milestones/0.57.0/jdt-language-server-0.57.0-202006172108.tar.gz")
-
-    (setq lombok-path (substitute-in-file-name "$HOME/.m2/repository/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar"))
-
-    (setq lsp-java-vmargs
-          (list "-noverify"
-                "-Xmx1G"
-                "-XX:+UseG1GC"
-                "-XX:+UseStringDeduplication"
-                (concat "-javaagent:" lombok-path)
-                (concat "-Xbootclasspath/a:" lombok-path)))
-
-
-    ;; (require 'lsp-java-boot)
-
-    ;; to enable the lenses
-    ;; (add-hook 'lsp-mode-hook #'lsp-lens-mode)
-    ;; (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
-    )
-#+end_src
-** kotlin
-#+begin_src emacs-lisp
-	(use-package kotlin-mode
-		:ensure t
-		:defer t
-		:hook ((kotlin-mode . lsp)))
 #+end_src
 ** Go
 #+begin_src emacs-lisp
@@ -1087,31 +965,20 @@
         (omnisharp-code-format-entire-file)))
     :config
     ;; (setq omnisharp-server-executable-path "~/.emacs.d/.cache/omnisharp-osx-arm64-net6.0/OmniSharp")
-    (setenv "FrameworkPathOverride" "/Library/Frameworks/Mono.framework/Versions/6.12.0"))
+    (setenv "FrameworkPathOverride" "/Library/Frameworks/Mono.framework/Versions/Current"))
+#+end_src
+** dart
+#+begin_src emacs-lisp
+  (use-package dart-mode
+  	:mode (("\\.dart\\'" . dart-mode))
+  	:hook ((dart-mod . lsp-bridge-mode)))
+
+  (use-package flutter
+  	:after dart-mode
+  	:bind (:map dart-mode-map
+  							("C-M-x" . #'flutter-run-or-hot-reload)))
 #+end_src
 * Front-End
-** tide
-#+begin_src emacs-lisp
-  (use-package tide
-    :ensure t
-    :config
-    (setq tide-completion-enable-autoimport-suggestions t))
-
-  (defun setup-tide-mode ()
-    "Setup tide mode for other mode."
-    (interactive)
-    ;; (message "setup tide mode ....")
-    (tide-setup)
-    (flycheck-mode +1)
-    (setq flycheck-check-syntax-automatically '(save mode-enabled))
-    (eldoc-mode +1)
-    ;; (company-mode +1)
-    (tide-hl-identifier-mode +1)
-    ;; aligns annotation to the right hand side
-    (setq company-tooltip-align-annotations t)
-    (define-key tide-mode-map (kbd "s-.") 'tide-references)
-    (define-key tide-references-mode-map (kbd "v") 'tide-goto-reference))
-#+end_src
 ** prettier-js
 #+begin_src emacs-lisp
   (use-package prettier-js
@@ -1147,6 +1014,7 @@
 ** web-mode
 #+begin_src emacs-lisp
   (setq-default css-indent-offset 2)
+  (setq js-indent-level 2)
 
   (use-package web-mode
   	:ensure t
@@ -1174,39 +1042,6 @@
   	(setq web-mode-block-padding 0)
   	(setq web-mode-enable-current-column-highlight t))
 #+end_src
-** rjsx-mode
-#+begin_src emacs-lisp
-  (use-package rjsx-mode
-    :ensure t
-    :mode (("\\.jsx?\\'" . rjsx-mode))
-    :hook (rjsx-mode . setup-tide-mode)
-    :config
-    (setq js-indent-level 2)
-    (setq-default js2-allow-rhino-new-expr-initializer nil)
-    (setq-default js2-auto-indent-p nil)
-    (setq-default js2-enter-indents-newline nil)
-    (setq-default js2-global-externs '("module" "require" "buster" "sinon" "assert" "refute" "setTimeout" "clearTimeout" "setInterval" "clearInterval" "location" "__dirname" "console" "JSON" "process" "setImmediate"))
-    (setq-default js2-idle-timer-delay 0.1)
-    (setq-default js2-indent-on-enter-key nil)
-    (setq-default js2-mirror-mode nil)
-    (setq-default js2-strict-inconsistent-return-warning nil)
-    (setq-default js2-auto-indent-p t)
-    (setq-default js2-include-rhino-externs nil)
-    (setq-default js2-include-gears-externs nil)
-    (setq-default js2-concat-multiline-strings 'eol)
-    (setq-default js2-rebind-eol-bol-keys nil)
-    ;; Let flycheck handle parse errors
-    (setq-default js2-show-parse-errors nil)
-    (setq-default js2-strict-missing-semi-warning nil)
-    (setq-default js2-strict-trailing-comma-warning nil) ;; jshint does not warn about this now for some reason
-
-    (add-hook 'rjsx-mode-hook
-              (lambda()
-                (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
-                ;; (flycheck-select-checker 'javascript-eslint)
-                ))
-    )
-#+end_src
 ** typescript
 #+begin_src emacs-lisp
   (use-package typescript-mode
@@ -1215,55 +1050,6 @@
   	:hook ((typescript-mode . lsp-bridge-mode))
   	:config
   	(setq typescript-indent-level 2))
-#+end_src
-** dart
-#+begin_src emacs-lisp
-  (use-package lsp-dart
-  	:ensure t
-  	:defer t
-  	:hook ((dart-mode . lsp-bridge-mode)
-  				 (dart-mode . smartparens-mode)
-  				 (before-save . my/dart-mode-before-save-hook))
-  	:preface
-  	(defun my/dart-mode-before-save-hook ()
-  		(when (eq major-mode 'dart-mode)
-  			(lsp-format-buffer)))
-  	:config
-  	(advice-add 'lsp-completion--looking-back-trigger-characterp :around
-  							(defun lsp-completion--looking-back-trigger-characterp@fix-dart-trigger-characters (orig-fn trigger-characters)
-  								(funcall orig-fn
-  												 (if (and (derived-mode-p 'dart-mode) (not trigger-characters))
-  														 ["." "=" "(" "$"]
-  													 trigger-characters))))
-  	(setq lsp-dart-flutter-widget-guides nil)
-  	(setq lsp-dart-dap-flutter-hot-reload-on-save t)
-  	(with-eval-after-load 'projectile
-  		(add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
-  		(add-to-list 'projectile-project-root-files-bottom-up "BUILD")))
-
-  (use-package flutter
-  	:after dart-mode
-  	:bind (:map dart-mode-map
-  							("C-M-x" . #'flutter-run-or-hot-reload)))
-#+end_src
-** tailwindcss
-#+begin_src emacs-lisp
-  ;; tailwindcss LSP 客户端注册
-  (use-package lsp-tailwindcss
-    :ensure t
-    :after lsp-mode
-    :config
-    ;; 可选：开启扩展模式
-    (setq lsp-tailwindcss-add-on-mode t)
-    ;; 注册客户端
-    (lsp-register-client
-     (make-lsp-client
-      :new-connection (lsp-stdio-connection '("tailwindcss-language-server" "--stdio"))
-      :activation-fn (lambda (filename mode) ;; 文件激活条件
-                       (member mode '(html-mode css-mode web-mode
-  																							typescript-mode typescriptreact-mode
-  																							javascript-mode javascriptreact-mode)))
-      :server-id 'tailwindcss-ls)))
 #+end_src
 * Org-Mode
 ** cal-china-x
