@@ -823,7 +823,6 @@
         )
       "The multi lang server rule for file extension."
       :type 'cons)
-    :config
   	(setq lsp-bridge-enable-completion-in-string t)
   	(setq lsp-bridge-get-language-id
           (lambda (project-path file-path server-name extension-name)
@@ -852,7 +851,7 @@
 
     (setq lsp-bridge-python-command (string-trim
   																	 (shell-command-to-string "pyenv which python3")))
-
+  	:config
     ;; (setq lsp-bridge-log-level 'debug)
     (global-lsp-bridge-mode))
 #+end_src
