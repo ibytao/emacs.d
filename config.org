@@ -30,6 +30,7 @@
 #+begin_src emacs-lisp
   ;;shell path
   (use-package exec-path-from-shell
+  	:ensure t
     :defer 1
     :config
     (when (memq window-system '(mac ns x))
