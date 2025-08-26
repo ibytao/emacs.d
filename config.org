@@ -814,12 +814,17 @@
   (use-package lsp-bridge
     :load-path "~/.emacs.d/site-lisp/lsp-bridge"
     :hook (prog-mode . (lambda () (require 'lsp-bridge)))
+  	:bind (:map lsp-bridge-mode
+  							("M-." . lsp-bridge-find-def)
+  							("M-," . lsp-bridge-find-def-return)
+  							("s-." . lsp-bridge-find-references))
     :init
     (defcustom lsp-bridge-multi-lang-server-extension-list
       '(
         (("vue") . "vue")
         (("ts") . "typescript_eslint")
-        (("tsx") . "react")
+        (("tsx") . "typescriptreact_eslint_tailwindcss")
+  			(("jsx" "js") . "react")
         )
       "The multi lang server rule for file extension."
       :type 'cons)
@@ -851,6 +856,7 @@
 
     (setq lsp-bridge-python-command (string-trim
   																	 (shell-command-to-string "pyenv which python3")))
+  	(setq lsp-bridge-python-multi-lsp-server "pylsp_ruff")
   	:config
     ;; (setq lsp-bridge-log-level 'debug)
     (global-lsp-bridge-mode))
@@ -978,6 +984,13 @@
   	:bind (:map dart-mode-map
   							("C-M-x" . #'flutter-run-or-hot-reload)))
 #+end_src
+** java
+#+begin_src emacs-lisp
+  (use-package lsp-bridge-jdtls
+  	:ensure t
+  	:config
+  	(setq lsp-bridge-enable-auto-import t))
+#+end_src
 * Front-End
 ** prettier-js
 #+begin_src emacs-lisp
@@ -1019,7 +1032,8 @@
   (use-package web-mode
   	:ensure t
   	:mode (("\\.vue\\'" . web-mode)
-  				 ("\\.tsx\\'" . web-mode))
+  				 ("\\.tsx\\'" . web-mode)
+  				 ("\\.wxml\\'" . web-mode))
   	:hook ((web-mode . yas-minor-mode)
   				 (web-mode . (lambda ()
   											 ;; short circuit js mode and just do everything in jsx-mode
@@ -1139,9 +1153,9 @@
     :vc (:url "https://github.com/copilot-emacs/copilot.el"
               ;; :rev :newest
               :branch "main")
-    ;;:hook (prog-mode . copilot-mode)
+    :hook (prog-mode . copilot-mode)
   	:config
-  	(setq copilot-node-executable "~/.nvm/versions/node/v22.13.0/bin/node")
+  	;; (setq copilot-node-executable "~/.nvm/versions/node/v22.13.0/bin/node")
   	(define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
   	(define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)))
 #+end_src
