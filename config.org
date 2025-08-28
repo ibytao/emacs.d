@@ -72,8 +72,9 @@
   (show-paren-mode 1)                                            ; Show the parent
   (setq-default cursor-type 'bar)                                ; set cursor style
   (blink-cursor-mode t)                                          ; blink cursor
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)       ; delete traniling whitespace
+  ;; (add-hook 'before-save-hook 'delete-trailing-whitespace)       ; delete traniling whitespace
   (add-to-list 'default-frame-alist '(fullscreen . maximized))   ; full screen
+  (global-auto-revert-mode t)
   ;; (global-visual-line-mode t)
   (setq-default truncate-lines t)
 
@@ -1155,7 +1156,7 @@
     :vc (:url "https://github.com/copilot-emacs/copilot.el"
               ;; :rev :newest
               :branch "main")
-    :hook (prog-mode . copilot-mode)
+    ;;:hook (prog-mode . copilot-mode)
   	:config
   	(define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
   	(define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion))
