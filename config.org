@@ -963,8 +963,10 @@
     :hook ((csharp-mode . lsp-bridge-mode)
            (csharp-mode . omnisharp-mode)
            (before-save . my/csharp-mode-before-save-hook))
-    :bind (("M-." . omnisharp-go-to-definition)
-           ("s-." . omnisharp-find-usages))
+    :bind (:map omnisharp-mode
+  							("M-." . omnisharp-go-to-definition)
+  							("M-," . omnisharp-go-to-definition-return)
+  							("s-." . omnisharp-find-usages))
     :preface
     (defun my/csharp-mode-before-save-hook ()
       (when (eq major-mode 'csharp-mode)
