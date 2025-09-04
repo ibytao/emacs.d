@@ -738,21 +738,21 @@
 #+end_src
 ** translate
 #+begin_src emacs-lisp
-  (use-package plz
-  	:ensure t)
-
-  (use-package go-translate
+  (use-package gt
     :ensure t
-    :bind (("C-c t" . gt-do-translate))
+    :bind (("C-c t" . gt-translate))
     :config
-  	(setq gt-default-http-client
-  				(gt-plz-http-client :args '("--proxy" "socks5://127.0.0.1:1080")))
-  	(setq gt-default-translator
-  				(gt-translator
-  				 :taker (gt-taker :langs '(en zh) :text 'word :prompt nil)
-  				 :engines (list (gt-google-engine)
-  												(gt-youdao-dict-engine))
-  				 :render (gt-buffer-render))))
+    (setq gt-http-proxy
+  				(lambda (request) ; 配置只有符合条件的网站走代理，其他的不走
+  					(when (string-match-p "\\(google.*\\|deepl\\|openai\\)\\.com" (oref request url))
+  						"socks5://127.0.0.1:1080")))
+    (setq gt-default-translator
+          (gt-translator
+           :taker (gt-taker :langs '(en zh) :text 'word :prompt nil)
+           :engines (list (gt-bing-engine)
+                          (gt-youdao-dict-engine)
+  												(gt-google-engine))
+           :render (gt-buffer-render))))
 #+end_src
 ** diff-hl
 #+begin_src emacs-lisp
@@ -809,19 +809,43 @@
 * Languages
 ** flycheck
 #+begin_src emacs-lisp
-	(use-package flycheck
-		:ensure t
-		:config
-		(setq flycheck-check-syntax-automatically '(mode-enabled save)))
+  (use-package flycheck
+  	:ensure t
+  	:hook ((web-mode . flycheck-mode)
+  				 (typescript-mode . flycheck-mode)
+  				 (flycheck-mode . my/use-eslint-from-node-modules))
+  	:config
+  	(defun my/use-eslint-from-node-modules ()
+      (let* ((root (locate-dominating-file
+                    (or (buffer-file-name) default-directory)
+                    "node_modules"))
+             (eslint (and root
+                          (expand-file-name "node_modules/.bin/eslint" root))))
+        (when (and eslint (file-executable-p eslint))
+          (setq-local flycheck-javascript-eslint-executable eslint))))
+  	(flycheck-add-mode 'javascript-eslint 'web-mode)
+  	(setq flycheck-check-syntax-automatically '(mode-enabled save)))
+
+  (defun my/run-npm-lint-on-project ()
+    "Run 'npm run lint' on the entire project and display the output in a buffer."
+    (interactive)
+    (let* ((root (locate-dominating-file default-directory "package.json"))
+           (npm-command (and root (executable-find "npm"))))
+      (when (and root npm-command)
+        (let ((default-directory root))
+          (async-shell-command (concat npm-command " run lint"))))))
+
+  ;; 绑定到一个新的快捷键，以区分不同的命令
+  (global-set-key (kbd "C-c l") 'my/run-npm-lint-on-project)
 #+end_src
 ** yasnippet-snippets
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (use-package yasnippet-snippets
     :ensure t
     :hook ((ls-bridge-mode . yas-minor-mode))
     :config
     (yas-reload-all))
-#+END_SRC
+#+end_src
 ** gradle
 #+begin_src emacs-lisp
   (use-package gradle-mode
@@ -958,6 +982,8 @@
       "The multi lang server rule for file extension."
       :type 'cons)
   	(setq lsp-bridge-enable-completion-in-string t)
+  	
+  	:config
   	(setq lsp-bridge-get-language-id
           (lambda (project-path file-path server-name extension-name)
             (when (string-equal server-name "tailwindcss")
@@ -986,7 +1012,6 @@
     (setq lsp-bridge-python-command (string-trim
   																	 (shell-command-to-string "pyenv which python3")))
   	(setq lsp-bridge-python-multi-lsp-server "pylsp_ruff")
-  	:config
     ;; (setq lsp-bridge-log-level 'debug)
     (global-lsp-bridge-mode))
 #+end_src
@@ -1153,10 +1178,15 @@
   (use-package copilot
     :ensure t
     :vc (:url "https://github.com/copilot-emacs/copilot.el"
-              ;; :rev :newest
-              :branch "main")
-    ;;:hook (prog-mode . copilot-mode)
+              :rev :newest)
+    :hook (prog-mode . copilot-mode)
   	:config
   	(define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
   	(define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion))
+
+  (use-package copilot-chat
+  	:ensure t
+  	:config
+  	(setq request-log-level 'debug)
+  	(setq copilot-chat-curl-proxy "http://localhost:1087"))
 #+end_src
