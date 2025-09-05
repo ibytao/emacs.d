@@ -35,7 +35,7 @@
     (when (memq window-system '(mac ns x))
       ;;(setq exec-path-from-shell-check-startup-files nil)
       ;;(setq exec-path-from-shell-arguments nil)
-      (dolist (envvar '("JAVA_HOME" "DOTNET_ROOT"))
+      (dolist (envvar '("JAVA_HOME" "DOTNET_ROOT" "COPILOT_PROXY" "GT_PROXY" "EMACS_HTTP_PROXY"))
         (add-to-list 'exec-path-from-shell-variables envvar))
       (exec-path-from-shell-initialize)
       ))
@@ -289,10 +289,13 @@
 #+end_src
 ** proxy
 #+begin_src emacs-lisp
-  ;; (setq url-proxy-services
-  ;;       '(("no_proxy" . "^\\(localhost\\|10\\..*\\|192\\.168\\..*\\)")
-  ;;         ("http" . "localhost:1087")
-  ;;         ("https" . "localhost:1087")))
+  (let ((proxy (getenv "EMACS_HTTP_PROXY")))
+    (setq url-proxy-services
+          (if proxy
+  		`(("no_proxy" . "^\\(localhost\\|10\\..*\\|192\\.168\\..*\\)")
+                ("http" . ,proxy)
+                ("https" . ,proxy))
+            nil)))
 #+end_src
 ** keyboard
 #+begin_src emacs-lisp
@@ -743,14 +746,15 @@
     :bind (("C-c t" . gt-translate))
     :config
     (setq gt-http-proxy
-  				(lambda (request) ; 配置只有符合条件的网站走代理，其他的不走
-  					(when (string-match-p "\\(google.*\\|deepl\\|openai\\)\\.com" (oref request url))
-  						"socks5://127.0.0.1:1080")))
+          (lambda (request)
+            (let ((proxy (getenv "GT_PROXY")))
+              (when (and proxy
+                         (string-match-p "\\(google.*\\|deepl\\|openai\\)\\.com" (oref request url)))
+                proxy))))
     (setq gt-default-translator
           (gt-translator
            :taker (gt-taker :langs '(en zh) :text 'word :prompt nil)
-           :engines (list (gt-bing-engine)
-                          (gt-youdao-dict-engine)
+           :engines (list (gt-youdao-dict-engine)
   												(gt-google-engine))
            :render (gt-buffer-render))))
 #+end_src
@@ -1183,9 +1187,9 @@
   	(define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion))
 
   (use-package copilot-chat
-  	:ensure t
-  	:config
-  	;; (setq request-log-level 'debug)
-  	(add-hook 'git-commit-setup-hook 'copilot-chat-insert-commit-message)
-  	(setq copilot-chat-curl-proxy "http://localhost:1087"))
+    :ensure t
+    :hook (git-commit-setup . copilot-chat-insert-commit-message)
+    :config
+    (when (getenv "COPILOT_PROXY")
+      (setq copilot-chat-curl-proxy (getenv "COPILOT_PROXY"))))
 #+end_src
