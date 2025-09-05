@@ -1015,7 +1015,6 @@
     ;; (setq lsp-bridge-log-level 'debug)
     (global-lsp-bridge-mode))
 #+end_src
-**
 * Front-End
 ** prettier-js
 #+begin_src emacs-lisp
@@ -1038,7 +1037,6 @@
     :hook ((rjsx-mode . add-node-modules-path)
            (typescript-mode . add-node-modules-path)
            (web-mode . add-node-modules-path)))
-#+end_src
 #+end_src
 ** emment
 #+begin_src emacs-lisp
