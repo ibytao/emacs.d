@@ -1185,6 +1185,7 @@
   (use-package copilot-chat
   	:ensure t
   	:config
-  	(setq request-log-level 'debug)
+  	;; (setq request-log-level 'debug)
+  	(add-hook 'git-commit-setup-hook 'copilot-chat-insert-commit-message)
   	(setq copilot-chat-curl-proxy "http://localhost:1087"))
 #+end_src
