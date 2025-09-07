@@ -810,6 +810,19 @@
                 ("<C-tab>" . origami-recursively-toggle-node)
                 ("<S-tab>" . origami-toggle-all-nodes)))
 #+end_src
+** vterm
+#+begin_src emacs-lisp
+  (use-package vterm
+    :ensure t
+    :hook (vterm-mode . (lambda ()
+                          (face-remap-add-relative 'default
+                                                   :family "MesloLGS NF"
+                                                   :height 140
+  																								 :weight 'regular)
+  																								(setq-local global-hl-line-mode nil))) ;; 禁用高亮当前行
+    :config
+    (setq vterm-max-scrollback 10000))  ;; 历史滚动缓冲区大小
+#+end_src
 * Languages
 ** flycheck
 #+begin_src emacs-lisp
