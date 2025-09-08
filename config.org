@@ -403,10 +403,13 @@
   (global-set-key (kbd "s-n") 'my-next-buffer)
 
   (defun my-switch-to-buffer ()
+    "Switch to a buffer, filtering out vterm-mode buffers."
     (interactive)
-    (let ((completion-regexp-list '("\\`[^*]"
-                                    "\\`\\([^T]\\|T\\($\\|[^A]\\|A\\($\\|[^G]\\|G\\($\\|[^S]\\|S.\\)\\)\\)\\).*")))
-      (call-interactively 'persp-ivy-switch-buffer)))
+    (let ((completion-predicate
+           (lambda (buffer)
+             (and (not (eq (buffer-local-value 'major-mode buffer) 'vterm-mode))
+                  (string-match-p "\\`[^*]" (buffer-name buffer))))))
+      (call-interactively 'persp-ivy-switch-buffer completion-predicate)))
 
   (global-set-key (kbd "C-u") 'my-switch-to-buffer)
 
@@ -821,6 +824,9 @@
   																								 :weight 'regular)
   																								(setq-local global-hl-line-mode nil))) ;; 禁用高亮当前行
     :config
+  	(define-key vterm-mode-map (kbd "C-o") 'counsel-recentf)
+  	(define-key vterm-mode-map (kbd "C-u")
+  							(lambda () (interactive) (vterm-send-key "u" nil nil t)))
     (setq vterm-max-scrollback 10000))  ;; 历史滚动缓冲区大小
 #+end_src
 * Languages
