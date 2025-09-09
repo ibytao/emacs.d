@@ -822,7 +822,8 @@
                                                    :family "MesloLGS NF"
                                                    :height 140
   																								 :weight 'regular)
-  																								(setq-local global-hl-line-mode nil))) ;; 禁用高亮当前行
+  												(setq-local vterm-cursor-shape 'bar) ;; 设置光标为竖线
+  												(setq-local global-hl-line-mode nil))) ;; 禁用高亮当前行
     :config
   	(define-key vterm-mode-map (kbd "C-o") 'counsel-recentf)
   	(define-key vterm-mode-map (kbd "C-u")
@@ -1209,6 +1210,7 @@
     :ensure t
     :hook (git-commit-setup . copilot-chat-insert-commit-message)
     :config
+    (setq copilot-chat-commit-prompt "请用中文总结本次提交的更改：")
     (when (getenv "COPILOT_PROXY")
       (setq copilot-chat-curl-proxy (getenv "COPILOT_PROXY"))))
 #+end_src
