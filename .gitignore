@@ -36,3 +36,6 @@ straight
 undo
 .amx-items
 forge-database.sqlite
+*.http
+request
+site-lisp
