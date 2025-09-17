@@ -121,11 +121,6 @@
   (setq ediff-split-window-function 'split-window-horizontally
         ediff-window-setup-function 'ediff-setup-windows-plain)
 
-  ;; https://github.com/manateelazycat/company-english-helper
-  ;; toggle-company-english-helper
-  ;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/elpa/company-english-helper"))
-  ;; (require 'company-english-helper)
-
   ;; create dir
   (defadvice find-file (before make-directory-maybe (filename &optional wildcards) activate)
     "Create parent directory if not exists while visiting file."
@@ -764,11 +759,12 @@
 ** diff-hl
 #+begin_src emacs-lisp
   (use-package diff-hl
-    :ensure t
+    :vc (:url "https://github.com/dgutov/diff-hl.git"
+  						:rev "d20f16bf5eadd66e775f215e800f25caddae8cb5")
     :config
     (global-diff-hl-mode)
-    (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
-    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
+    (add-hook 'magit-pre-refresh-hook #'diff-hl-magit-pre-refresh)
+    (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
 #+end_src
 ** restclient
 #+begin_src emacs-lisp
@@ -1044,7 +1040,8 @@
 #+begin_src emacs-lisp
   (use-package prettier-js
     :ensure t
-    :hook ((rjsx-mode . maybe-use-prettier)
+    :hook ((js-mode . maybe-use-prettier)
+  				 (js-jsx-mode . maybe-use-prettier)
            (web-mode . maybe-use-prettier)
            (typescript-tsx-mode . maybe-use-prettier))
     :config
@@ -1056,11 +1053,21 @@
 #+end_src
 ** add-node-modules-path
 #+begin_src emacs-lisp
-  (use-package add-node-modules-path
-    :ensure t
-    :hook ((rjsx-mode . add-node-modules-path)
-           (typescript-mode . add-node-modules-path)
-           (web-mode . add-node-modules-path)))
+  (defun my/add-node-modules-path ()
+    "找到最近的 node_modules/.bin 并加到 exec-path。"
+    (let* ((root (or (locate-dominating-file default-directory "node_modules")
+                     (project-root (project-current)))) ; project.el 支持
+           (bin (when root (expand-file-name "node_modules/.bin" root))))
+      (when (and bin (file-directory-p bin))
+        (make-local-variable 'exec-path)
+        (add-to-list 'exec-path bin)
+        (message "Added %s to exec-path" bin))))
+
+  (add-hook 'typescript-mode-hook #'my/add-node-modules-path)
+  (add-hook 'typescript-tsx-mode-hook #'my/add-node-modules-path)
+  (add-hook 'web-mode-hook #'my/add-node-modules-path)
+  (add-hook 'js-mode-hook #'my/add-node-modules-path)
+  (add-hook 'js-jsx-mode-hook #'my/add-node-modules-path)
 #+end_src
 ** emment
 #+begin_src emacs-lisp
@@ -1069,7 +1076,6 @@
     :hook (web-mode css-mode scss-mode sgml-mode typescript-tsx-mode rjsx-mode)
     :bind (:map emmet-mode-keymap
                 ("<C-return>" . nil)))
-
 #+end_src
 ** web-mode
 #+begin_src emacs-lisp
