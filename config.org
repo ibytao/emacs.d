@@ -1,10 +1,15 @@
+#+PROPERTY: header-args:emacs-lisp :lexical-binding t
 #+STARTUP: show2levels
 * Emacs Initialization
 ** Packages Sources
 #+BEGIN_SRC emacs-lisp
-  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                           ("gnu" . "https://elpa.gnu.org/packages/")
-                           ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+  ;;; -*- lexical-binding: t -*-
+  (setq use-package-always-ensure t       ;; 自动安装未安装的包
+  			use-package-always-defer t        ;; 默认延迟加载所有包，直到真的用到 (减少启动时间，但某些必须立即加载的包需要加 :demand t）
+  			use-package-vc-prefer-newest t    ;; 对 :vc 包使用最新版本
+  			package-archives '(("melpa" . "https://melpa.org/packages/")
+  												 ("gnu" . "https://elpa.gnu.org/packages/")
+  												 ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 #+END_SRC
 ** use-package
 #+begin_src emacs-lisp
@@ -12,8 +17,7 @@
     (package-refresh-contents)
     (package-install 'use-package))
 
-  (use-package delight :ensure t)
-  (use-package use-package-ensure-system-package :ensure t)
+  (use-package delight :ensure t)             ;; 精简 mode-line 显示
 #+end_src
 ** dufuns
 #+begin_src emacs-lisp
@@ -30,15 +34,15 @@
 #+begin_src emacs-lisp
   ;;shell path
   (use-package exec-path-from-shell
-  	:ensure t
+    :demand t
     :config
     (when (memq window-system '(mac ns x))
-      ;;(setq exec-path-from-shell-check-startup-files nil)
-      ;;(setq exec-path-from-shell-arguments nil)
+      ;; 或者完全禁用参数检查
+      (setq exec-path-from-shell-check-startup-files nil)
+
       (dolist (envvar '("JAVA_HOME" "DOTNET_ROOT" "COPILOT_PROXY" "GT_PROXY" "EMACS_HTTP_PROXY"))
         (add-to-list 'exec-path-from-shell-variables envvar))
-      (exec-path-from-shell-initialize)
-      ))
+      (exec-path-from-shell-initialize)))
 #+end_src
 * Start Up
 ** Better defaults
@@ -131,37 +135,8 @@
 #+end_src
 ** Theme
 #+begin_src emacs-lisp
-  ;; -------------------------------------------------------------------------------------------------------
-  ;; (use-package doom-themes
-  ;;   :config
-  ;;   (setq doom-themes-enable-bold nil)
-  ;;   (setq doom-themes-enable-italic nil)
-
-  ;;   (load-theme 'doom-solarized-dark t)
-  ;;   ;; (load-theme 'doom-solarized-light t)
-  ;;   ;; (load-theme 'doom-nord-light)
-  ;;   ;; (load-theme 'doom-dracula t)
-
-  ;;   (doom-themes-neotree-config)
-  ;;   (doom-themes-org-config)
-  ;;   )
-
-  ;; (use-package doom-modeline
-  ;;   :defer 0.1
-  ;;   :config (doom-modeline-mode))
-
-  ;; (use-package fancy-battery
-  ;;   :after doom-modeline
-  ;;   :hook (after-init . fancy-battery-mode))
-
-  ;; (use-package solaire-mode
-  ;;   :custom (solaire-mode-remap-fringe t)
-  ;;   :config
-  ;;   ;;(solaire-mode-swap-bg)
-  ;;   (solaire-global-mode +1))
-
   (use-package solarized-theme
-    :ensure t
+    :demand t
     :config
     ;; make the fringe stand out from the background
     ;; (setq solarized-distinct-fringe-background t)
@@ -197,7 +172,7 @@
     (set-face-attribute 'cursor nil :inverse-video nil))
 
   (use-package spaceline
-    :ensure t
+    :demand t
     :config
     (require 'spaceline-config)
     (spaceline-spacemacs-theme)
@@ -233,6 +208,7 @@
     )
 
   (use-package spaceline-all-the-icons
+    :demand t
     :after spaceline
     :config
     (spaceline-all-the-icons-theme)
@@ -281,16 +257,6 @@
    ;; Your init file should contain only one such instance.
    ;; If there is more than one, they won't work right.
    '(org-table ((t (:foreground "#859900" :family "Ubuntu Mono")))))
-#+end_src
-** proxy
-#+begin_src emacs-lisp
-  (let ((proxy (getenv "EMACS_HTTP_PROXY")))
-    (setq url-proxy-services
-          (if proxy
-  		`(("no_proxy" . "^\\(localhost\\|10\\..*\\|192\\.168\\..*\\)")
-                ("http" . ,proxy)
-                ("https" . ,proxy))
-            nil)))
 #+end_src
 ** keyboard
 #+begin_src emacs-lisp
@@ -398,13 +364,30 @@
   (global-set-key (kbd "s-n") 'my-next-buffer)
 
   (defun my-switch-to-buffer ()
-    "Switch to a buffer, filtering out vterm-mode buffers."
+    "Switch to a buffer, showing only regular files and specific system buffers."
     (interactive)
-    (let ((completion-predicate
-           (lambda (buffer)
-             (and (not (eq (buffer-local-value 'major-mode buffer) 'vterm-mode))
-                  (string-match-p "\\`[^*]" (buffer-name buffer))))))
-      (call-interactively 'persp-ivy-switch-buffer completion-predicate)))
+    (let* ((allowed-special '("*Messages*" "*scratch*" "*Warnings*"))
+           (filtered-buffers '()))
+      
+      (dolist (buffer (buffer-list))
+        (let ((name (buffer-name buffer)))
+          (cond
+           ;; 允许的特殊 buffer
+           ((member name allowed-special)
+            (push name filtered-buffers))
+           ;; 普通文件 buffer（有关联文件的）
+           ((and name
+                 (not (string-prefix-p "*" name))
+                 (not (string-prefix-p " " name))
+                 (buffer-file-name buffer))  ; 必须有关联文件
+            (push name filtered-buffers)))))
+      
+      (setq filtered-buffers (nreverse filtered-buffers))
+      ;; 可以移除这行调试信息
+      ;; (message "Filtered buffers: %S" filtered-buffers)
+      
+      (let ((choice (completing-read "Switch to buffer: " filtered-buffers)))
+        (switch-to-buffer choice))))
 
   (global-set-key (kbd "C-u") 'my-switch-to-buffer)
 
@@ -455,14 +438,12 @@
   	)
 
   ;; (use-package all-the-icons-dired
-  ;;   :ensure t
   ;;   :config
   ;;   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 #+end_src
 ** ivy
 #+begin_src emacs-lisp
   (use-package ivy
-    :ensure t
     :delight ivy-mode ""
     :bind (:map ivy-minibuffer-map
                 ("C-h" . delete-backward-char)
@@ -495,13 +476,11 @@
 #+end_src
 ** ivy-avy
 #+begin_src emacs-lisp
-  (use-package ivy-avy
-    ensure t)
+  (use-package ivy-avy)
 #+end_src
 ** avy
 #+begin_src emacs-lisp
   (use-package avy
-    :ensure t
     :bind (("C-;" . avy-goto-char-timer)
            ("C-:" . avy-resume))
     :config
@@ -531,7 +510,6 @@
 ** counsel
 #+begin_src emacs-lisp
   (use-package counsel
-    :ensure t
     :bind (("M-x" . counsel-M-x)
            ("\C-x \C-f" . counsel-find-file)
            ("s-f" . counsel-find-file)
@@ -547,7 +525,6 @@
 ** swiper
 #+begin_src emacs-lisp
   (use-package swiper
-    :ensure t
     :after ivy
     :bind (("C-r" . swiper-thing-at-point)
            ("C-s" . swiper)
@@ -557,7 +534,6 @@
 ** amx
 #+begin_src emacs-lisp
   (use-package amx
-    :ensure t
     :after ivy
     :custom
     (amx-backend 'auto)
@@ -584,7 +560,6 @@
 ** expand-region
 #+begin_src emacs-lisp
   (use-package expand-region
-    :ensure t
     :bind
     (("C-=" . 'er/expand-region)
      ("C-+" . 'er/contract-region)
@@ -599,13 +574,11 @@
 ** change-inner
 #+BEGIN_SRC emacs-lisp
   (use-package change-inner
-    :ensure t
     :bind
     (("M-i" . 'change-inner))
     (("M-o" . 'change-outer))
     (("M-I" . 'copy-inner))
-    (("M-O" . 'copy-outer))
-    )
+    (("M-O" . 'copy-outer)))
 #+END_SRC
 ** multiple-cursors
 #+BEGIN_SRC emacs-lisp
@@ -613,7 +586,6 @@
   ;; multiple cursors
   ;;
   (use-package multiple-cursors
-    :ensure t
     :init
     (global-unset-key (kbd "M-<down-mouse-1>"))
     (global-set-key (kbd "M-<mouse-1>") 'mc/add-cursor-on-click)
@@ -655,24 +627,23 @@
 ** which-key
 #+begin_src emacs-lisp
   (use-package which-key
-    :ensure t
+    :defer 2
     :config
     (which-key-mode))
 #+end_src
 ** magit
 #+begin_src emacs-lisp
   (use-package magit
-    :ensure t
+    :init
+    (global-set-key (kbd "C-x m") 'magit)  
     :config
-    (setq magit-buffer-name-format "*%x%M%v: %t%x")
-    (global-set-key (kbd "C-x m") 'magit))
+    (setq magit-buffer-name-format "*%x%M%v: %t%x"))
 
   (use-package forge :after magit)
 #+end_src
 ** paredit
 #+begin_src emacs-lisp
   (use-package paredit
-    :ensure t
     :config
     (add-hook 'clojure-mode-hook 'paredit-mode)
     (add-hook 'cider-repl-mode-hook 'paredit-mode)
@@ -688,7 +659,6 @@
 ** smartparens
 #+begin_src emacs-lisp
   (use-package smartparens
-    :ensure t
     :bind (:map smartparens-mode-map
                 ("C-M-a" . sp-beginning-of-sexp)
                 ("C-M-e" . sp-end-of-sexp)
@@ -719,7 +689,6 @@
 ** guide-key
 #+begin_src emacs-lisp
   (use-package guide-key
-    :ensure t
     :config
     (guide-key-mode 1)
     (setq guide-key/idle-delay 0.5)
@@ -731,16 +700,15 @@
 ** perspective
 #+begin_src emacs-lisp
   (use-package perspective
-    :ensure t
+  	:defer 1
     :config
-    (customize-set-variable 'persp-mode-prefix-key (kbd "C-x x"))
+  	(customize-set-variable 'persp-mode-prefix-key (kbd "C-x x"))
     (unless (equal persp-mode t)
       (persp-mode)))
 #+end_src
 ** translate
 #+begin_src emacs-lisp
   (use-package gt
-    :ensure t
     :bind (("C-c t" . gt-translate))
     :config
     (setq gt-http-proxy
@@ -759,6 +727,7 @@
 ** diff-hl
 #+begin_src emacs-lisp
   (use-package diff-hl
+    :defer 2
     :vc (:url "https://github.com/dgutov/diff-hl.git"
   						:rev "d20f16bf5eadd66e775f215e800f25caddae8cb5")
     :config
@@ -769,19 +738,23 @@
 ** restclient
 #+begin_src emacs-lisp
   (use-package restclient
-    :ensure t
-    :mode (("\\.http\\'" . restclient-mode))
+    :mode (("\\.http\\'" . restclient-mode)
+           ("\\.rest\\'" . restclient-mode))
     :config
     (setq restclient-log-request t))
 
   (use-package ob-restclient
-    :init (cl-pushnew '(restclient . t) load-language-list))
+    :after (org restclient)
+    :config
+    ;; 检查变量是否存在再操作
+    (when (boundp 'org-babel-load-languages)
+      (cl-pushnew '(restclient . t) org-babel-load-languages :test #'equal)
+      (org-babel-do-load-languages 'org-babel-load-languages 
+                                   org-babel-load-languages)))
 #+end_src
 ** search-web
 #+begin_src emacs-lisp
   (use-package search-web
-    :defer t
-    :ensure t
     :init
     (setq search-web-engines
           '(("Google" "http://www.google.com/search?q=%s" nil)
@@ -803,7 +776,6 @@
 ** origami
 #+begin_src emacs-lisp
   (use-package origami
-    :ensure t
     :hook (prog-mode . origami-mode)
     :bind (:map origami-mode-map
                 ("<C-tab>" . origami-recursively-toggle-node)
@@ -812,7 +784,6 @@
 ** vterm
 #+begin_src emacs-lisp
   (use-package vterm
-    :ensure t
     :hook (vterm-mode . (lambda ()
                           (face-remap-add-relative 'default
                                                    :family "MesloLGS NF"
@@ -830,7 +801,6 @@
 ** flycheck
 #+begin_src emacs-lisp
   (use-package flycheck
-  	:ensure t
   	:hook ((web-mode . flycheck-mode)
   				 (typescript-mode . flycheck-mode)
   				 (flycheck-mode . my/use-eslint-from-node-modules))
@@ -861,7 +831,6 @@
 ** yasnippet-snippets
 #+begin_src emacs-lisp
   (use-package yasnippet-snippets
-    :ensure t
     :hook ((ls-bridge-mode . yas-minor-mode))
     :config
     (yas-reload-all))
@@ -869,8 +838,6 @@
 ** gradle
 #+begin_src emacs-lisp
   (use-package gradle-mode
-    :ensure t
-    :defer t
     :bind (("C-c g b" . gradle-build)
            ("C-c g t" . gradle-test)
            ("C-c g s" . gradle-single-test)
@@ -892,7 +859,6 @@
 ** clojure
 #+begin_src emacs-lisp
   (use-package clojure-mode
-    :ensure t
     :config
     (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
     (add-to-list 'auto-mode-alist '("\\.cljs$" . clojurescript-mode))
@@ -901,7 +867,6 @@
 ** clj-refactor
 #+begin_src emacs-lisp
   (use-package clj-refactor
-    :ensure t
     :config
     (defun my-clojure-mode-hook ()
       (clj-refactor-mode 1)
@@ -914,7 +879,6 @@
 ** Go
 #+begin_src emacs-lisp
   (use-package go-mode
-    :ensure t
     :mode (("\\.go\\'" . go-mode))
     :hook ((go-mode . lsp-bridge-mode)
   				 (go-mode . gofmt-before-save)))
@@ -922,7 +886,6 @@
 ** rust
 #+begin_src emacs-lisp
   (use-package rust-mode
-    :ensure t
     :hook ((rust-mode . lsp-bridge-mode)
            (before-save . my/rust-mode-before-save-hook))
     :bind (("C-c C-c" . rust-run)
@@ -936,7 +899,6 @@
     (require 'smartparens-rust))
 
   (use-package flycheck-rust
-    :ensure t
     :config
     (with-eval-after-load 'rust-mode
       (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
@@ -944,11 +906,9 @@
 ** csharp
 #+begin_src emacs-lisp
   (use-package csharp-mode
-    :hook ((csharp-mode . flycheck-mode))
-    :ensure t)
+    :hook ((csharp-mode . flycheck-mode)))
 
   (use-package omnisharp
-    :ensure t
     :hook ((csharp-mode . lsp-bridge-mode)
            (csharp-mode . omnisharp-mode)
            (before-save . my/csharp-mode-before-save-hook))
@@ -978,13 +938,14 @@
 ** java
 #+begin_src emacs-lisp
   (use-package lsp-bridge-jdtls
-  	:ensure t
+  	:ensure nil
   	:config
   	(setq lsp-bridge-enable-auto-import t))
 #+end_src
 ** lsp-bridge
 #+begin_src emacs-lisp
   (use-package lsp-bridge
+  	:defer 5
     :load-path "~/.emacs.d/site-lisp/lsp-bridge"
     :hook (prog-mode . (lambda () (require 'lsp-bridge)))
   	:bind (:map lsp-bridge-mode
@@ -1072,8 +1033,7 @@
 ** emment
 #+begin_src emacs-lisp
   (use-package emmet-mode
-    :ensure t
-    :hook (web-mode css-mode scss-mode sgml-mode typescript-tsx-mode rjsx-mode)
+    :hook (web-mode css-mode scss-mode sgml-mode typescript-tsx-mode js-mode js-jsx-mode)
     :bind (:map emmet-mode-keymap
                 ("<C-return>" . nil)))
 #+end_src
@@ -1083,7 +1043,6 @@
   (setq js-indent-level 2)
 
   (use-package web-mode
-  	:ensure t
   	:mode (("\\.vue\\'" . web-mode)
   				 ("\\.tsx\\'" . web-mode)
   				 ("\\.wxml\\'" . web-mode))
@@ -1112,7 +1071,6 @@
 ** typescript
 #+begin_src emacs-lisp
   (use-package typescript-mode
-  	:ensure t
   	:mode (("\\.ts\\'" . typescript-mode))
   	:hook ((typescript-mode . lsp-bridge-mode))
   	:config
@@ -1178,7 +1136,6 @@
 ** org-bullets
 #+begin_src emacs-lisp
   (use-package org-bullets
-    :ensure t
     :hook ((org-mode . org-bullets-mode))
   	:init
   	(setq org-ellipsis "⤵") ;; ⤵ ↴ ⬎ ⤷
@@ -1192,19 +1149,15 @@
 ** reveal
 #+begin_src emacs-lisp
   (use-package ox-reveal
-    :ensure t
     :config
     (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
-    (setq org-reveal-mathjax t)
-    )
+    (setq org-reveal-mathjax t))
 
-  (use-package htmlize
-    :ensure t)
+  (use-package htmlize)
 #+end_src
 ** copilot
 #+begin_src emacs-lisp
   (use-package copilot
-    :ensure t
     :vc (:url "https://github.com/copilot-emacs/copilot.el"
               :rev :newest)
     :hook (prog-mode . copilot-mode)
@@ -1213,7 +1166,6 @@
   	(define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion))
 
   (use-package copilot-chat
-    :ensure t
     :hook (git-commit-setup . copilot-chat-insert-commit-message)
     :config
     (setq copilot-chat-commit-prompt "请用中文总结本次提交的更改：")

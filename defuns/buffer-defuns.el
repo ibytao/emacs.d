@@ -1,4 +1,4 @@
-;; Buffer-related defuns
+;; Buffer-related defuns  -*- lexical-binding: t; -*-
 
 (require 'imenu)
 

@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (require 's)
 
 (defun clj--src-file-name-from-test (name)

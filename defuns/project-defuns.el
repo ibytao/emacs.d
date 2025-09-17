@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (defmacro project-specifics (name &rest body)
   (declare (indent 1))
   `(progn

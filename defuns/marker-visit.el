@@ -1,4 +1,4 @@
-;;; marker-visit.el --- navigate through a buffer's marks in order
+;;; marker-visit.el --- navigate through a buffer's marks in order  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2001 Benjamin Rutt
 ;;

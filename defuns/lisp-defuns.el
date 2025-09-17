@@ -1,4 +1,4 @@
-;; Lisp specific defuns
+;; Lisp specific defuns  -*- lexical-binding: t; -*-
 
 (defun eval-and-replace ()
   "Replace the preceding sexp with its value."
