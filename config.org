@@ -915,8 +915,9 @@
 #+begin_src emacs-lisp
   (use-package lsp-bridge
   	:defer 5
-    :load-path "~/.emacs.d/site-lisp/lsp-bridge"
-    :hook (prog-mode . (lambda () (require 'lsp-bridge)))
+  	:vc (:url "https://github.com/manateelazycat/lsp-bridge.git"
+  						:rev :newest)
+    :hook (prog-mode . lsp-bridge-mode)
   	:bind (:map lsp-bridge-mode
   							("M-." . lsp-bridge-find-def)
   							("M-," . lsp-bridge-find-def-return)
@@ -937,23 +938,17 @@
             (when (string-equal server-name "tailwindcss")
               (cond
                ;; 处理 TypeScript 文件
-               ((string-equal extension-name "ts")
-                "typescript")
+               ((string-equal extension-name "ts") "typescript")
                ;; 处理 TypeScript React 文件
-               ((string-equal extension-name "tsx")
-                "typescriptreact")
+               ((string-equal extension-name "tsx") "typescriptreact")
                ;; 处理 JavaScript React 文件
-               ((string-equal extension-name "jsx")
-                "javascriptreact")
+               ((string-equal extension-name "jsx") "javascriptreact")
                ;; 处理普通的 JavaScript 文件
-               ((string-equal extension-name "js")
-                "javascript")
+               ((string-equal extension-name "js") "javascript")
                ;; 处理 Svelte 文件
-               ((string-equal extension-name "svelte")
-                "svelte")
+               ((string-equal extension-name "svelte") "svelte")
   						 ;; 处理 Vue 文件
-  						 ((string-equal extension-name "vue")
-  							"vue")
+  						 ((string-equal extension-name "vue") "vue")
                ;; 默认情况，返回扩展名本身
                (t extension-name)))))
 
