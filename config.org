@@ -644,17 +644,9 @@
 ** paredit
 #+begin_src emacs-lisp
   (use-package paredit
-    :config
-    (add-hook 'clojure-mode-hook 'paredit-mode)
-    (add-hook 'cider-repl-mode-hook 'paredit-mode)
-    (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
-    ;; Enable `paredit-mode' in the minibuffer, during `eval-expression'.
-    ;; (defun conditionally-enable-paredit-mode
-    ;;   (if (eq this-command 'eval-expression)
-    ;;       (paredit-mode 1)))
-
-    ;; (add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode)
-    )
+  	:hook ((clojure-mode . paredit-mode)
+  				 (cider-mode . paredit-mode)
+  				 (emacs-lisp-mode . paredit-mode)))
 #+end_src
 ** smartparens
 #+begin_src emacs-lisp
@@ -746,32 +738,10 @@
   (use-package ob-restclient
     :after (org restclient)
     :config
-    ;; 检查变量是否存在再操作
-    (when (boundp 'org-babel-load-languages)
-      (cl-pushnew '(restclient . t) org-babel-load-languages :test #'equal)
-      (org-babel-do-load-languages 'org-babel-load-languages 
-                                   org-babel-load-languages)))
-#+end_src
-** search-web
-#+begin_src emacs-lisp
-  (use-package search-web
-    :init
-    (setq search-web-engines
-          '(("Google" "http://www.google.com/search?q=%s" nil)
-            ("Youtube" "http://www.youtube.com/results?search_query=%s" nil)
-            ("Stackoveflow" "http://stackoverflow.com/search?q=%s" nil)
-            ("MDN" "https://developer.mozilla.org/zh-CN/search?q=%s" nil)
-            ("Github" "https://github.com/search?q=%s" nil)
-            ("Melpa" "https://melpa.org/#/?q=%s" nil)
-            ("Emacs-China" "https://emacs-china.org/search?q=%s" nil)
-            ("EmacsWiki" "https://www.emacswiki.org/emacs/%s" nil)
-            ("Wiki-zh" "https://zh.wikipedia.org/wiki/%s" nil)
-            ("Wiki-en" "https://en.wikipedia.org/wiki/%s" nil)
-            ))
-    :bind (("C-c w u" . browse-url)
-           ("C-c w w" . search-web)
-           ("C-c w p" . search-web-at-point)
-           ("C-c w r" . search-web-region)))
+    ;; 添加到 org-babel 语言列表
+    (add-to-list 'org-babel-load-languages '(restclient . t))
+    (org-babel-do-load-languages 'org-babel-load-languages 
+                                 org-babel-load-languages))
 #+end_src
 ** origami
 #+begin_src emacs-lisp
@@ -847,8 +817,7 @@
            ("C-c g d" . gradle-execute--daemon)
            ("C-c g e" . gradle-execute))
     :config
-    (gradle-mode 1)
-    )
+    (gradle-mode 1))
 #+end_src
 ** sql
 #+begin_src emacs-lisp
@@ -954,12 +923,10 @@
   							("s-." . lsp-bridge-find-references))
     :init
     (defcustom lsp-bridge-multi-lang-server-extension-list
-      '(
-        (("vue") . "vue")
+      '((("vue") . "vue")
         (("ts") . "typescript_eslint")
         (("tsx") . "typescriptreact_eslint_tailwindcss")
-  			(("jsx" "js") . "react")
-        )
+  			(("jsx" "js") . "react"))
       "The multi lang server rule for file extension."
       :type 'cons)
   	(setq lsp-bridge-enable-completion-in-string t)
@@ -1036,6 +1003,20 @@
     :hook (web-mode css-mode scss-mode sgml-mode typescript-tsx-mode js-mode js-jsx-mode)
     :bind (:map emmet-mode-keymap
                 ("<C-return>" . nil)))
+#+end_src
+** js
+#+begin_src emacs-lisp
+  (use-package js
+  	:ensure nil
+    :mode ("\\.jsx?\\'" . js-jsx-mode)
+    :hook (js-jsx-mode . my-js-jsx-setup)
+    :config
+    (defun my-js-jsx-setup ()
+      (setq js-indent-level 2)
+      (setq js-jsx-indent-level 2)
+      (setq js-jsx-syntax t)
+      (electric-pair-local-mode 1)
+      (show-paren-mode 1)))
 #+end_src
 ** web-mode
 #+begin_src emacs-lisp
@@ -1157,11 +1138,25 @@
 #+end_src
 ** copilot
 #+begin_src emacs-lisp
+  (defun my/parse-proxy-url (proxy-url)
+    "Parse proxy URL and return plist for copilot-network-proxy.
+  Example: http://127.0.0.1:1087 -> (:host \"127.0.0.1\" :port 1087)"
+    (when (and proxy-url (string-match "\\(?:\\([^:]+\\)://\\)?\\([^:]+\\):\\([0-9]+\\)" proxy-url))
+      (let ((protocol (match-string 1 proxy-url))
+            (host (match-string 2 proxy-url))
+            (port (string-to-number (match-string 3 proxy-url))))
+        (if (string= protocol "socks5")
+            `(:host ,host :port ,port :type socks5)
+          `(:host ,host :port ,port)))))
+
   (use-package copilot
     :vc (:url "https://github.com/copilot-emacs/copilot.el"
               :rev :newest)
     :hook (prog-mode . copilot-mode)
   	:config
+  	(when-let ((proxy-env (getenv "COPILOT_PROXY")))
+  		(setq copilot-network-proxy (my/parse-proxy-url proxy-env)))
+  	
   	(define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
   	(define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion))
 
