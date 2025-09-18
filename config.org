@@ -927,7 +927,7 @@
       '((("vue") . "vue")
         (("ts") . "typescript_eslint")
         (("tsx") . "typescriptreact_eslint_tailwindcss")
-  			(("jsx" "js") . "react"))
+  			(("jsx" "js") . "typescriptreact_eslint_tailwindcss"))
       "The multi lang server rule for file extension."
       :type 'cons)
   	(setq lsp-bridge-enable-completion-in-string t)
@@ -1149,7 +1149,7 @@
               :rev :newest)
     :hook (prog-mode . copilot-mode)
   	:config
-  	(when-let ((proxy-env (getenv "COPILOT_PROXY")))
+  	(when-let* ((proxy-env (getenv "COPILOT_PROXY")))
   		(setq copilot-network-proxy (my/parse-proxy-url proxy-env)))
   	
   	(define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
