@@ -40,7 +40,7 @@
       ;; 或者完全禁用参数检查
       (setq exec-path-from-shell-check-startup-files nil)
 
-      (dolist (envvar '("JAVA_HOME" "DOTNET_ROOT" "COPILOT_PROXY" "GT_PROXY" "EMACS_HTTP_PROXY"))
+      (dolist (envvar '("DOTNET_ROOT" "COPILOT_PROXY" "GT_PROXY" "EMACS_HTTP_PROXY"))
         (add-to-list 'exec-path-from-shell-variables envvar))
       (exec-path-from-shell-initialize)))
 #+end_src
