@@ -927,7 +927,7 @@
       '((("vue") . "vue")
         (("ts") . "typescript_eslint")
         (("tsx") . "typescriptreact_eslint_tailwindcss")
-  			(("jsx" "js") . "typescriptreact_eslint_tailwindcss"))
+  			(("jsx" "js") . "typescriptreact_tailwindcss"))
       "The multi lang server rule for file extension."
       :type 'cons)
   	(setq lsp-bridge-enable-completion-in-string t)
