@@ -1156,7 +1156,7 @@
   	(define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion))
 
   (use-package copilot-chat
-    :hook (git-commit-setup . copilot-chat-insert-commit-message)
+    ;; :hook (git-commit-setup . copilot-chat-insert-commit-message)
     :config
     (setq copilot-chat-commit-prompt "请用中文总结本次提交的更改：")
     (when (getenv "COPILOT_PROXY")
