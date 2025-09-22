@@ -908,7 +908,28 @@
 #+begin_src emacs-lisp
   (use-package lsp-bridge-jdtls
   	:ensure nil
+  	:hook (java-mode . (lambda ()
+  											 (setq c-basic-offset 4
+  														 tab-width 4
+  														 indent-tabs-mode nil)))
   	:config
+  	(defun find-lombok-jar ()
+  		"Find lombok jar in local maven repository"
+  		(let* ((m2-repo (expand-file-name "~/.m2/repository/org/projectlombok/lombok/"))
+  					 (lombok-dirs (when (file-directory-p m2-repo)
+  													(directory-files m2-repo nil "^[0-9]")))
+  					 (latest-version (when lombok-dirs (car (sort lombok-dirs 'string>))))
+  					 (lombok-jar (when latest-version
+  												 (expand-file-name 
+  													(format "%s/lombok-%s.jar" latest-version latest-version)
+  													(expand-file-name latest-version m2-repo)))))
+  			(when (and lombok-jar (file-exists-p lombok-jar))
+  				lombok-jar)))
+
+  	(let ((lombok-jar (find-lombok-jar)))
+  		(when lombok-jar
+  			(setq lsp-bridge-jdtls-jvm-args 
+  						(list (format "-javaagent:%s" lombok-jar)))))
   	(setq lsp-bridge-enable-auto-import t))
 #+end_src
 ** lsp-bridge
