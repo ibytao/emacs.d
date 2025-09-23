@@ -840,7 +840,7 @@
 ** yasnippet-snippets
 #+begin_src emacs-lisp
   (use-package yasnippet-snippets
-    :hook ((ls-bridge-mode . yas-minor-mode))
+    :hook ((lsp-bridge-mode . yas-minor-mode))
     :config
     (yas-reload-all))
 #+end_src
@@ -959,8 +959,8 @@
   													(directory-files m2-repo nil "^[0-9]")))
   					 (latest-version (when lombok-dirs (car (sort lombok-dirs 'string>))))
   					 (lombok-jar (when latest-version
-  												 (expand-file-name 
-  													(format "%s/lombok-%s.jar" latest-version latest-version)
+  												 (expand-file-name
+  													(format "lombok-%s.jar" latest-version)
   													(expand-file-name latest-version m2-repo)))))
   			(when (and lombok-jar (file-exists-p lombok-jar))
   				lombok-jar)))
