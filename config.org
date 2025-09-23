@@ -633,11 +633,50 @@
 #+end_src
 ** magit
 #+begin_src emacs-lisp
+  (defun claude-generate-commit-message ()
+    "使用 Claude 生成提交信息"
+    (interactive)
+    (let* ((git-diff (shell-command-to-string "git diff --cached"))
+           (git-status (shell-command-to-string "git status --porcelain"))
+           (prompt (format "请根据以下 git diff 和状态信息生成一个简洁的提交信息（只返回提交信息，不要其他解释）：\n\nGit Status:\n%s\n\nGit Diff:\n%s"
+                          git-status git-diff)))
+      (if (string-empty-p git-diff)
+          (message "没有暂存的更改")
+        (let ((temp-file (make-temp-file "claude-commit-" nil ".txt")))
+          (with-temp-file temp-file
+            (insert prompt))
+          (let* ((proxy-env (getenv "EMACS_HTTP_PROXY"))
+                 (proxy-url (if (and proxy-env (not (string-prefix-p "http" proxy-env)))
+                               (concat "http://" proxy-env)
+                             proxy-env))
+                 (env-vars (if proxy-url
+                              (format "https_proxy=%s http_proxy=%s " proxy-url proxy-url)
+                            ""))
+                 (command (format "%sclaude --print < '%s'" env-vars temp-file))
+                 (commit-msg (string-trim (shell-command-to-string command))))
+            (delete-file temp-file)
+            (if (and commit-msg (not (string-empty-p commit-msg)))
+                (progn
+                  (message "生成的提交信息: %s" commit-msg)
+                  (insert commit-msg))
+              (message "Claude 生成提交信息失败")))))))
+
   (use-package magit
     :init
-    (global-set-key (kbd "C-x m") 'magit)  
+    (global-set-key (kbd "C-x m") 'magit)
     :config
-    (setq magit-buffer-name-format "*%x%M%v: %t%x"))
+    (setq magit-buffer-name-format "*%x%M%v: %t%x")
+
+    ;; 在 git-commit-mode 中添加快捷键
+    (define-key git-commit-mode-map (kbd "C-c C-a") 'claude-generate-commit-message)
+
+    ;; 可选：在 magit-commit 时自动建议使用 Claude
+    (defun magit-commit-with-claude-suggestion ()
+      "提交时提示使用 Claude 生成提交信息"
+      (interactive)
+      (magit-commit-create)
+      (when (y-or-n-p "是否使用 Claude 生成提交信息？")
+        (claude-generate-commit-message))))
 
   (use-package forge :after magit)
 #+end_src
