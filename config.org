@@ -634,14 +634,14 @@
 ** magit
 #+begin_src emacs-lisp
   (defun claude-generate-commit-message ()
-    "使用 Claude 生成提交信息"
+    "Generate commit message using Claude"
     (interactive)
     (let* ((git-diff (shell-command-to-string "git diff --cached"))
            (git-status (shell-command-to-string "git status --porcelain"))
-           (prompt (format "请根据以下 git diff 和状态信息生成一个简洁的提交信息（只返回提交信息，不要其他解释）：\n\nGit Status:\n%s\n\nGit Diff:\n%s"
+           (prompt (format "Generate a concise git commit message based on the following git diff and status. Return only the commit message, no other explanation:\n\nGit Status:\n%s\n\nGit Diff:\n%s"
                           git-status git-diff)))
       (if (string-empty-p git-diff)
-          (message "没有暂存的更改")
+          (message "No staged changes")
         (let ((temp-file (make-temp-file "claude-commit-" nil ".txt")))
           (with-temp-file temp-file
             (insert prompt))
@@ -657,9 +657,9 @@
             (delete-file temp-file)
             (if (and commit-msg (not (string-empty-p commit-msg)))
                 (progn
-                  (message "生成的提交信息: %s" commit-msg)
+                  (message "Generated commit message: %s" commit-msg)
                   (insert commit-msg))
-              (message "Claude 生成提交信息失败")))))))
+              (message "Failed to generate commit message with Claude")))))))
 
   (use-package magit
     :init
@@ -672,10 +672,10 @@
 
     ;; 可选：在 magit-commit 时自动建议使用 Claude
     (defun magit-commit-with-claude-suggestion ()
-      "提交时提示使用 Claude 生成提交信息"
+      "Suggest using Claude to generate commit message during commit"
       (interactive)
       (magit-commit-create)
-      (when (y-or-n-p "是否使用 Claude 生成提交信息？")
+      (when (y-or-n-p "Generate commit message with Claude? ")
         (claude-generate-commit-message))))
 
   (use-package forge :after magit)
