@@ -974,26 +974,27 @@
 ** lsp-bridge
 #+begin_src emacs-lisp
   (use-package lsp-bridge
-  	:defer 5
-  	:vc (:url "https://github.com/manateelazycat/lsp-bridge.git"
-  						:rev :newest)
+    :defer 5
+    :vc (:url "https://github.com/manateelazycat/lsp-bridge.git"
+              :rev :newest)
     :hook (prog-mode . lsp-bridge-mode)
-  	:bind (:map lsp-bridge-mode
-  							("M-." . lsp-bridge-find-def)
-  							("M-," . lsp-bridge-find-def-return)
-  							("s-." . lsp-bridge-find-references))
+    :bind (:map lsp-bridge-mode
+                ("M-." . lsp-bridge-find-def)
+                ("M-," . lsp-bridge-find-def-return)
+                ("s-." . lsp-bridge-find-references))
     :init
     (defcustom lsp-bridge-multi-lang-server-extension-list
       '((("vue") . "vue")
         (("ts") . "typescript_eslint")
         (("tsx") . "typescriptreact_eslint_tailwindcss")
-  			(("jsx" "js") . "typescriptreact_tailwindcss"))
+        (("jsx" "js") . "typescriptreact_tailwindcss"))
       "The multi lang server rule for file extension."
       :type 'cons)
-  	(setq lsp-bridge-enable-completion-in-string t)
-  	
-  	:config
-  	(setq lsp-bridge-get-language-id
+    (setq lsp-bridge-enable-completion-in-string t)
+  	(setq acm-backend-lsp-block-kind-list '(Snippet))
+
+    :config
+    (setq lsp-bridge-get-language-id
           (lambda (project-path file-path server-name extension-name)
             (when (string-equal server-name "tailwindcss")
               (cond
@@ -1007,14 +1008,14 @@
                ((string-equal extension-name "js") "javascript")
                ;; 处理 Svelte 文件
                ((string-equal extension-name "svelte") "svelte")
-  						 ;; 处理 Vue 文件
-  						 ((string-equal extension-name "vue") "vue")
+               ;; 处理 Vue 文件
+               ((string-equal extension-name "vue") "vue")
                ;; 默认情况，返回扩展名本身
                (t extension-name)))))
 
     (setq lsp-bridge-python-command (string-trim
-  																	 (shell-command-to-string "pyenv which python3")))
-  	(setq lsp-bridge-python-multi-lsp-server "pylsp_ruff")
+                                     (shell-command-to-string "pyenv which python3")))
+    (setq lsp-bridge-python-multi-lsp-server "pylsp_ruff")
     ;; (setq lsp-bridge-log-level 'debug)
     (global-lsp-bridge-mode))
 #+end_src
