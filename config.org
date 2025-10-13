@@ -638,8 +638,22 @@
     (interactive)
     (let* ((git-diff (shell-command-to-string "git diff --cached"))
            (git-status (shell-command-to-string "git status --porcelain"))
-           (prompt (format "Generate a concise git commit message based on the following git diff and status. Return only the commit message, no other explanation:\n\nGit Status:\n%s\n\nGit Diff:\n%s"
-                          git-status git-diff)))
+           (prompt (format "Generate a concise git commit message based on the following git diff and status.
+
+  Requirements:
+  - First line (subject): Maximum 50 characters, imperative mood (e.g., 'Add', 'Fix', 'Update')
+  - If needed, add a blank line followed by detailed explanation (wrap at 72 characters)
+  - Use English only
+  - Be specific and clear about what changed
+
+  Return only the commit message, no other explanation:
+
+  Git Status:
+  %s
+
+  Git Diff:
+  %s"
+                           git-status git-diff)))
       (if (string-empty-p git-diff)
           (message "No staged changes")
         (let ((temp-file (make-temp-file "claude-commit-" nil ".txt")))
@@ -647,19 +661,87 @@
             (insert prompt))
           (let* ((proxy-env (getenv "EMACS_HTTP_PROXY"))
                  (proxy-url (if (and proxy-env (not (string-prefix-p "http" proxy-env)))
-                               (concat "http://" proxy-env)
-                             proxy-env))
+                                (concat "http://" proxy-env)
+                              proxy-env))
                  (env-vars (if proxy-url
-                              (format "https_proxy=%s http_proxy=%s " proxy-url proxy-url)
-                            ""))
+                               (format "https_proxy=%s http_proxy=%s " proxy-url proxy-url)
+                             ""))
                  (command (format "%sclaude --print < '%s'" env-vars temp-file))
-                 (commit-msg (string-trim (shell-command-to-string command))))
+                 (commit-msg-raw (string-trim (shell-command-to-string command)))
+                 (commit-msg (claude-format-commit-message commit-msg-raw)))
             (delete-file temp-file)
             (if (and commit-msg (not (string-empty-p commit-msg)))
                 (progn
-                  (message "Generated commit message: %s" commit-msg)
+                  (message "Generated commit message: %s" (car (split-string commit-msg "\n")))
                   (insert commit-msg))
               (message "Failed to generate commit message with Claude")))))))
+
+  (defun claude-format-commit-message (msg)
+    "Format and validate commit message according to best practices"
+    (when (and msg (not (string-empty-p msg)))
+      (let* ((lines (split-string msg "\n" t " \t"))
+             (subject (car lines))
+             (body-lines (cdr lines))
+             (formatted-subject (claude-format-subject-line subject))
+             (formatted-body (claude-format-body-lines body-lines)))
+        (if formatted-body
+            (concat formatted-subject "\n\n" formatted-body)
+          formatted-subject))))
+
+  (defun claude-format-subject-line (subject)
+    "Format the subject line to meet Git commit conventions"
+    (when subject
+      (let* ((cleaned (string-trim subject))
+             ;; Remove quotes if present
+             (cleaned (if (and (string-prefix-p "\"" cleaned)
+                               (string-suffix-p "\"" cleaned))
+                          (substring cleaned 1 -1)
+                        cleaned))
+             ;; Capitalize first letter
+             (cleaned (concat (upcase (substring cleaned 0 1))
+                              (substring cleaned 1)))
+             ;; Remove trailing period
+             (cleaned (if (string-suffix-p "." cleaned)
+                          (substring cleaned 0 -1)
+                        cleaned)))
+        ;; Truncate if too long
+        (if (> (length cleaned) 50)
+            (concat (substring cleaned 0 47) "...")
+          cleaned))))
+
+  (defun claude-format-body-lines (body-lines)
+    "Format body lines to wrap at 72 characters"
+    (when body-lines
+      (let ((formatted-lines '()))
+        (dolist (line body-lines)
+          (let ((trimmed-line (string-trim line)))
+            (when (not (string-empty-p trimmed-line))
+              ;; Wrap long lines
+              (if (> (length trimmed-line) 72)
+                  (let ((wrapped (claude-wrap-line trimmed-line 72)))
+                    (setq formatted-lines (append formatted-lines wrapped)))
+                (push trimmed-line formatted-lines)))))
+        (when formatted-lines
+          (string-join (nreverse formatted-lines) "\n")))))
+
+  (defun claude-wrap-line (line max-width)
+    "Wrap a line to maximum width, breaking at word boundaries"
+    (let ((words (split-string line " " t))
+          (current-line "")
+          (result-lines '()))
+      (dolist (word words)
+        (let ((potential-line (if (string-empty-p current-line)
+                                  word
+                                (concat current-line " " word))))
+          (if (> (length potential-line) max-width)
+              (progn
+                (when (not (string-empty-p current-line))
+                  (push current-line result-lines))
+                (setq current-line word))
+            (setq current-line potential-line))))
+      (when (not (string-empty-p current-line))
+        (push current-line result-lines))
+      (nreverse result-lines)))
 
   (use-package magit
     :init
@@ -1090,6 +1172,7 @@
   											 ;;     (web-mode-set-content-type "jsx")
   											 ;;   (message "now set to: %s" web-mode-content-type))
   											 ;; (setq lsp-enable-indentation nil)
+  											 ;; (font-lock-refresh-defaults)
   											 (when (string-equal "tsx" (file-name-extension buffer-file-name)) (lsp-bridge-mode))
   											 (when (string-equal "vue" (file-name-extension buffer-file-name)) (lsp-bridge-mode)))))
   	:custom
